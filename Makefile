@@ -1,5 +1,5 @@
 DOCKER_COMPOSE = docker compose
-SERVICE = aik
+SERVICE = pm
 
 .PHONY: all
 all: build up
