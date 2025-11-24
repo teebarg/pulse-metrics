@@ -1,13 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Upload, Sparkles, Zap, Shield, Brain, CheckCircle2, Clock, ArrowRight, BarChart3, Zap, Shield, TrendingUp, Code, Check } from "lucide-react";
+import { Upload, Sparkles, Brain, CheckCircle2, Clock, ArrowRight, BarChart3, Zap, Shield, TrendingUp, Code, Check } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
-import Features from "~/components/Features";
-import InteractiveDemo from "~/components/InteractiveDemo";
-import Pricing from "~/components/Pricing";
+import Features from "~/components/landing/Features";
+import Pricing from "~/components/landing/Pricing";
 import Footer from "~/components/Footer";
-import TrustedBy from "~/components/TrustedBy";
-import HeroNetworkGraph from "~/components/landing/HeroNetworkGraph";
+import TrustedBy from "~/components/landing/TrustedBy";
 import { motion } from "framer-motion";
 import { fetchUser } from "~/lib/supabase/fetch-user-server-fn";
 
@@ -21,32 +19,7 @@ export const Route = createFileRoute("/")({
 });
 
 function RouteComponent() {
-    const benefits = [
-        { icon: Zap, text: "Lightning fast search" },
-        { icon: Shield, text: "Secure & private" },
-        { icon: Sparkles, text: "AI-powered insights" },
-    ];
-
-    const steps = [
-        {
-            icon: Upload,
-            title: "Upload your knowledge base",
-            description: "Connect Google Drive, Notion, or upload PDFs directly. All your data, one place.",
-        },
-        {
-            icon: Brain,
-            title: "Ask questions in natural language",
-            description: "No complex queries needed. Just ask like you're talking to a colleague.",
-        },
-        {
-            icon: CheckCircle2,
-            title: "Get instant, cited answers",
-            description: "Receive accurate responses with direct citations to source documents.",
-        },
-    ];
-
     const { isAuthenticated } = Route.useLoaderData();
-
     const navigate = useNavigate();
 
     const handleGetStarted = () => {
@@ -54,8 +27,7 @@ function RouteComponent() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
-            {/* Header */}
+        <div className="min-h-screen bg-linear-to-b from-slate-900 via-slate-800 to-slate-900">
             <header className="border-b border-slate-700">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex justify-between items-center">
@@ -63,12 +35,18 @@ function RouteComponent() {
                             <BarChart3 className="w-8 h-8 text-blue-400" />
                             <span className="text-2xl font-bold text-white">PulseMetrics</span>
                         </div>
-                        <div className="flex gap-4">
-                            <button className="text-slate-300 hover:text-white transition">Sign In</button>
-                            <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition">
-                                Get Started Free
-                            </button>
-                        </div>
+                        {isAuthenticated ? (
+                            <Button onClick={() => navigate({ to: "/account" })}>Dashboard</Button>
+                        ) : (
+                            <div className="flex items-center gap-4">
+                                <Button variant="ghost" onClick={handleGetStarted}>
+                                    Sign In
+                                </Button>
+                                <Button className="animate-scale-in cursor-pointer" onClick={handleGetStarted}>
+                                    Get Started
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </header>
@@ -78,7 +56,7 @@ function RouteComponent() {
                 <div className="text-center">
                     <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
                         Real-Time Analytics for
-                        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Modern E-Commerce</span>
+                        <span className="block text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-purple-400">Modern E-Commerce</span>
                     </h1>
                     <p className="text-xl text-slate-300 mb-8 max-w-3xl mx-auto">
                         Get instant insights into your store's performance. Track visitors, sales, and conversions in real-time. Install in under 60

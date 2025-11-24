@@ -6,13 +6,10 @@ import { prettyJSON } from "hono/pretty-json";
 
 import { authMiddleware } from "@/api/middleware/auth.js";
 import { errorHandler } from "@/api/middleware/error-handler.js";
-import { documentRoutes } from "@/api/routes/document.routes";
-import { searchRoutes } from "@/api/routes/search.routes";
-import { chatRoutes } from "@/api/routes/chat.routes";
-import { conversationRoutes } from "@/api/routes/conversation.routes";
-import { settingsRoutes } from "@/api/routes/settings.routes";
 import { profileRoutes } from "@/api/routes/profile.routes";
 import { healthRoute } from "./routes/health.routes";
+import { eventsRoute } from "./routes/events.routes";
+import { analyticsRoutes } from "./routes/analytics.routes";
 
 const port = Number(process.env.PORT || 8787);
 
@@ -27,18 +24,15 @@ app.use("/v1/*", authMiddleware);
 
 
 app.route("/", healthRoute);
-app.route("/v1", documentRoutes);
-app.route("/v1", searchRoutes);
-app.route("/v1", chatRoutes);
-app.route("/v1", conversationRoutes);
-app.route("/v1", settingsRoutes);
 app.route("/v1", profileRoutes);
+app.route("/v1", analyticsRoutes);
+app.route("/v1", eventsRoute);
 
 // OpenAPI documentation
 app.doc("/doc", {
     openapi: "3.0.0",
     info: {
-        title: "AI Knowledge Search API",
+        title: "Pulse Metrics API",
         version: "1.0.0",
     },
 });

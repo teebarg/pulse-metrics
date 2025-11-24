@@ -41,7 +41,7 @@ function RouteComponent() {
 
     const steps: OnboardingStep[] = [
         {
-            title: "Welcome to Your AI Knowledge Hub",
+            title: "Welcome to Your PulseMetrics Hub",
             description: "Discover insights from your connected data sources with AI-powered intelligence",
             icon: <Brain className="h-10 w-10" />,
             content: (
@@ -145,7 +145,7 @@ function RouteComponent() {
             content: (
                 <div className="space-y-6">
                     <p className="text-lg text-foreground/80 leading-relaxed">
-                        Your AI Knowledge Hub is ready. Upload your first documents and experience the power of intelligent search.
+                        Your Account is ready. Upload your first documents and experience the power of intelligent search.
                     </p>
                     <div className="grid gap-3">
                         {[

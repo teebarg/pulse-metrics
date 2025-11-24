@@ -21,50 +21,6 @@ export const Route = createFileRoute("/_protected/account/")({
 
 function RouteComponent() {
     const navigate = useNavigate({ from: "/account" });
-    const stats = [
-        {
-            label: "Total Documents",
-            value: "24",
-            icon: FileText,
-            color: "text-primary",
-        },
-        {
-            label: "Searches Today",
-            value: "47",
-            icon: Search,
-            color: "text-secondary",
-        },
-        {
-            label: "Chat Sessions",
-            value: "12",
-            icon: MessageSquare,
-            color: "text-accent-foreground",
-        },
-        {
-            label: "Insights Found",
-            value: "156",
-            icon: TrendingUp,
-            color: "text-primary",
-        },
-    ];
-
-    const quickActions = [
-        {
-            title: "Upload Documents",
-            description: "Add new files to your knowledge base",
-            path: "/account/documents",
-        },
-        {
-            title: "Start Searching",
-            description: "Find information instantly with AI",
-            path: "/account/search",
-        },
-        {
-            title: "Chat with AI",
-            description: "Have a conversation about your docs",
-            path: "/account/chat",
-        },
-    ];
 
     return (
         <div className="min-h-screen bg-slate-900 text-white">
@@ -90,7 +46,7 @@ function RouteComponent() {
 
             <div className="max-w-7xl mx-auto px-6 py-8">
                 {/* Real-time Metrics Banner */}
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-6 mb-8 shadow-lg">
+                <div className="bg-linear-to-r from-blue-600 to-purple-600 rounded-xl p-6 mb-8 shadow-lg">
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2">
                             <Activity className="w-5 h-5 animate-pulse" />

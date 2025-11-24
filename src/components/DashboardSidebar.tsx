@@ -29,7 +29,7 @@ export function DashboardSidebar() {
                 <div className="p-4 border-b border-sidebar-border">
                     <div className="flex items-center gap-2">
                         <Sparkles className="h-6 w-6 text-sidebar-primary" />
-                        {open && <span className="font-semibold text-sidebar-foreground">AI Knowledge</span>}
+                        {open && <span className="font-semibold text-sidebar-foreground">Pulse Metrics</span>}
                     </div>
                 </div>
 

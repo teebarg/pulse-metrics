@@ -20,9 +20,6 @@ import { Route as ProtectedOnboardingRouteImport } from './routes/_protected/onb
 import { Route as ProtectedAccountRouteImport } from './routes/_protected/account'
 import { Route as ProtectedAccountIndexRouteImport } from './routes/_protected/account/index'
 import { Route as ProtectedAccountSettingsRouteImport } from './routes/_protected/account/settings'
-import { Route as ProtectedAccountSearchRouteImport } from './routes/_protected/account/search'
-import { Route as ProtectedAccountDocumentsRouteImport } from './routes/_protected/account/documents'
-import { Route as ProtectedAccountChatRouteImport } from './routes/_protected/account/chat'
 
 const DeferredRoute = DeferredRouteImport.update({
   id: '/deferred',
@@ -79,22 +76,6 @@ const ProtectedAccountSettingsRoute =
     path: '/settings',
     getParentRoute: () => ProtectedAccountRoute,
   } as any)
-const ProtectedAccountSearchRoute = ProtectedAccountSearchRouteImport.update({
-  id: '/search',
-  path: '/search',
-  getParentRoute: () => ProtectedAccountRoute,
-} as any)
-const ProtectedAccountDocumentsRoute =
-  ProtectedAccountDocumentsRouteImport.update({
-    id: '/documents',
-    path: '/documents',
-    getParentRoute: () => ProtectedAccountRoute,
-  } as any)
-const ProtectedAccountChatRoute = ProtectedAccountChatRouteImport.update({
-  id: '/chat',
-  path: '/chat',
-  getParentRoute: () => ProtectedAccountRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -105,9 +86,6 @@ export interface FileRoutesByFullPath {
   '/auth/error': typeof AuthErrorRoute
   '/auth/oauth': typeof AuthOauthRoute
   '/auth/': typeof AuthIndexRoute
-  '/account/chat': typeof ProtectedAccountChatRoute
-  '/account/documents': typeof ProtectedAccountDocumentsRoute
-  '/account/search': typeof ProtectedAccountSearchRoute
   '/account/settings': typeof ProtectedAccountSettingsRoute
   '/account/': typeof ProtectedAccountIndexRoute
 }
@@ -118,9 +96,6 @@ export interface FileRoutesByTo {
   '/auth/error': typeof AuthErrorRoute
   '/auth/oauth': typeof AuthOauthRoute
   '/auth': typeof AuthIndexRoute
-  '/account/chat': typeof ProtectedAccountChatRoute
-  '/account/documents': typeof ProtectedAccountDocumentsRoute
-  '/account/search': typeof ProtectedAccountSearchRoute
   '/account/settings': typeof ProtectedAccountSettingsRoute
   '/account': typeof ProtectedAccountIndexRoute
 }
@@ -135,9 +110,6 @@ export interface FileRoutesById {
   '/auth/error': typeof AuthErrorRoute
   '/auth/oauth': typeof AuthOauthRoute
   '/auth/': typeof AuthIndexRoute
-  '/_protected/account/chat': typeof ProtectedAccountChatRoute
-  '/_protected/account/documents': typeof ProtectedAccountDocumentsRoute
-  '/_protected/account/search': typeof ProtectedAccountSearchRoute
   '/_protected/account/settings': typeof ProtectedAccountSettingsRoute
   '/_protected/account/': typeof ProtectedAccountIndexRoute
 }
@@ -152,9 +124,6 @@ export interface FileRouteTypes {
     | '/auth/error'
     | '/auth/oauth'
     | '/auth/'
-    | '/account/chat'
-    | '/account/documents'
-    | '/account/search'
     | '/account/settings'
     | '/account/'
   fileRoutesByTo: FileRoutesByTo
@@ -165,9 +134,6 @@ export interface FileRouteTypes {
     | '/auth/error'
     | '/auth/oauth'
     | '/auth'
-    | '/account/chat'
-    | '/account/documents'
-    | '/account/search'
     | '/account/settings'
     | '/account'
   id:
@@ -181,9 +147,6 @@ export interface FileRouteTypes {
     | '/auth/error'
     | '/auth/oauth'
     | '/auth/'
-    | '/_protected/account/chat'
-    | '/_protected/account/documents'
-    | '/_protected/account/search'
     | '/_protected/account/settings'
     | '/_protected/account/'
   fileRoutesById: FileRoutesById
@@ -274,42 +237,15 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedAccountSettingsRouteImport
       parentRoute: typeof ProtectedAccountRoute
     }
-    '/_protected/account/search': {
-      id: '/_protected/account/search'
-      path: '/search'
-      fullPath: '/account/search'
-      preLoaderRoute: typeof ProtectedAccountSearchRouteImport
-      parentRoute: typeof ProtectedAccountRoute
-    }
-    '/_protected/account/documents': {
-      id: '/_protected/account/documents'
-      path: '/documents'
-      fullPath: '/account/documents'
-      preLoaderRoute: typeof ProtectedAccountDocumentsRouteImport
-      parentRoute: typeof ProtectedAccountRoute
-    }
-    '/_protected/account/chat': {
-      id: '/_protected/account/chat'
-      path: '/chat'
-      fullPath: '/account/chat'
-      preLoaderRoute: typeof ProtectedAccountChatRouteImport
-      parentRoute: typeof ProtectedAccountRoute
-    }
   }
 }
 
 interface ProtectedAccountRouteChildren {
-  ProtectedAccountChatRoute: typeof ProtectedAccountChatRoute
-  ProtectedAccountDocumentsRoute: typeof ProtectedAccountDocumentsRoute
-  ProtectedAccountSearchRoute: typeof ProtectedAccountSearchRoute
   ProtectedAccountSettingsRoute: typeof ProtectedAccountSettingsRoute
   ProtectedAccountIndexRoute: typeof ProtectedAccountIndexRoute
 }
 
 const ProtectedAccountRouteChildren: ProtectedAccountRouteChildren = {
-  ProtectedAccountChatRoute: ProtectedAccountChatRoute,
-  ProtectedAccountDocumentsRoute: ProtectedAccountDocumentsRoute,
-  ProtectedAccountSearchRoute: ProtectedAccountSearchRoute,
   ProtectedAccountSettingsRoute: ProtectedAccountSettingsRoute,
   ProtectedAccountIndexRoute: ProtectedAccountIndexRoute,
 }

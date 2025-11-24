@@ -1,10 +1,11 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 import { ErrorSchema, SuccessSchema } from "@/api/schemas/common.schemas.js";
 import { createClient } from "@supabase/supabase-js";
+import { EventSchema } from "@/api/schemas/event.schemas";
 
-export const analyticsRoute = new OpenAPIHono();
+export const analyticsRoutes = new OpenAPIHono();
 
-analyticsRoute.openapi(
+analyticsRoutes.openapi(
     createRoute({
         method: "get",
         path: "/realtime",
@@ -77,7 +78,7 @@ analyticsRoute.openapi(
 );
 
 
-analyticsRoute.openapi(
+analyticsRoutes.openapi(
     createRoute({
         method: "get",
         path: "/today",
@@ -160,7 +161,7 @@ analyticsRoute.openapi(
 );
 
 
-analyticsRoute.openapi(
+analyticsRoutes.openapi(
     createRoute({
         method: "get",
         path: "/top-products",

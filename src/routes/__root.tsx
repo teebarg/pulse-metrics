@@ -24,8 +24,8 @@ export const Route = createRootRouteWithContext<{
                 content: "width=device-width, initial-scale=1",
             },
             ...seo({
-                title: "AI Knowledge Search",
-                description: `AI Knowledge Search is a type-safe, client-first, full-stack React framework. `,
+                title: "Pulse Metrics",
+                description: `Pulse Metrics a real-time analytics SaaS built for e-commerce store`,
             }),
         ],
         links: [

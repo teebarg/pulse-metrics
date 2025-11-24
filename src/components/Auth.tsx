@@ -79,9 +79,9 @@ export default function Auth() {
                 <div className="text-center mb-8 animate-fade-in">
                     <div className="flex items-center justify-center gap-2 mb-4">
                         <Sparkles className="h-8 w-8 text-primary" />
-                        <span className="text-2xl font-bold">AI Knowledge Search</span>
+                        <span className="text-2xl font-bold">Pulse Metrics</span>
                     </div>
-                    <p className="text-muted-foreground">Access your intelligent knowledge base</p>
+                    <p className="text-muted-foreground">Access your real-time analytics</p>
                 </div>
 
                 <Card className="p-8 animate-scale-in">

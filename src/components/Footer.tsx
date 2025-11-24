@@ -36,7 +36,7 @@ export default function Footer() {
                             <div className="w-8 h-8 bg-linear-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center">
                                 <Search className="w-5 h-5 text-white" />
                             </div>
-                            <span className="text-xl font-bold text-white">KnowledgeAI</span>
+                            <span className="text-xl font-bold text-white">Pulse Metrics</span>
                         </div>
                         <p className="text-slate-400 mb-6 leading-relaxed">
                             Transform your knowledge into instant, intelligent answers. Built for modern teams who need information at the speed of
@@ -119,7 +119,7 @@ export default function Footer() {
 
                 <div className="border-t border-slate-800 pt-8">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                        <p className="text-slate-400 text-sm">© 2025 KnowledgeAI. All rights reserved.</p>
+                        <p className="text-slate-400 text-sm">© 2025 Pulse Metrics. All rights reserved.</p>
                         <p className="text-slate-400 text-sm">Built with AI-first technology for the future of work</p>
                     </div>
                 </div>
