@@ -5,6 +5,49 @@ import { db } from "@/api/db";
 import { users } from "@/api/db/schema";
 import { eq } from "drizzle-orm";
 
+export async function verifyApiKey(c: Context, next: Next) {
+    const apiKey = c.req.header('X-API-Key');
+
+    if (!apiKey) {
+        return c.json({ error: 'API key required' }, 401);
+    }
+
+    const supabase = createClient(
+        c.env.SUPABASE_URL,
+        c.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
+    try {
+        const { data: org, error } = await supabase
+            .from('organizations')
+            .select('id, plan, event_limit, events_used')
+            .eq('api_key', apiKey)
+            .single();
+
+        if (error || !org) {
+            return c.json({ error: 'Invalid API key' }, 401);
+        }
+
+        // Check if organization has exceeded limit
+        if (org.events_used >= org.event_limit) {
+            return c.json({
+                error: 'Event limit exceeded',
+                message: `Your ${org.plan} plan limit of ${org.event_limit} events has been reached.`
+            }, 429);
+        }
+
+        // Store organization ID in context
+        c.set('organizationId', org.id);
+        c.set('organization', org);
+
+        await next();
+    } catch (error) {
+        console.error('Auth middleware error:', error);
+        return c.json({ error: 'Authentication failed' }, 500);
+    }
+}
+
+
 /**
  * Supabase client for JWT verification
  */

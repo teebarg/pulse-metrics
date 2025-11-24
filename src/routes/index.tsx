@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Upload, Sparkles, Zap, Shield, Brain, CheckCircle2, Clock, ArrowRight } from "lucide-react";
+import { Upload, Sparkles, Zap, Shield, Brain, CheckCircle2, Clock, ArrowRight, BarChart3, Zap, Shield, TrendingUp, Code, Check } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import Features from "~/components/Features";
 import InteractiveDemo from "~/components/InteractiveDemo";
@@ -54,131 +54,207 @@ function RouteComponent() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-subtle">
-            <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
-                <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <Sparkles className="h-6 w-6 text-primary" />
-                        <span className="text-xl font-semibold">KnowledgeAI</span>
-                    </div>
-                    {isAuthenticated ? (
-                        <Button onClick={() => navigate({ to: "/account" })}>Dashboard</Button>
-                    ) : (
-                        <div className="flex items-center gap-4">
-                            <Button variant="ghost" onClick={handleGetStarted}>
-                                Sign In
-                            </Button>
-                            <Button className="animate-scale-in cursor-pointer" onClick={handleGetStarted}>
-                                Get Started
-                            </Button>
+        <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
+            {/* Header */}
+            <header className="border-b border-slate-700">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                            <BarChart3 className="w-8 h-8 text-blue-400" />
+                            <span className="text-2xl font-bold text-white">PulseMetrics</span>
                         </div>
-                    )}
+                        <div className="flex gap-4">
+                            <button className="text-slate-300 hover:text-white transition">Sign In</button>
+                            <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition">
+                                Get Started Free
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </header>
 
-            <section className="relative container mx-auto px-4 pt-24 pb-32 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-hero opacity-50 blur-3xl" />
-                <div className="relative max-w-7xl mx-auto">
-                    <div className="grid lg:grid-cols-2 gap-12 items-center">
-                        {/* Left Column - Text Content */}
-                        <div className="text-center lg:text-left animate-fade-up">
-                            <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm font-medium animate-scale-in">
-                                <Sparkles className="h-3 w-3 mr-2" />
-                                Trusted by 10,000+ teams worldwide
-                            </Badge>
-
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight mb-6 leading-tight">
-                                Search smarter.
-                                <br />
-                                <span className="bg-gradient-primary bg-clip-text text-transparent">Discover insights</span>
-                                <br />
-                                from your data.
-                            </h1>
-
-                            <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
-                                Connect your knowledge sources and let AI surface answers instantly. No more endless document hunting.
-                            </p>
-
-                            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                                <Button size="lg" className="text-lg h-14 px-8 animate-fade-up" onClick={handleGetStarted}>
-                                    Get Started Free
-                                    <ArrowRight className="ml-2 h-5 w-5" />
-                                </Button>
-                                <Button size="lg" variant="outline" className="text-lg h-14 px-8 animate-fade-up" style={{ animationDelay: "0.1s" }}>
-                                    View Demo
-                                </Button>
-                            </div>
-                        </div>
-
-                        {/* Right Column - Network Graph */}
-                        <div className="relative animate-fade-up" style={{ animationDelay: "0.2s" }}>
-                            <HeroNetworkGraph />
-                        </div>
+            {/* Hero Section */}
+            <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div className="text-center">
+                    <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+                        Real-Time Analytics for
+                        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Modern E-Commerce</span>
+                    </h1>
+                    <p className="text-xl text-slate-300 mb-8 max-w-3xl mx-auto">
+                        Get instant insights into your store's performance. Track visitors, sales, and conversions in real-time. Install in under 60
+                        seconds.
+                    </p>
+                    <div className="flex gap-4 justify-center">
+                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition shadow-lg shadow-blue-500/50">
+                            Start Free Trial
+                        </button>
+                        <button className="border-2 border-slate-600 hover:border-slate-500 text-white px-8 py-4 rounded-lg font-semibold text-lg transition">
+                            View Demo
+                        </button>
                     </div>
-                    <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground mt-12">
-                        {benefits.map((benefit, i) => (
-                            <div key={i} className="flex items-center gap-2">
-                                <benefit.icon className="h-4 w-4 text-primary" />
-                                <span>{benefit.text}</span>
-                            </div>
-                        ))}
+
+                    {/* Trust indicators */}
+                    <div className="mt-12 flex gap-8 justify-center items-center text-sm text-slate-400">
+                        <div className="flex items-center gap-2">
+                            <Check className="w-5 h-5 text-green-400" />
+                            <span>Free Forever</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Check className="w-5 h-5 text-green-400" />
+                            <span>No Credit Card</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Check className="w-5 h-5 text-green-400" />
+                            <span>2-Minute Setup</span>
+                        </div>
                     </div>
                 </div>
-                <motion.div
-                    className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
-                    animate={{ y: [0, 10, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                >
-                    <div className="w-6 h-10 border-2 border-slate-400 rounded-full flex items-start justify-center p-2">
-                        <motion.div
-                            className="w-1 h-2 bg-slate-400 rounded-full"
-                            animate={{ y: [0, 6, 0] }}
-                            transition={{ duration: 2, repeat: Infinity }}
+
+                {/* Demo Dashboard Preview */}
+                <div className="mt-16 rounded-2xl border border-slate-700 bg-slate-800/50 p-8 shadow-2xl">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <MetricCard title="Active Visitors" value="127" change="+12%" positive />
+                        <MetricCard title="Today's Sales" value="$2,847" change="+23%" positive />
+                        <MetricCard title="Conversion Rate" value="3.2%" change="+0.4%" positive />
+                    </div>
+                    <div className="bg-slate-900/50 rounded-lg p-6 h-64 flex items-center justify-center">
+                        <div className="text-slate-500">
+                            <TrendingUp className="w-16 h-16 mx-auto mb-4" />
+                            <p className="text-center">Real-time sales chart would go here</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Features Section */}
+            <section className="bg-slate-800/50 py-20">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl font-bold text-white mb-4">Everything You Need to Grow</h2>
+                        <p className="text-xl text-slate-300">Powerful analytics made simple</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <FeatureCard
+                            icon={<Zap className="w-8 h-8 text-yellow-400" />}
+                            title="Real-Time Updates"
+                            description="See what's happening on your store right now. No delays, no waiting."
+                        />
+                        <FeatureCard
+                            icon={<Shield className="w-8 h-8 text-green-400" />}
+                            title="Privacy First"
+                            description="GDPR compliant. Your data stays secure and private."
+                        />
+                        <FeatureCard
+                            icon={<Code className="w-8 h-8 text-blue-400" />}
+                            title="One-Line Setup"
+                            description="Add one script tag and you're done. Works with any e-commerce platform."
+                        />
+                        <FeatureCard
+                            icon={<TrendingUp className="w-8 h-8 text-purple-400" />}
+                            title="Conversion Tracking"
+                            description="Track the entire customer journey from landing to purchase."
+                        />
+                        <FeatureCard
+                            icon={<BarChart3 className="w-8 h-8 text-pink-400" />}
+                            title="Product Insights"
+                            description="See which products are hot and which need attention."
+                        />
+                        <FeatureCard
+                            icon={<Zap className="w-8 h-8 text-orange-400" />}
+                            title="Smart Alerts"
+                            description="Get notified about unusual activity or sales spikes."
                         />
                     </div>
-                </motion.div>
+                </div>
             </section>
 
-            <TrustedBy />
-
-            <section className="px-4 py-32 bg-white">
-                <div className="max-w-6xl mx-auto">
-                    <div className="text-center mb-20">
-                        <Badge variant="secondary" className="mb-4">
-                            <Clock className="h-3 w-3 mr-2" />
-                            Get started in minutes
-                        </Badge>
-                        <h2 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900">How it works</h2>
-                        <p className="text-xl text-slate-600">Three simple steps to transform your knowledge management</p>
+            {/* Integration Section */}
+            <section className="py-20">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-12">
+                        <h2 className="text-4xl font-bold text-white mb-4">Works With Your Stack</h2>
+                        <p className="text-xl text-slate-300">Integrate in minutes, not hours</p>
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {steps.map((step, i) => (
-                            <div key={i} className="relative animate-fade-in" style={{ animationDelay: `${i * 0.15}s` }}>
-                                <div className="text-center">
-                                    <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-primary mb-6 shadow-lg">
-                                        <step.icon className="h-8 w-8 text-primary-foreground" />
-                                    </div>
-                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
-                                        {i + 1}
-                                    </div>
-                                    <h3 className="text-xl font-semibold mb-3 text-slate-900">{step.title}</h3>
-                                    <p className="text-slate-600">{step.description}</p>
-                                </div>
-                                {i < steps.length - 1 && <div className="hidden md:block absolute top-8 left-[60%] w-[80%] h-0.5 bg-border" />}
-                            </div>
-                        ))}
+                    <div className="bg-slate-800/50 rounded-2xl p-8 max-w-3xl mx-auto border border-slate-700">
+                        <div className="mb-4">
+                            <span className="text-sm text-slate-400">JavaScript SDK</span>
+                        </div>
+                        <pre className="bg-slate-900 rounded-lg p-6 overflow-x-auto">
+                            <code className="text-green-400 text-sm">
+                                {`<!-- Add to your <head> -->
+<script src="https://cdn.pulsemetrics.io/sdk.js"></script>
+<script>
+  PulseMetrics.init({
+    apiKey: 'your_api_key_here'
+  });
+</script>`}
+                            </code>
+                        </pre>
+                        <p className="text-sm text-slate-400 mt-4 text-center">That's it! You're now tracking visitors and sales.</p>
+                    </div>
+
+                    <div className="mt-12 flex justify-center gap-6 flex-wrap">
+                        <PlatformBadge name="Shopify" />
+                        <PlatformBadge name="WooCommerce" />
+                        <PlatformBadge name="Magento" />
+                        <PlatformBadge name="BigCommerce" />
+                        <PlatformBadge name="Custom" />
                     </div>
                 </div>
             </section>
 
-            <Features />
-
-            <InteractiveDemo />
-
+            {/* Pricing Section */}
             <Pricing />
 
-            <Footer />
+            {/* CTA Section */}
+            <section className="py-20">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h2 className="text-4xl font-bold text-white mb-6">Ready to Get Started?</h2>
+                    <p className="text-xl text-slate-300 mb-8">Join hundreds of e-commerce stores already using PulseMetrics</p>
+                    <button className="bg-blue-500 hover:bg-blue-600 text-white px-12 py-4 rounded-lg font-semibold text-lg transition shadow-lg shadow-blue-500/50">
+                        Start Your Free Trial
+                    </button>
+                </div>
+            </section>
+
+            {/* Footer */}
+            <footer className="border-t border-slate-700 py-12">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                            <BarChart3 className="w-6 h-6 text-blue-400" />
+                            <span className="text-lg font-bold text-white">PulseMetrics</span>
+                        </div>
+                        <div className="text-sm text-slate-400">© 2024 PulseMetrics. All rights reserved.</div>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
+}
+
+function MetricCard({ title, value, change, positive }: any) {
+    return (
+        <div className="bg-slate-900/50 rounded-lg p-6 border border-slate-700">
+            <div className="text-sm text-slate-400 mb-2">{title}</div>
+            <div className="text-3xl font-bold text-white mb-2">{value}</div>
+            <div className={`text-sm ${positive ? "text-green-400" : "text-red-400"}`}>{change}</div>
+        </div>
+    );
+}
+
+function FeatureCard({ icon, title, description }: any) {
+    return (
+        <div className="bg-slate-900/50 rounded-lg p-6 border border-slate-700 hover:border-slate-600 transition">
+            <div className="mb-4">{icon}</div>
+            <h3 className="text-xl font-semibold text-white mb-2">{title}</h3>
+            <p className="text-slate-400">{description}</p>
+        </div>
+    );
+}
+
+function PlatformBadge({ name }: any) {
+    return <div className="bg-slate-800 border border-slate-700 rounded-lg px-6 py-3 text-white font-medium">{name}</div>;
 }

@@ -33,23 +33,23 @@ export default function Pricing() {
         {
             name: "Free",
             price: "0",
-            description: "Perfect for trying out AI search",
-            features: ["Up to 100 documents", "50 queries per month", "Basic search", "Email support", "1 data source"],
+            description: "Perfect for getting started",
+            features: ["100,000 events/month", "30 days data retention", "Real-time dashboard", "Basic analytics", "2 team members"],
             cta: "Get Started",
             popular: false,
         },
         {
             name: "Pro",
             price: "29",
-            description: "For individuals and small teams",
+            description: "For growing businesses",
             features: [
-                "Unlimited documents",
-                "Unlimited queries",
-                "Advanced AI search",
+                "10M events/month",
+                "1 year data retention",
+                "Advanced analytics",
+                "Custom alerts",
+                "10 team members",
+                "API access",
                 "Priority support",
-                "All data sources",
-                "Custom models",
-                "Analytics dashboard",
             ],
             cta: "Start Free Trial",
             popular: true,
@@ -57,16 +57,15 @@ export default function Pricing() {
         {
             name: "Team",
             price: "99",
-            description: "For growing organizations",
+            description: "For large organizations",
             features: [
-                "Everything in Pro",
-                "Unlimited team members",
-                "Shared workspaces",
-                "SSO & SAML",
-                "Advanced security",
+                "Unlimited events",
+                "Custom retention",
+                "White-label option",
                 "Custom integrations",
-                "Dedicated support",
+                "Unlimited team members",
                 "SLA guarantee",
+                "Dedicated support",
             ],
             cta: "Contact Sales",
             popular: false,
@@ -78,7 +77,7 @@ export default function Pricing() {
     };
 
     return (
-        <section id="pricing" ref={sectionRef} className="py-24 bg-white">
+        <section id="pricing" ref={sectionRef} className="bg-slate-800/50 py-24">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="text-center mb-16">
                     <Badge variant="secondary" className="mb-4">
