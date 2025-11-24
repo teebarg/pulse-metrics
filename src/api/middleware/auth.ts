@@ -2,51 +2,47 @@ import { Context, Next } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { createClient } from "@supabase/supabase-js";
 import { db } from "@/api/db";
-import { users } from "@/api/db/schema";
+import { organizations, users } from "@/api/db/schema";
 import { eq } from "drizzle-orm";
+import { generateApiKey } from "../utils/common.utils";
 
 export async function verifyApiKey(c: Context, next: Next) {
-    const apiKey = c.req.header('X-API-Key');
+    const apiKey = c.req.header("X-API-Key");
 
     if (!apiKey) {
-        return c.json({ error: 'API key required' }, 401);
+        return c.json({ error: "API key required" }, 401);
     }
 
-    const supabase = createClient(
-        c.env.SUPABASE_URL,
-        c.env.SUPABASE_SERVICE_ROLE_KEY
-    );
+    const supabase = createClient(c.env.SUPABASE_URL, c.env.SUPABASE_SERVICE_ROLE_KEY);
 
     try {
-        const { data: org, error } = await supabase
-            .from('organizations')
-            .select('id, plan, event_limit, events_used')
-            .eq('api_key', apiKey)
-            .single();
+        const { data: org, error } = await supabase.from("organizations").select("id, plan, event_limit, events_used").eq("api_key", apiKey).single();
 
         if (error || !org) {
-            return c.json({ error: 'Invalid API key' }, 401);
+            return c.json({ error: "Invalid API key" }, 401);
         }
 
         // Check if organization has exceeded limit
         if (org.events_used >= org.event_limit) {
-            return c.json({
-                error: 'Event limit exceeded',
-                message: `Your ${org.plan} plan limit of ${org.event_limit} events has been reached.`
-            }, 429);
+            return c.json(
+                {
+                    error: "Event limit exceeded",
+                    message: `Your ${org.plan} plan limit of ${org.event_limit} events has been reached.`,
+                },
+                429
+            );
         }
 
         // Store organization ID in context
-        c.set('organizationId', org.id);
-        c.set('organization', org);
+        c.set("organizationId", org.id);
+        c.set("organization", org);
 
         await next();
     } catch (error) {
-        console.error('Auth middleware error:', error);
-        return c.json({ error: 'Authentication failed' }, 500);
+        console.error("Auth middleware error:", error);
+        return c.json({ error: "Authentication failed" }, 500);
     }
 }
-
 
 /**
  * Supabase client for JWT verification
@@ -110,19 +106,25 @@ export async function authMiddleware(c: Context, next: Next) {
             });
         }
 
-
         // Ensure user exists in local DB
         const dbUser = await db.select().from(users).where(eq(users.id, user.id));
         if (!dbUser[0]) {
-            console.log("User not found in local DB")
-            // Use name from user_metadata or email prefix
-            let name = user.user_metadata?.name || user.email?.split("@")[0] || "User";
+            const name = user.user_metadata?.name || user.email?.split("@")[0] || "User";
+            const org = await db
+                .insert(organizations)
+                .values({
+                    name,
+                    domain: user.email?.split("@")[1],
+                    apiKey: generateApiKey(),
+                })
+                .returning({ id: organizations.id });
             await db.insert(users).values({
                 id: user.id,
                 name,
                 email: user.email,
                 onboardingCompleted: false,
                 onboardingStep: 0,
+                organizationId: org[0].id,
             });
         }
 

@@ -1,6 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Upload, Search } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
     DropdownMenu,
@@ -35,41 +33,27 @@ export function DashboardHeader() {
         }
     };
     return (
-        <header className="h-16 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 flex items-center px-4 md:px-6 gap-4">
+        <header className="h-16 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 flex items-center justify-between px-4 md:px-6 gap-4">
             <SidebarTrigger />
 
             <div className="flex items-center gap-4">
-                <div className="relative">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        type="search"
-                        placeholder="Search documents..."
-                        className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
-                    />
-                </div>
                 <ThemeToggle />
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="rounded-full">
+                            <CurrentUserAvatar />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => navigate({ to: "/account/settings" })}>Settings</DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleLogout} disabled={isLoggingOut}>
+                            {isLoggingOut ? "Signing out..." : "Log out"}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
-
-            <Button size="sm" className="gap-2">
-                <Upload className="h-4 w-4" />
-                <span className="hidden sm:inline">Upload</span>
-            </Button>
-
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="rounded-full">
-                        <CurrentUserAvatar />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => navigate({ to: "/account/settings" })}>Settings</DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleLogout} disabled={isLoggingOut}>
-                        {isLoggingOut ? "Signing out..." : "Log out"}
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
         </header>
     );
 }

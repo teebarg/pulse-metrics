@@ -219,7 +219,7 @@ function RouteComponent() {
     const handleComplete = async () => {
         try {
             await completeOnboardingFn({ data: { completed: true } });
-            navigate({ to: "/account/documents" });
+            navigate({ to: "/account" });
         } catch (error) {
             console.error("Failed to complete onboarding:", error);
             toast.error("Failed to complete onboarding. Please try again.");

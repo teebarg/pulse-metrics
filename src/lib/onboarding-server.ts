@@ -2,8 +2,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { getSupabaseServerClient } from "./supabase/supabase";
 import { db } from "@/api/db";
-import { users } from "@/api/db/schema";
+import { organizations, users } from "@/api/db/schema";
 import { eq } from "drizzle-orm";
+import { generateApiKey } from "~/api/utils/common.utils";
 
 // Validation schemas
 export const updateOnboardingStepSchema = z.object({
@@ -56,12 +57,21 @@ export const updateOnboardingStepFn = createServerFn({ method: "POST" })
         const dbUser = await db.select().from(users).where(eq(users.id, user.id));
         if (!dbUser[0]) {
             const name = user.user_metadata?.name || user.email?.split("@")[0] || "User";
+            const org = await db
+                .insert(organizations)
+                .values({
+                    name,
+                    domain: user.email?.split("@")[1],
+                    apiKey: generateApiKey(),
+                })
+                .returning({ id: organizations.id });
             await db.insert(users).values({
                 id: user.id,
                 name,
                 email: user.email || "",
                 onboardingStep: data.step,
                 onboardingCompleted: false,
+                organizationId: org[0].id,
             });
         } else {
             await db
@@ -92,12 +102,21 @@ export const completeOnboardingFn = createServerFn({ method: "POST" })
         const dbUser = await db.select().from(users).where(eq(users.id, user.id));
         if (!dbUser[0]) {
             const name = user.user_metadata?.name || user.email?.split("@")[0] || "User";
+            const org = await db
+                .insert(organizations)
+                .values({
+                    name,
+                    domain: user.email?.split("@")[1],
+                    apiKey: generateApiKey(),
+                })
+                .returning({ id: organizations.id });
             await db.insert(users).values({
                 id: user.id,
                 name,
                 email: user.email || "",
                 onboardingStep: 0,
                 onboardingCompleted: data.completed,
+                organizationId: org[0].id,
             });
         } else {
             await db

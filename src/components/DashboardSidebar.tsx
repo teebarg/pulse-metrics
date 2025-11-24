@@ -14,9 +14,6 @@ import { Link } from "@tanstack/react-router";
 
 const menuItems = [
     { title: "Dashboard", url: "/account", icon: FileText },
-    { title: "Documents", url: "/account/documents", icon: FileText },
-    { title: "Search", url: "/account/search", icon: Search },
-    { title: "Chat", url: "/account/chat", icon: MessageSquare },
     { title: "Settings", url: "/account/settings", icon: Settings },
 ];
 

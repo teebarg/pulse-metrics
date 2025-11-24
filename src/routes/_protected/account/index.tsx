@@ -13,6 +13,7 @@ import {
     ArrowDown,
     RefreshCw,
 } from "lucide-react";
+import { useState } from "react";
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 
 export const Route = createFileRoute("/_protected/account/")({
@@ -21,6 +22,25 @@ export const Route = createFileRoute("/_protected/account/")({
 
 function RouteComponent() {
     const navigate = useNavigate({ from: "/account" });
+    const [isRefreshing] = useState(false);
+
+    const realtimeMetrics = {
+        active_visitors: 0,
+        recent_purchases: 0,
+        recent_revenue: 0,
+    };
+    const todayMetrics = {
+        unique_visitors: 0,
+        total_revenue: 0,
+        total_purchases: 0,
+        conversion_rate: 0,
+    };
+    const hourlyData: any = [];
+    const topProducts: any = [];
+    const recentEvents: any = [];
+    const fetchAllData = () => {
+        // TODO fetch all data
+    };
 
     return (
         <div className="min-h-screen bg-slate-900 text-white">
@@ -171,7 +191,7 @@ function RouteComponent() {
                         </div>
 
                         <div className="space-y-4">
-                            {topProducts.map((product, index) => (
+                            {topProducts.map((product, index: number) => (
                                 <div
                                     key={product.product_id}
                                     className="flex items-center justify-between p-4 bg-slate-900/50 rounded-lg hover:bg-slate-900 transition"

@@ -7,9 +7,9 @@ import { prettyJSON } from "hono/pretty-json";
 import { authMiddleware } from "@/api/middleware/auth.js";
 import { errorHandler } from "@/api/middleware/error-handler.js";
 import { profileRoutes } from "@/api/routes/profile.routes";
-import { healthRoute } from "./routes/health.routes";
-import { eventsRoute } from "./routes/events.routes";
-import { analyticsRoutes } from "./routes/analytics.routes";
+import { healthRoute } from "@/api/routes/health.routes";
+import { eventsRoute } from "@/api/routes/events.routes";
+import { analyticsRoutes } from "@/api/routes/analytics.routes";
 
 const port = Number(process.env.PORT || 8787);
 
@@ -20,7 +20,7 @@ app.use("*", cors());
 app.use("*", prettyJSON());
 app.onError(errorHandler);
 
-app.use("/v1/*", authMiddleware);
+// app.use("/v1/*", authMiddleware);
 
 
 app.route("/", healthRoute);
