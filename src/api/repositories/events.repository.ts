@@ -3,20 +3,16 @@ import { events } from "@/api/db/schema.js";
 import { eq, desc, and } from "drizzle-orm";
 
 export class EventsRepository {
-    async create(data: { id: string; userId: string; title: string }) {
-        const now = new Date();
-        await db.insert(events).values({
-            ...data,
-            createdAt: now,
-            updatedAt: now,
-        });
+    async insert(data: any) {
+        const [org] = await db
+            .insert(events)
+            .values({ ...data })
+            .returning();
 
-        return {
-            id: data.id,
-            title: data.title,
-            created_at: now.toISOString(),
-            updated_at: now.toISOString(),
-        };
+        if (!org) {
+            throw new Error("Failed to create event");
+        }
+        return org;
     }
 
     async update(id: string, data: { title: string }) {

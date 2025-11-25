@@ -14,6 +14,10 @@ export const organizations = pgTable("organizations", {
     apiKey: text("api_key").notNull().unique(),
     eventsLimit: integer("events_limit").default(100).notNull(),
     eventsUsed: integer("events_used").default(0).notNull(),
+    onboardingCompleted: boolean("onboarding_completed").default(false).notNull(),
+    onboardingStep: integer("onboarding_step").default(0).notNull(),
+    onboardingSkipped: integer("onboarding_skipped").default(0).notNull(),
+    onboardingCompletedAt: timestamp("onboarding_completed_at").defaultNow(),
     createdAt: timestamp("created_at", {
         withTimezone: true,
     }).defaultNow(),

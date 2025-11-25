@@ -10,6 +10,7 @@ import { profileRoutes } from "@/api/routes/profile.routes";
 import { healthRoute } from "@/api/routes/health.routes";
 import { eventsRoute } from "@/api/routes/events.routes";
 import { analyticsRoutes } from "@/api/routes/analytics.routes";
+import { onBoardingRoutes } from "@/api/routes/onboarding.routes";
 
 const port = Number(process.env.PORT || 8787);
 
@@ -20,14 +21,15 @@ app.use("*", cors());
 app.use("*", prettyJSON());
 app.onError(errorHandler);
 
-// app.use("/v1/*", authMiddleware);
-app.use("/v1/*", verifyApiKey);
+app.use("/v1/*", authMiddleware);
+app.use("/v1/analytics/*", verifyApiKey);
 
 
 app.route("/", healthRoute);
-app.route("/v1", profileRoutes);
-app.route("/v1", analyticsRoutes);
-app.route("/v1", eventsRoute);
+app.route("/v1/profile", profileRoutes);
+app.route("/v1/analytics", analyticsRoutes);
+app.route("/v1/events", eventsRoute);
+app.route("/v1/onboarding", onBoardingRoutes);
 
 // OpenAPI documentation
 app.doc("/doc", {
