@@ -101,8 +101,42 @@ services:
       - traefik.http.routers.adminer-http.rule=Host(`adminer.localhost`)
       - traefik.http.routers.adminer-http.entrypoints=http
 
+  redis:
+    image: redis:alpine
+    ports:
+      - "7066:6379"
+    networks:
+      - pm-public
+      - default
+    volumes:
+      - redis-data:/data
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    ports:
+      - "7067:5540"
+    networks:
+      - pm-public
+      - default
+    environment:
+      RI_REDIS_HOST: redis
+      RI_REDIS_PORT: 6379
+      RI_REDIS_ALIAS: local-redis
+    depends_on:
+      - redis
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=pm-public
+      - traefik.constraint-label=pm-public
+
+      - traefik.http.services.redisinsight.loadbalancer.server.port=5540
+
+      - traefik.http.routers.redisinsight-http.rule=Host(`redis.localhost`)
+      - traefik.http.routers.redisinsight-http.entrypoints=http
+
 volumes:
   pgv-data:
+  redis-data:
 
 networks:
   pm-public:
