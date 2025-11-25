@@ -16,4 +16,28 @@ export class AnalyticsService {
             recentRevenue,
         };
     }
+
+    async GetTodayAnalytics(organizationId: string) {
+        const [totalEvents, totalPurchasesData, uniqueVisitors] = await Promise.all([
+            this.analyticsRepo.getTodayEvents(organizationId),
+            this.analyticsRepo.getTodayPurchases(organizationId),
+            this.analyticsRepo.getTodayUniqueVisitors(organizationId),
+        ]);
+
+        const totalRevenue = totalPurchasesData.reduce((sum: number, p: any) => sum + ((p.properties as any)?.revenue || 0), 0);
+        return {
+            totalEvents,
+            totalPurchases: totalPurchasesData.length,
+            totalRevenue,
+            uniqueVisitors,
+        };
+    }
+
+    async GetTopProducts(organizationId: string, days: number, metric: string) {
+        const topProducts = await this.analyticsRepo.getTopProducts(organizationId, days, metric);
+
+        return {
+            topProducts,
+        };
+    }
 }
