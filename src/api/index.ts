@@ -4,7 +4,7 @@ import { swaggerUI } from "@hono/swagger-ui";
 import { cors } from "hono/cors";
 import { prettyJSON } from "hono/pretty-json";
 
-import { authMiddleware } from "@/api/middleware/auth.js";
+import { authMiddleware, verifyApiKey } from "@/api/middleware/auth.js";
 import { errorHandler } from "@/api/middleware/error-handler.js";
 import { profileRoutes } from "@/api/routes/profile.routes";
 import { healthRoute } from "@/api/routes/health.routes";
@@ -21,6 +21,7 @@ app.use("*", prettyJSON());
 app.onError(errorHandler);
 
 // app.use("/v1/*", authMiddleware);
+app.use("/v1/*", verifyApiKey);
 
 
 app.route("/", healthRoute);

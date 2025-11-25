@@ -8,11 +8,23 @@ import { AnalyticsService } from "@/api/services/analytics.service";
 export const analyticsRoutes = new OpenAPIHono();
 const analyticsService = new AnalyticsService(new AnalyticsRepository());
 
+analyticsRoutes.openAPIRegistry.registerComponent("securitySchemes", "Bearer", {
+    type: "http",
+    scheme: "bearer",
+    bearerFormat: "JWT", // Optional: specify if using JWTs; adjust as needed
+});
+
+analyticsRoutes.openAPIRegistry.registerComponent("securitySchemes", "ApiKeyAuth", {
+    type: "apiKey",
+    in: "header",
+    name: "X-API-Key",
+});
+
 analyticsRoutes.openapi(
     createRoute({
         method: "get",
         path: "/realtime",
-        security: [{ Bearer: [] }],
+        security: [{ Bearer: [] }, { ApiKeyAuth: [] }],
         tags: ["analytics"],
         description: "Get realtime analytics",
         responses: {
@@ -28,8 +40,6 @@ analyticsRoutes.openapi(
     }),
     async (c) => {
         const organizationId = c.get("organizationId");
-        console.log("🚀 ~ file: analytics.routes.ts:36 ~ organizationId:", organizationId)
-
         try {
             const data = await analyticsService.GetRealtimeAnalytics(organizationId);
 
@@ -50,9 +60,9 @@ analyticsRoutes.openapi(
     createRoute({
         method: "get",
         path: "/today",
-        security: [{ Bearer: [] }],
+        security: [{ Bearer: [] }, { ApiKeyAuth: [] }],
         tags: ["events"],
-        description: "Create an event",
+        description: "Get today analytics",
         request: {
             body: {
                 content: { "application/json": { schema: EventSchema } },
@@ -60,8 +70,8 @@ analyticsRoutes.openapi(
         },
         responses: {
             200: {
-                description: "Chat stream",
-                content: { "text/event-stream": { schema: z.any() } },
+                description: "Get Today Analytics",
+                content: { "application/json": { schema: SuccessSchema } },
             },
             500: {
                 description: "Server error",

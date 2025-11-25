@@ -3,8 +3,8 @@ import { HTTPException } from "hono/http-exception";
 import { createClient } from "@supabase/supabase-js";
 import { db } from "@/api/db";
 import { organizations, users } from "@/api/db/schema";
-import { eq } from "drizzle-orm";
 import { generateApiKey } from "../utils/common.utils";
+import { eq } from "drizzle-orm";
 
 export async function verifyApiKey(c: Context, next: Next) {
     const apiKey = c.req.header("X-API-Key");
@@ -13,33 +13,38 @@ export async function verifyApiKey(c: Context, next: Next) {
         return c.json({ error: "API key required" }, 401);
     }
 
-    const supabase = createClient(c.env.SUPABASE_URL, c.env.SUPABASE_SERVICE_ROLE_KEY);
-
     try {
-        const { data: org, error } = await supabase.from("organizations").select("id, plan, event_limit, events_used").eq("api_key", apiKey).single();
+        const [org] = await db
+            .select({
+                id: organizations.id,
+                plan: organizations.plan,
+                eventsLimit: organizations.eventsLimit,
+                eventsUsed: organizations.eventsUsed,
+            })
+            .from(organizations)
+            .where(eq(organizations.apiKey, apiKey))
+            .limit(1);
 
-        if (error || !org) {
+        if (!org) {
             return c.json({ error: "Invalid API key" }, 401);
         }
 
-        // Check if organization has exceeded limit
-        if (org.events_used >= org.event_limit) {
+        if (org.eventsUsed >= org.eventsLimit) {
             return c.json(
                 {
                     error: "Event limit exceeded",
-                    message: `Your ${org.plan} plan limit of ${org.event_limit} events has been reached.`,
+                    message: `Your ${org.plan} plan limit of ${org.eventsLimit} events has been reached.`,
                 },
                 429
             );
         }
 
-        // Store organization ID in context
         c.set("organizationId", org.id);
         c.set("organization", org);
 
         await next();
-    } catch (error) {
-        console.error("Auth middleware error:", error);
+    } catch (err) {
+        console.error("API key verification error:", err);
         return c.json({ error: "Authentication failed" }, 500);
     }
 }
