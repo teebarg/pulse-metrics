@@ -2,12 +2,12 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "~/components/DashboardSidebar";
 import { DashboardHeader } from "~/components/DashboardHeader";
-import { checkOnboardingStatus } from "~/lib/onboarding-utils";
+import { getOnboardingStatusFn } from "~/lib/onboarding-server";
 
 export const Route = createFileRoute("/_protected/account")({
     component: RouteComponent,
     beforeLoad: async ({ context }) => {
-        const { onboardingCompleted } = await checkOnboardingStatus();
+        const { onboardingCompleted } = await getOnboardingStatusFn();
         if (!onboardingCompleted) {
             throw redirect({ to: "/onboarding" });
         }

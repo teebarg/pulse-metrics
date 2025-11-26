@@ -13,10 +13,8 @@ CREATE TABLE "analytics_cache" (
 --> statement-breakpoint
 CREATE TABLE "events" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"user_id" text,
 	"organization_id" uuid NOT NULL,
 	"event_type" text NOT NULL,
-	"type" text NOT NULL,
 	"session_id" text,
 	"properties" jsonb,
 	"timestamp" timestamp with time zone DEFAULT now() NOT NULL,
@@ -26,12 +24,18 @@ CREATE TABLE "events" (
 --> statement-breakpoint
 CREATE TABLE "organizations" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"name" text NOT NULL,
+	"name" text,
 	"domain" text,
-	"plan" "organization_plan" DEFAULT 'free' NOT NULL,
+	"plan" "organization_plan" DEFAULT 'free',
 	"api_key" text NOT NULL,
-	"events_limit" integer DEFAULT 100 NOT NULL,
-	"events_used" integer DEFAULT 0 NOT NULL,
+	"events_limit" integer DEFAULT 100,
+	"events_used" integer DEFAULT 0,
+	"events_received" integer DEFAULT 0,
+	"platform" text DEFAULT 'custom',
+	"onboarding_completed" boolean DEFAULT false,
+	"onboarding_step" integer DEFAULT 0,
+	"onboarding_skipped" integer DEFAULT 0,
+	"onboarding_completed_at" timestamp DEFAULT now(),
 	"created_at" timestamp with time zone DEFAULT now(),
 	"updated_at" timestamp with time zone DEFAULT now(),
 	CONSTRAINT "organizations_api_key_unique" UNIQUE("api_key")
@@ -39,11 +43,11 @@ CREATE TABLE "organizations" (
 --> statement-breakpoint
 CREATE TABLE "users" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"first_name" text,
+	"last_name" text,
 	"email" text NOT NULL,
-	"organization_id" uuid NOT NULL,
-	"role" "organization_role" DEFAULT 'owner' NOT NULL,
-	"onboarding_completed" boolean DEFAULT false NOT NULL,
-	"onboarding_step" integer DEFAULT 0 NOT NULL,
+	"role" "organization_role" DEFAULT 'owner',
+	"organization_id" uuid,
 	"created_at" timestamp with time zone DEFAULT now(),
 	"updated_at" timestamp with time zone DEFAULT now(),
 	CONSTRAINT "users_email_unique" UNIQUE("email")
@@ -51,7 +55,7 @@ CREATE TABLE "users" (
 --> statement-breakpoint
 ALTER TABLE "analytics_cache" ADD CONSTRAINT "analytics_cache_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "events" ADD CONSTRAINT "events_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "users" ADD CONSTRAINT "users_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "users" ADD CONSTRAINT "users_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 CREATE UNIQUE INDEX "analytics_cache_unique" ON "analytics_cache" USING btree ("organization_id","metric_type","time_window","period_start");--> statement-breakpoint
 CREATE INDEX "idx_org_timestamp" ON "events" USING btree ("organization_id","timestamp" DESC NULLS LAST);--> statement-breakpoint
 CREATE INDEX "idx_event_type" ON "events" USING btree ("organization_id","event_type","timestamp" DESC NULLS LAST);

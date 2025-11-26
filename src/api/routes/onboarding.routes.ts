@@ -13,8 +13,8 @@ import { UserRepository } from "../repositories/users.repository";
 import { EventsRepository } from "../repositories/events.repository";
 
 const completeOnboardingSchema = z.object({
-    storeName: z.string().min(1),
-    storeUrl: z.string().url().optional(),
+    store: z.string().min(1),
+    domain: z.string().url().optional(),
     platform: z.enum(["shopify", "woocommerce", "custom"]),
 });
 

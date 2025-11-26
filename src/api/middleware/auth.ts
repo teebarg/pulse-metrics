@@ -111,25 +111,14 @@ export async function authMiddleware(c: Context, next: Next) {
             });
         }
 
-        // Ensure user exists in local DB
         const dbUser = await db.select().from(users).where(eq(users.id, user.id));
         if (!dbUser[0]) {
             const name = user.user_metadata?.name || user.email?.split("@")[0] || "User";
-            const org = await db
-                .insert(organizations)
-                .values({
-                    name,
-                    domain: user.email?.split("@")[1],
-                    apiKey: generateApiKey(),
-                })
-                .returning({ id: organizations.id });
             await db.insert(users).values({
                 id: user.id,
-                name,
+                firstName: name,
+                lastName: name,
                 email: user.email,
-                onboardingCompleted: false,
-                onboardingStep: 0,
-                organizationId: org[0].id,
             });
         }
 

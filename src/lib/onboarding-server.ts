@@ -6,9 +6,11 @@ import { organizations, users } from "@/api/db/schema";
 import { eq } from "drizzle-orm";
 import { generateApiKey } from "~/api/utils/common.utils";
 
-// Validation schemas
 export const updateOnboardingStepSchema = z.object({
     step: z.number().int().min(0),
+    domain: z.string().optional(),
+    name: z.string().optional(),
+    platform: z.string().optional(),
 });
 
 export const completeOnboardingSchema = z.object({
@@ -26,9 +28,30 @@ export const getOnboardingStatusFn = createServerFn({ method: "GET" }).handler(a
         throw new Error("Not authenticated");
     }
 
-    const dbUser = await db.select().from(users).where(eq(users.id, user.id));
-
+    const dbUser = await db.select({ organizationId: users.organizationId }).from(users).where(eq(users.id, user.id));
     if (!dbUser[0]) {
+        const [firstName, lastName] = user.user_metadata?.full_name?.split(" ") || ["", ""];
+        await db.insert(users).values({
+            id: user.id,
+            firstName,
+            lastName,
+            email: user.email || "",
+        });
+        return {
+            onboardingCompleted: false,
+            onboardingStep: 0,
+        };
+    }
+    if (!dbUser[0].organizationId) {
+        return {
+            onboardingCompleted: false,
+            onboardingStep: 0,
+        };
+    }
+
+    const dbOrg = await db.select().from(organizations).where(eq(organizations.id, dbUser[0].organizationId));
+
+    if (!dbOrg[0]) {
         return {
             onboardingCompleted: false,
             onboardingStep: 0,
@@ -36,14 +59,15 @@ export const getOnboardingStatusFn = createServerFn({ method: "GET" }).handler(a
     }
 
     return {
-        onboardingCompleted: dbUser[0].onboardingCompleted ?? false,
-        onboardingStep: dbUser[0].onboardingStep ?? 0,
+        onboardingCompleted: dbOrg[0].onboardingCompleted ?? false,
+        onboardingStep: dbOrg[0].onboardingStep ?? 0,
     };
 });
 
 export const updateOnboardingStepFn = createServerFn({ method: "POST" })
     .inputValidator((input: unknown) => updateOnboardingStepSchema.parse(input))
     .handler(async ({ data }) => {
+        console.log("🚀 ~ file: onboarding-server.ts:66 ~ data:", data);
         const supabase = getSupabaseServerClient();
         const {
             data: { user },
@@ -54,34 +78,37 @@ export const updateOnboardingStepFn = createServerFn({ method: "POST" })
             throw new Error("Not authenticated");
         }
 
-        const dbUser = await db.select().from(users).where(eq(users.id, user.id));
+        const dbUser = await db.select({ organizationId: users.organizationId }).from(users).where(eq(users.id, user.id));
         if (!dbUser[0]) {
-            const name = user.user_metadata?.name || user.email?.split("@")[0] || "User";
+            throw new Error("User not found");
+        }
+
+        if (!dbUser[0].organizationId) {
             const org = await db
                 .insert(organizations)
                 .values({
-                    name,
                     domain: user.email?.split("@")[1],
                     apiKey: generateApiKey(),
+                    onboardingStep: data.step,
                 })
                 .returning({ id: organizations.id });
-            await db.insert(users).values({
-                id: user.id,
-                name,
-                email: user.email || "",
-                onboardingStep: data.step,
-                onboardingCompleted: false,
-                organizationId: org[0].id,
-            });
-        } else {
             await db
                 .update(users)
                 .set({
-                    onboardingStep: data.step,
-                    updatedAt: new Date(),
+                    organizationId: org[0].id,
                 })
                 .where(eq(users.id, user.id));
+            return { success: true, step: data.step };
         }
+
+        await db
+            .update(organizations)
+            .set({
+                ...data,
+                onboardingStep: data.step,
+                updatedAt: new Date(),
+            })
+            .where(eq(organizations.id, dbUser[0].organizationId));
 
         return { success: true, step: data.step };
     });

@@ -1,58 +1,57 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { useState, useEffect } from "react";
+import { getSupabaseClient } from "~/lib/supabase/supabase-client";
 
 interface Organization {
-  id: string;
-  name: string;
-  plan: string;
-  api_key: string;
-  event_limit: number;
-  events_used: number;
+    id: string;
+    name: string;
+    plan: string;
+    api_key: string;
+    event_limit: number;
+    events_used: number;
 }
 
 export function useOrganization() {
-  const [organization, setOrganization] = useState<Organization | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+    const supabase = getSupabaseClient();
+    const [organization, setOrganization] = useState<Organization | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    const fetchOrganization = async () => {
-      try {
-        setIsLoading(true);
+    useEffect(() => {
+        const fetchOrganization = async () => {
+            try {
+                setIsLoading(true);
 
-        // Get current user
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error('Not authenticated');
+                // Get current user
+                const {
+                    data: { user },
+                } = await supabase.auth.getUser();
+                if (!user) throw new Error("Not authenticated");
 
-        // Get user's organization
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('organization_id')
-          .eq('id', user.id)
-          .single();
+                // Get user's organization
+                const { data: userData, error: userError } = await supabase.from("users").select("organization_id").eq("id", user.id).single();
 
-        if (userError) throw userError;
+                if (userError) throw userError;
 
-        // Get organization details
-        const { data: orgData, error: orgError } = await supabase
-          .from('organizations')
-          .select('*')
-          .eq('id', userData.organization_id)
-          .single();
+                // Get organization details
+                const { data: orgData, error: orgError } = await supabase
+                    .from("organizations")
+                    .select("*")
+                    .eq("id", userData.organization_id)
+                    .single();
 
-        if (orgError) throw orgError;
+                if (orgError) throw orgError;
 
-        setOrganization(orgData);
-        setError(null);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+                setOrganization(orgData);
+                setError(null);
+            } catch (err) {
+                setError(err as Error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-    fetchOrganization();
-  }, []);
+        fetchOrganization();
+    }, []);
 
-  return { organization, isLoading, error };
+    return { organization, isLoading, error };
 }

@@ -45,8 +45,8 @@ export class OnBoardingService {
 
         const organization = await this.organizationRepo.updateById(userData[0].organization_id, {
             onboarding_completed: true,
-            name: data.storeName,
-            domain: data.storeUrl,
+            name: data.store,
+            domain: data.domain,
             metadata: { platform: data.platform },
             onboardingCompleted: true,
             onboardingCompletedAt: new Date(),
@@ -55,7 +55,7 @@ export class OnBoardingService {
         await this.eventsRepo.insert({
             organization_id: userData[0].organization_id,
             event_type: "onboarding_completed",
-            properties: { platform: data.platform, has_url: !!data.storeUrl },
+            properties: { platform: data.platform, has_url: !!data.domain },
         });
 
         return {

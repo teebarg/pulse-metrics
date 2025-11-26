@@ -1,35 +1,35 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
 export class AnalyticsAPI {
-  private apiKey: string;
+    private apiKey: string;
 
-  constructor(apiKey: string) {
-    this.apiKey = apiKey;
-  }
-
-  private async fetch(endpoint: string) {
-    const response = await fetch(`${API_URL}${endpoint}`, {
-      headers: {
-        'X-API-Key': this.apiKey,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.statusText}`);
+    constructor(apiKey: string) {
+        this.apiKey = apiKey;
     }
 
-    return response.json();
-  }
+    private async fetch(endpoint: string) {
+        const response = await fetch(`${API_URL}${endpoint}`, {
+            headers: {
+                "X-API-Key": this.apiKey,
+            },
+        });
 
-  async getRealtimeMetrics() {
-    return this.fetch('/analytics/realtime');
-  }
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.statusText}`);
+        }
 
-  async getTodayMetrics() {
-    return this.fetch('/analytics/today');
-  }
+        return response.json();
+    }
 
-  async getTopProducts(days = 7, metric = 'views') {
-    return this.fetch(`/analytics/top-products?days=${days}&metric=${metric}`);
-  }
+    async getRealtimeMetrics() {
+        return this.fetch("/analytics/realtime");
+    }
+
+    async getTodayMetrics() {
+        return this.fetch("/analytics/today");
+    }
+
+    async getTopProducts(days = 7, metric = "views") {
+        return this.fetch(`/analytics/top-products?days=${days}&metric=${metric}`);
+    }
 }
