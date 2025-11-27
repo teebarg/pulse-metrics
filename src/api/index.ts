@@ -11,12 +11,13 @@ import { healthRoute } from "@/api/routes/health.routes";
 import { eventsRoute } from "@/api/routes/events.routes";
 import { analyticsRoutes } from "@/api/routes/analytics.routes";
 import { onBoardingRoutes } from "@/api/routes/onboarding.routes";
+import { createNodeWebSocket } from "@hono/node-ws";
+import { createRealtimeListener, registerClient, unregisterClient } from "./realtime-listener";
 
 const port = Number(process.env.PORT || 8787);
 
 const app = new OpenAPIHono();
 
-// Apply middleware 
 app.use("*", cors());
 app.use("*", prettyJSON());
 app.onError(errorHandler);
@@ -24,14 +25,12 @@ app.onError(errorHandler);
 app.use("/v1/*", authMiddleware);
 app.use("/v1/analytics/*", verifyApiKey);
 
-
 app.route("/", healthRoute);
 app.route("/v1/profile", profileRoutes);
 app.route("/v1/analytics", analyticsRoutes);
 app.route("/v1/events", eventsRoute);
 app.route("/v1/onboarding", onBoardingRoutes);
 
-// OpenAPI documentation
 app.doc("/doc", {
     openapi: "3.0.0",
     info: {
@@ -50,21 +49,83 @@ app.get("/", (c) => {
     });
 });
 
-if (process.env.NODE_ENV !== "production") {
-    const startDevServer = async () => {
-        const { serve } = await import("@hono/node-server");
-        serve(
-            {
-                fetch: app.fetch,
-                port,
+const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app });
+app.get(
+    "/ws",
+    upgradeWebSocket((c) => {
+        return {
+            onOpen(event, ws) {
+                console.log("🚀 ~ file: index.ts:58 ~ event:", event);
+                console.log("Connection opened");
+                // Register client with optional filters
+                // You can extract these from query params or auth
+                registerClient(ws, {
+                    tables: ["events", "profile"], // Subscribe to specific tables
+                    // userId: c.get("userId"), // Filter by user if authenticated
+                    // filters: { user_id: "123" }, // Custom filters
+                });
             },
-            (info) => {
-                console.log(`Server is running on http://localhost:${info.port}`);
-            }
-        );
-    };
+            onMessage(event, ws) {
+                console.log(`Message from client: ${event.data}`);
+                ws.send("Hello from server!");
+                try {
+                    const message = JSON.parse(event.data.toString());
+                    console.log(`📨 Message from client:`, message);
 
-    startDevServer().catch(console.error);
-}
+                    // Handle client messages (e.g., subscribe/unsubscribe)
+                    if (message.type === "subscribe") {
+                        registerClient(ws, {
+                            tables: message.tables || [],
+                            filters: message.filters || {},
+                        });
+                        ws.send(
+                            JSON.stringify({
+                                type: "subscribed",
+                                tables: message.tables,
+                            })
+                        );
+                    }
+                } catch (error) {
+                    console.error("Error handling message:", error);
+                }
+            },
+            onClose(event, ws) {
+                console.log("🚀 ~ file: index.ts:73 ~ ws:", ws);
+                console.log("🚀 ~ file: index.ts:73 ~ event:", event);
+                console.log("Connection closed");
+                unregisterClient(ws);
+            },
+            onError(evt: any, ws) {
+                console.log("🚀 ~ file: index.ts:79 ~ ws:", ws);
+                console.error("WebSocket error observed:", evt?.message);
+                unregisterClient(ws);
+            },
+        };
+    })
+);
+
+const startServer = async () => {
+    const { serve } = await import("@hono/node-server");
+    const server = serve(
+        {
+            fetch: app.fetch,
+            port,
+        },
+        (info) => {
+            console.log(`Server is running on http://localhost:${info.port}`);
+        }
+    );
+
+    injectWebSocket(server);
+    // Start the Postgres real-time listener
+    try {
+        await createRealtimeListener();
+        console.log("🎧 Real-time listener started");
+    } catch (error) {
+        console.error("Failed to start real-time listener:", error);
+    }
+};
+
+startServer().catch(console.error);
 
 export default app;

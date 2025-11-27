@@ -8,4 +8,7 @@ const pool = new Pool({
 
 export const db = drizzle(pool, { schema });
 
-export { pool };
+const client = await pool.connect();
+await client.query("LISTEN events_channel");
+
+export { pool, client };

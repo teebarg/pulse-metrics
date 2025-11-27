@@ -40,6 +40,7 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+      - ./pulsews-sdk:/app/node_modules/@teebarg/pulsews
     environment:
       - NODE_ENV=development
       - WATCHPACK_POLLING=true

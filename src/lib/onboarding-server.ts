@@ -11,6 +11,7 @@ export const updateOnboardingStepSchema = z.object({
     domain: z.string().optional(),
     name: z.string().optional(),
     platform: z.string().optional(),
+    eventsReceived: z.number().int().optional()
 });
 
 export const completeOnboardingSchema = z.object({

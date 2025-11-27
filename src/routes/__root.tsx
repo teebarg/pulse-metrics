@@ -10,6 +10,8 @@ import appCss from "@/styles.css?url";
 import { seo } from "@/utils/seo";
 import { Toaster } from "sonner";
 import { getStoredTheme, ThemeProvider } from "~/lib/ThemeProvider";
+import { WSProvider } from "~/providers/websocket";
+import { WebSocketProvider } from "@teebarg/pulsews";
 
 export const Route = createRootRouteWithContext<{
     queryClient: QueryClient;
@@ -93,7 +95,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             </head>
             <body className="min-h-screen bg-background text-foreground">
                 <ThemeProvider initialTheme={_storedTheme}>
-                    {children}
+                    <WebSocketProvider
+                        url="ws://localhost:7063/ws"
+                        debug={true}
+                        onOpen={() => console.log("WebSocket connected!")}
+                        onClose={() => console.log("WebSocket disconnected!")}
+                    >
+                        {children}
+                    </WebSocketProvider>
                     <TanStackRouterDevtools position="bottom-right" />
                     <ReactQueryDevtools buttonPosition="bottom-left" />
                     <Toaster closeButton richColors duration={3000} expand={false} position="top-right" />

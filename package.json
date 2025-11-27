@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.19.6",
+    "@hono/node-ws": "^1.2.0",
     "@hono/standard-validator": "^0.1.5",
     "@hono/swagger-ui": "^0.5.2",
     "@hono/zod-openapi": "^1.1.4",
@@ -64,6 +65,7 @@
     "superjson": "^2.2.2",
     "tailwind-merge": "^3.0.2",
     "tw-animate-css": "^1.3.6",
+    "ws": "^8.18.3",
     "zod": "^4.1.12"
   },
   "devDependencies": {
@@ -76,6 +78,7 @@
     "@types/pg": "^8.10.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "^5.0.4",
     "concurrently": "^9.2.1",
     "dotenv-cli": "^10.0.0",
