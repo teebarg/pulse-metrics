@@ -1,7 +1,8 @@
 {
     "name": "pulsews",
     "version": "1.0.1",
-    "description": "PulseWS — A robust, easy-to-use WebSocket SDK for real-time apps.",
+    "description": "PulseMetrics — A robust, easy-to-use WebSocket SDK for real-time apps.",
+    "workspaces": ["packages/*"],
     "type": "module",
     "main": "./dist/index.cjs",
     "module": "./dist/index.js",

@@ -1,0 +1,27 @@
+{
+    "name": "@pulsemet/react",
+    "version": "1.0.0",
+    "peerDependencies": {
+        "react": ">=18"
+    },
+    "dependencies": {
+        "@pulsemet/core": "workspace:*"
+    },
+    "main": "dist/index.cjs",
+    "module": "dist/index.mjs",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "require": "./dist/index.cjs",
+            "import": "./dist/index.mjs",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "files": ["dist"],
+    "scripts": {
+        "build": "tsup src/index.tsx --format cjs,esm --dts"
+    },
+    "publishConfig": {
+        "access": "public"
+    }
+}

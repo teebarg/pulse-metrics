@@ -1,6 +1,6 @@
-# PulseWS
+# PulseMetrics
 
-**PulseWS** is a lightweight, robust, and reusable WebSocket SDK for modern web apps.
+**PulseMetrics** is a lightweight, robust, and reusable WebSocket SDK for modern web apps.
 It simplifies working with WebSockets by providing automatic reconnections, event-based messaging, heartbeats, and token-based authentication — all in a type-safe, easy-to-use API.
 
 ---
