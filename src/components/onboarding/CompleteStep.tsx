@@ -1,5 +1,6 @@
 import React from "react";
 import { Check, Rocket, BarChart3, Zap } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 export function CompleteStep({ formData }: { formData: any }) {
     return (
@@ -18,17 +19,21 @@ export function CompleteStep({ formData }: { formData: any }) {
             </div>
 
             <div className="space-y-4">
-                <a href="/dashboard" className="block bg-blue-500 hover:bg-blue-600 px-8 py-4 rounded-lg font-semibold text-lg transition">
+                <Link
+                    to="/account"
+                    activeProps={{ className: "active-link" }}
+                    className="block bg-blue-500 hover:bg-blue-600 px-8 py-4 rounded-lg font-semibold text-lg transition"
+                >
                     View Your Dashboard
-                </a>
+                </Link>
 
                 <div className="flex gap-4">
-                    <a href="/docs" className="flex-1 px-6 py-3 border border-slate-700 rounded-lg hover:bg-slate-700 transition">
+                    <Link to="/docs" className="flex-1 px-6 py-3 border border-slate-700 rounded-lg hover:bg-slate-700 transition">
                         Read Documentation
-                    </a>
-                    <a href="/settings" className="flex-1 px-6 py-3 border border-slate-700 rounded-lg hover:bg-slate-700 transition">
+                    </Link>
+                    <Link to="/account/settings" className="flex-1 px-6 py-3 border border-slate-700 rounded-lg hover:bg-slate-700 transition">
                         Customize Settings
-                    </a>
+                    </Link>
                 </div>
             </div>
 

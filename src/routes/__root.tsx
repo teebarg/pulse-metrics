@@ -10,8 +10,7 @@ import appCss from "@/styles.css?url";
 import { seo } from "@/utils/seo";
 import { Toaster } from "sonner";
 import { getStoredTheme, ThemeProvider } from "~/lib/ThemeProvider";
-import { WSProvider } from "~/providers/websocket";
-import { WebSocketProvider } from "@teebarg/pulsews";
+import { WebSocketProvider } from "pulsews";
 
 export const Route = createRootRouteWithContext<{
     queryClient: QueryClient;

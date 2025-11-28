@@ -29,8 +29,7 @@ export class UserRepository {
     }
 
     async userOrg(id: string) {
-        const userData = await db.select({ organization_id: users.organizationId }).from(users).where(eq(users.id, id)).limit(1);
-        console.log("🚀 ~ file: users.repository.ts:33 ~ userData:", userData);
+        const userData = await db.select({ organizationId: users.organizationId }).from(users).where(eq(users.id, id)).limit(1);
         return userData;
     }
 }

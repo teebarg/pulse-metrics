@@ -21,14 +21,14 @@ export class OnBoardingService {
             onboarding_completed: false,
         });
 
-        const updatedUser = await this.usersRepo.updateById(user.id, {
-            organization_id: organization.id,
+        await this.usersRepo.updateById(user.id, {
+            organizationId: organization.id,
             role: "owner",
         });
 
         return {
             success: true,
-            organization_id: organization.id,
+            organizationId: organization.id,
             api_key: organization.apiKey,
         };
     }
@@ -36,14 +36,14 @@ export class OnBoardingService {
     async CompleteOnboarding(user: any, data: any) {
         const userData = await this.usersRepo.userOrg(user.id);
 
-        if (!userData[0]?.organization_id) {
+        if (!userData[0]?.organizationId) {
             return {
                 success: false,
                 message: "Organization not found",
             };
         }
 
-        const organization = await this.organizationRepo.updateById(userData[0].organization_id, {
+        const organization = await this.organizationRepo.updateById(userData[0].organizationId, {
             onboarding_completed: true,
             name: data.store,
             domain: data.domain,
@@ -53,7 +53,7 @@ export class OnBoardingService {
         });
 
         await this.eventsRepo.insert({
-            organization_id: userData[0].organization_id,
+            organizationId: userData[0].organizationId,
             event_type: "onboarding_completed",
             properties: { platform: data.platform, has_url: !!data.domain },
         });
@@ -66,7 +66,7 @@ export class OnBoardingService {
     async VerifyEvents(user: any) {
         const userData = await this.usersRepo.userOrg(user.id);
 
-        if (!userData[0]?.organization_id) {
+        if (!userData[0]?.organizationId) {
             return {
                 success: false,
                 message: "Organization not found",
@@ -77,7 +77,7 @@ export class OnBoardingService {
         const result = await db
             .select({ count: sql<number>`count(*)` })
             .from(events)
-            .where(and(eq(events.organizationId, userData[0]?.organization_id), gt(events.timestamp, fiveMinutesAgo)));
+            .where(and(eq(events.organizationId, userData[0]?.organizationId), gt(events.timestamp, fiveMinutesAgo)));
 
         const count = result?.[0]?.count ?? 0;
 
@@ -90,7 +90,7 @@ export class OnBoardingService {
     async OnboardingStatus(user: any) {
         const userData = await this.usersRepo.userOrg(user.id);
 
-        if (!userData[0]?.organization_id) {
+        if (!userData[0]?.organizationId) {
             return {
                 onboarding_completed: false,
             };
@@ -101,7 +101,7 @@ export class OnBoardingService {
             WHERE id = $1
             LIMIT 1
         `;
-        const result = await pool.query(query, [userData[0].organization_id]);
+        const result = await pool.query(query, [userData[0].organizationId]);
         const org = result.rows[0] ?? {};
 
         return {
@@ -115,12 +115,12 @@ export class OnBoardingService {
     async SkipOnboarding(user: any) {
         const userData = await this.usersRepo.userOrg(user.id);
 
-        if (!userData[0]?.organization_id) {
+        if (!userData[0]?.organizationId) {
             return {
                 success: false,
             };
         }
-        await this.organizationRepo.updateById(userData[0].organization_id, {
+        await this.organizationRepo.updateById(userData[0].organizationId, {
             onboardingCompleted: true,
             onboardingSkipped: true,
             onboardingCompletedAt: new Date(),

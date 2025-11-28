@@ -1,4 +1,4 @@
-import { WSClient } from "@teebarg/pulsews";
+import { WSClient } from "pulsews";
 
 let wsInstance: WSClient | null = null;
 

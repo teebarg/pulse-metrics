@@ -1,104 +1,68 @@
-import { useState, useEffect, useCallback } from "react";
-import type { RealtimeChannel } from "@supabase/supabase-js";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useWebSocket } from "pulsews";
 
-export function useRealtimeVerification(organizationId: string | null) {
+export function useRealtimeVerification(count: number = 0) {
+    const { lastMessage, send } = useWebSocket();
     const [isVerifying, setIsVerifying] = useState(false);
-    const [eventsReceived, setEventsReceived] = useState(0);
+    const [eventsReceived, setEventsReceived] = useState(count);
     const [isVerified, setIsVerified] = useState(false);
-    const [recentEvents, setRecentEvents] = useState<any[]>([]);
 
-    let channelRef: RealtimeChannel | null = null;
+    const autoStarted = useRef(false);
 
-    const startVerification = useCallback(async () => {
-        if (!organizationId) return;
-
+    const startVerification = useCallback(() => {
         setIsVerifying(true);
         setEventsReceived(0);
         setIsVerified(false);
-        setRecentEvents([]);
-
-        try {
-            // Get initial count
-            const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-
-            const { count, data: initialEvents } = await supabase
-                .from("events")
-                .select("*", { count: "exact" })
-                .eq("organization_id", organizationId)
-                .gte("timestamp", fiveMinutesAgo)
-                .order("timestamp", { ascending: false })
-                .limit(10);
-
-            setEventsReceived(count || 0);
-            setRecentEvents(initialEvents || []);
-
-            // Subscribe to real-time updates
-            channelRef = supabase
-                .channel(`verification:${organizationId}`)
-                .on(
-                    "postgres_changes",
-                    {
-                        event: "INSERT",
-                        schema: "public",
-                        table: "events",
-                        filter: `organization_id=eq.${organizationId}`,
-                    },
-                    (payload) => {
-                        console.log("New event received!", payload);
-
-                        // Update count
-                        setEventsReceived((prev) => {
-                            const newCount = prev + 1;
-
-                            // Check if verified (5+ events)
-                            if (newCount >= 5 && !isVerified) {
-                                setIsVerified(true);
-                                setIsVerifying(false);
-
-                                // Unsubscribe after verification
-                                if (channelRef) {
-                                    supabase.removeChannel(channelRef);
-                                }
-                            }
-
-                            return newCount;
-                        });
-
-                        // Add to recent events list
-                        setRecentEvents((prev) => [payload.new, ...prev.slice(0, 9)]);
-                    }
-                )
-                .subscribe((status: any) => {
-                    console.log("Realtime subscription status:", status);
-                });
-        } catch (error) {
-            console.error("Verification setup error:", error);
-            setIsVerifying(false);
-        }
-    }, [organizationId, isVerified]);
+        send(JSON.stringify({ type: "subscribe", tables: ["organizations"] }));
+    }, [send]);
 
     const stopVerification = useCallback(() => {
-        if (channelRef) {
-            supabase.removeChannel(channelRef);
-            channelRef = null;
-        }
+        send(JSON.stringify({ type: "unsubscribe", tables: ["organizations"] }));
         setIsVerifying(false);
-    }, []);
+    }, [send]);
 
-    // Cleanup on unmount
     useEffect(() => {
-        return () => {
-            if (channelRef) {
-                supabase.removeChannel(channelRef);
+        if (autoStarted.current) return;
+
+        if (count > 0 && count < 5) {
+            autoStarted.current = true;
+            setIsVerifying(true);
+            setEventsReceived(count);
+            send(JSON.stringify({ type: "subscribe", tables: ["organizations"] }));
+        }
+
+        if (count >= 5) {
+            autoStarted.current = true;
+            setEventsReceived(count);
+            setIsVerified(true);
+            setIsVerifying(false);
+        }
+    }, [count, send]);
+
+    useEffect(() => {
+        if (!lastMessage || lastMessage.type != "events") return;
+
+        const parsed = lastMessage?.data;
+
+        if (parsed?.events_received != null) {
+            const newCount = parsed.events_received;
+            setEventsReceived(newCount);
+
+            if (newCount > 0 && newCount < 5) {
+                setIsVerifying(true);
             }
-        };
-    }, []);
+
+            if (newCount >= 5) {
+                setIsVerified(true);
+                setIsVerifying(false);
+            }
+        }
+    }, [lastMessage]);
 
     return {
         isVerifying,
         eventsReceived,
         isVerified,
-        recentEvents,
         startVerification,
         stopVerification,
     };

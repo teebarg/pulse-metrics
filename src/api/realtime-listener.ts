@@ -1,28 +1,3 @@
-import { Pool } from "pg";
-
-// export function createRealtimeListener(broadcast: (data: any) => void) {
-//     const pool = new Pool({
-//         connectionString: process.env.DATABASE_URL,
-//     });
-
-//     (async () => {
-//         const client = await pool.connect();
-//         await client.query("LISTEN events_channel");
-
-//         console.log("👂 Listening for Postgres events...");
-
-//         client.on("notification", (msg) => {
-//             try {
-//                 const payload = JSON.parse(msg.payload!);
-//                 console.log("🚀 New Event:", payload);
-//                 broadcast(payload); // Send to all subscribed websocket clients
-//             } catch (err) {
-//                 console.error("Invalid payload:", err);
-//             }
-//         });
-//     })();
-// }
-
 import pg from "pg";
 
 const { Client } = pg;
@@ -34,7 +9,6 @@ interface RealtimePayload {
     old_data?: any;
 }
 
-// Store WebSocket clients with their subscriptions
 const wsClients = new Map<
     any,
     {
@@ -61,13 +35,11 @@ export function unregisterClient(ws: any) {
     console.log(`📡 Client unregistered. Total clients: ${wsClients.size}`);
 }
 
-// Broadcast to specific clients based on filters
 function broadcast(payload: RealtimePayload) {
-    console.log("🚀 ~ file: realtime-listener.ts:66 ~ payload:", payload)
     let sentCount = 0;
 
     for (const [ws, options] of wsClients.entries()) {
-        console.log("🚀 ~ file: realtime-listener.ts:70 ~ options:", options)
+        console.log("🚀 ~ file: realtime-listener.ts:70 ~ options:", options);
         // Check if client is interested in this table
         if (options.tables && !options.tables.includes(payload.table)) {
             continue;
@@ -83,7 +55,7 @@ function broadcast(payload: RealtimePayload) {
 
         try {
             if (ws.readyState === 1) {
-                ws.send(JSON.stringify(payload));
+                ws.send(JSON.stringify({ ...payload, type: "events" }));
                 sentCount++;
             }
         } catch (error) {
@@ -97,7 +69,6 @@ function broadcast(payload: RealtimePayload) {
     }
 }
 
-// Create and start the Postgres listener
 export async function createRealtimeListener() {
     const client = new Client({
         connectionString: process.env.DATABASE_URL,
@@ -106,18 +77,10 @@ export async function createRealtimeListener() {
     try {
         await client.connect();
         console.log("✅ Connected to Postgres for real-time listening");
-
-        // Listen to the notification channel
         await client.query("LISTEN table_changes");
 
-        // Handle notifications
         client.on("notification", (msg) => {
-            console.log("🚀 ~ file: realtime-listener.ts:114 ~ msg:", msg)
-            console.log(msg.channel)
-            console.log(msg.payload)
-            console.log("yooooo.........")
             if (msg.channel === "table_changes") {
-                console.log("Broadcasting......")
                 try {
                     const payload: RealtimePayload = JSON.parse(msg.payload || "{}");
                     broadcast(payload);
@@ -127,7 +90,6 @@ export async function createRealtimeListener() {
             }
         });
 
-        // Handle connection errors
         client.on("error", (err) => {
             console.error("Postgres listener error:", err);
         });

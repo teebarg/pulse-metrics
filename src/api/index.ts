@@ -67,7 +67,7 @@ app.get(
             },
             onMessage(event, ws) {
                 console.log(`Message from client: ${event.data}`);
-                ws.send("Hello from server!");
+                ws.send(JSON.stringify({ type: "debug", message: "Hello from server!" }));
                 try {
                     const message = JSON.parse(event.data.toString());
                     console.log(`📨 Message from client:`, message);
@@ -90,13 +90,11 @@ app.get(
                 }
             },
             onClose(event, ws) {
-                console.log("🚀 ~ file: index.ts:73 ~ ws:", ws);
-                console.log("🚀 ~ file: index.ts:73 ~ event:", event);
+                console.log("🚀 ~ file: index.ts:93 ~ event:", event);
                 console.log("Connection closed");
                 unregisterClient(ws);
             },
             onError(evt: any, ws) {
-                console.log("🚀 ~ file: index.ts:79 ~ ws:", ws);
                 console.error("WebSocket error observed:", evt?.message);
                 unregisterClient(ws);
             },
