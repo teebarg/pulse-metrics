@@ -16,11 +16,9 @@ export const Route = createFileRoute("/_protected/onboarding")({
 });
 
 function RouteComponent() {
-    const { onboardingStep } = Route.useLoaderData();
-
     return (
         <div className="min-h-screen">
-            <OnboardingFlow onboardingStep={onboardingStep} />
+            <OnboardingFlow />
         </div>
     );
 }

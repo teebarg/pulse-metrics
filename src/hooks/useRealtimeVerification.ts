@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useWebSocket } from "pulsews";
+import { useOrganization } from "~/providers/organization-provider";
 
 export function useRealtimeVerification(count: number = 0) {
+    const { data } = useOrganization();
     const { lastMessage, send } = useWebSocket();
     const [isVerifying, setIsVerifying] = useState(false);
     const [eventsReceived, setEventsReceived] = useState(count);
@@ -13,11 +15,11 @@ export function useRealtimeVerification(count: number = 0) {
         setIsVerifying(true);
         setEventsReceived(0);
         setIsVerified(false);
-        send(JSON.stringify({ type: "subscribe", tables: ["organizations"] }));
+        send(JSON.stringify({ type: "subscribe", tables: ["organizations"], filters: { id: data.organizationId } }));
     }, [send]);
 
     const stopVerification = useCallback(() => {
-        send(JSON.stringify({ type: "unsubscribe", tables: ["organizations"] }));
+        send(JSON.stringify({ type: "unsubscribe", tables: ["organizations"], filters: { id: data.organizationId } }));
         setIsVerifying(false);
     }, [send]);
 
@@ -28,7 +30,7 @@ export function useRealtimeVerification(count: number = 0) {
             autoStarted.current = true;
             setIsVerifying(true);
             setEventsReceived(count);
-            send(JSON.stringify({ type: "subscribe", tables: ["organizations"] }));
+            send(JSON.stringify({ type: "subscribe", tables: ["organizations"], filters: { id: data.organizationId } }));
         }
 
         if (count >= 5) {

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Check, ChevronRight, ChevronLeft, Rocket, Store, Key, BarChart3, Zap, Copy, ExternalLink } from "lucide-react";
-import { Route, useNavigate } from "@tanstack/react-router";
-import { getOnboardingStatusFn, updateOnboardingStepFn } from "~/lib/onboarding-server";
+import { Check, Rocket, Store, Key, BarChart3, Zap } from "lucide-react";
+import { updateOnboardingStepFn } from "~/lib/onboarding-server";
 import { toast } from "sonner";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getOrganizationFn } from "~/lib/organizations-server";
+import { useQueryClient } from "@tanstack/react-query";
 import { IntegrationStep } from "./onboarding/IntegrationStep";
 import { VerifyStep } from "./onboarding/VerifyStep";
 import { StoreInfoStep } from "./onboarding/StoreInfoStep";
 import { CompleteStep } from "./onboarding/CompleteStep";
 import { WelcomeStep } from "./onboarding/WelcomeStep";
+import { useOrganization } from "~/providers/organization-provider";
+import { cn } from "~/lib/utils";
 
 const STEPS = [
     { id: "welcome", title: "Welcome", icon: Rocket },
@@ -19,8 +19,9 @@ const STEPS = [
     { id: "complete", title: "Complete", icon: Zap },
 ];
 
-export default function OnboardingFlow({ onboardingStep }: { onboardingStep: number }) {
-    const [currentStep, setCurrentStep] = useState(onboardingStep);
+export default function OnboardingFlow() {
+    const { data } = useOrganization();
+    const [currentStep, setCurrentStep] = useState(data?.organization?.onboardingStep ?? 0);
     const [formData, setFormData] = useState({
         store: "",
         domain: "",
@@ -28,17 +29,9 @@ export default function OnboardingFlow({ onboardingStep }: { onboardingStep: num
         apiKey: "",
         eventsReceived: 0,
     });
-    const navigate = useNavigate();
     const [direction, setDirection] = useState<"forward" | "backward">("forward");
     const [isTransitioning, setIsTransitioning] = useState(false);
-    // const [isLoading, setIsLoading] = useState(true);
-    ``;
     const queryClient = useQueryClient();
-
-    const { data } = useQuery({
-        queryKey: ["organization"],
-        queryFn: () => getOrganizationFn(),
-    });
 
     useEffect(() => {
         if (data?.organization) {
@@ -59,20 +52,21 @@ export default function OnboardingFlow({ onboardingStep }: { onboardingStep: num
             setDirection("forward");
             setIsTransitioning(true);
 
-            try {
-                await updateOnboardingStepFn({
-                    data: { step: nextStep, ...formData, name: formData.store },
-                });
-                queryClient.invalidateQueries({ queryKey: ["organization"] });
-            } catch (error) {
-                console.error("Failed to save onboarding step:", error);
-                toast.error("Failed to save progress");
-            }
-
             setTimeout(() => {
                 setCurrentStep(nextStep);
                 setIsTransitioning(false);
-            }, 150);
+            }, 300);
+
+            updateOnboardingStepFn({
+                data: { step: nextStep, ...formData, name: formData.store },
+            })
+                .then(() => {
+                    queryClient.invalidateQueries({ queryKey: ["organization"] });
+                })
+                .catch((error) => {
+                    console.error("Failed to save onboarding step:", error);
+                    toast.error("Failed to save progress");
+                });
         }
     };
 
@@ -120,7 +114,19 @@ export default function OnboardingFlow({ onboardingStep }: { onboardingStep: num
                     </div>
                 </div>
 
-                <div className="bg-slate-800/50 rounded-2xl border border-slate-700 p-8 min-h-[500px] backdrop-blur-sm">
+                <div
+                    key={currentStep}
+                    className={cn(
+                        "bg-slate-800/50 rounded-2xl border border-slate-700 p-8 min-h-[500px] backdrop-blur-sm",
+                        isTransitioning
+                            ? direction === "forward"
+                                ? "animate-slide-out-left"
+                                : "animate-slide-out-right"
+                            : direction === "forward"
+                              ? "animate-slide-in-right"
+                              : "animate-slide-in-left"
+                    )}
+                >
                     {currentStep === 0 && <WelcomeStep onNext={handleNext} />}
                     {currentStep === 1 && <StoreInfoStep formData={formData} setFormData={setFormData} onNext={handleNext} onPrev={handlePrev} />}
                     {currentStep === 2 && <IntegrationStep formData={formData} onNext={handleNext} onPrev={handlePrev} />}
