@@ -1,5 +1,5 @@
 DOCKER_COMPOSE = docker compose
-SERVICE = pm
+SERVICE = pulse-metrics
 
 .PHONY: all
 all: build up
@@ -26,25 +26,20 @@ logs:
 
 .PHONY: bash
 bash:
-	$(DOCKER_COMPOSE) exec $(SERVICE) /bin/bash
-
-
-.PHONY: install
-install:
-	$(DOCKER_COMPOSE) exec $(SERVICE) pip install $(package)
+	$(DOCKER_COMPOSE) exec $(SERVICE) /bin/sh
 
 .PHONY: clean
 clean:
 	$(DOCKER_COMPOSE) down -v --remove-orphans
 
+.PHONY: deploy
+deploy:
+	vercel deploy --prod
+
 .PHONY: help
 help:
-	@echo "Available targets:"
-	@echo "  make build     - Build Docker images"
-	@echo "  make up        - Start services"
-	@echo "  make down      - Stop services"
-	@echo "  make logs      - View logs (use 'make logs service=jupyter')"
-	@echo "  make bash      - Enter bash shell in Jupyter service"
-	@echo "  make install   - Install a package (use 'make install package=numpy')"
-	@echo "  make clean     - Clean up Docker resources"
-	@echo "  make help      - Display this help message"
+	@echo "Available commands:"
+	@echo "  make dev         - Run the development server"
+	@echo "  make build       - Build the production application"
+	@echo "  make start       - Start the production server"
+	@echo "  make prettier    - Run prettier"

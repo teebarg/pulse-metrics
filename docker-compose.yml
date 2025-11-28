@@ -30,7 +30,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: app/Dockerfile.dev
     container_name: pulse-metrics
     ports:
       - "7062:5173"  # Vite frontend
@@ -38,12 +38,14 @@ services:
     depends_on:
       - db
     volumes:
-      - .:/app
+      - ./app:/app
       - /app/node_modules
     environment:
       - NODE_ENV=development
       - WATCHPACK_POLLING=true
       - CHOKIDAR_USEPOLLING=true
+    env_file:
+      - ./app/.env
     labels:
       - traefik.enable=true
       - traefik.docker.network=pm-public
