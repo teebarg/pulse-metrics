@@ -1,6 +1,6 @@
 import { JSX, ReactNode, useEffect, useRef, useState } from "react";
-import { useAnalytics } from "./hooks/useAnalytics";
 import { EventProperties } from "./types";
+import { useAnalytics } from "./hooks/useAnalytics";
 
 /**
  * Track clicks on any element

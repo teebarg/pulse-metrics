@@ -1,6 +1,5 @@
 import { useContext } from "react";
-import { AnalyticsContextValue } from "..";
-import { AnalyticsContext } from "../provider";
+import { AnalyticsContext, AnalyticsContextValue } from "../provider";
 
 export function useAnalytics(): AnalyticsContextValue {
     const context = useContext(AnalyticsContext);

@@ -1,7 +1,7 @@
 {
-    "name": "@pulsemetrics/vue",
+    "name": "@pulsemetrics/sdk",
     "version": "1.0.0",
-    "description": "Vue 3 SDK for PulseMetrics",
+    "description": "Vanilla JavaScript SDK for PulseMetrics",
     "main": "./dist/index.js",
     "module": "./dist/index.esm.js",
     "types": "./dist/index.d.ts",
@@ -16,24 +16,29 @@
         "dist"
     ],
     "scripts": {
+        "build2": "tsup src/index.ts --format esm,cjs --dts",
         "build": "rollup -c",
         "dev": "rollup -c -w",
         "test": "vitest",
+        "test:watch": "vitest --watch",
         "clean": "rm -rf dist",
         "prepublishOnly": "npm run build"
     },
-    "peerDependencies": {
-        "vue": "^3.0.0"
-    },
+    "keywords": [
+        "analytics",
+        "tracking",
+        "pulsemetrics"
+    ],
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^15.2.0",
         "@rollup/plugin-typescript": "^11.1.0",
-        "@vue/test-utils": "^2.4.0",
         "rollup": "^3.29.0",
         "rollup-plugin-terser": "^7.0.2",
         "typescript": "^5.0.0",
-        "vue": "^3.3.0",
         "vitest": "^1.0.0"
     },
-    "license": "MIT"
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public"
+    }
 }

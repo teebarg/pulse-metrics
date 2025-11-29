@@ -1,26 +1,45 @@
 {
-    "name": "@pulsemet/react",
+    "name": "@pulsemetrics/react",
     "version": "1.0.0",
-    "peerDependencies": {
-        "react": ">=18"
-    },
-    "dependencies": {
-        "@pulsemet/core": "workspace:*"
-    },
-    "main": "dist/index.cjs",
-    "module": "dist/index.mjs",
-    "types": "dist/index.d.ts",
+    "description": "React SDK for PulseMetrics",
+    "type": "module",
+    "main": "./dist/index.js",
+    "module": "./dist/index.esm.js",
+    "types": "./dist/index.d.ts",
     "exports": {
         ".": {
-            "require": "./dist/index.cjs",
-            "import": "./dist/index.mjs",
+            "import": "./dist/index.esm.js",
+            "require": "./dist/index.js",
             "types": "./dist/index.d.ts"
         }
     },
-    "files": ["dist"],
+    "files": [
+        "dist"
+    ],
     "scripts": {
-        "build": "tsup src/index.tsx --format cjs,esm --dts"
+        "build": "rollup -c",
+        "dev": "rollup -c -w",
+        "test": "vitest",
+        "clean": "rm -rf dist",
+        "prepublishOnly": "npm run build"
     },
+    "peerDependencies": {
+        "react": ">=18",
+        "react-dom": ">=18"
+    },
+    "devDependencies": {
+        "@rollup/plugin-node-resolve": "^15.2.0",
+        "@rollup/plugin-typescript": "^11.1.0",
+        "@testing-library/react": "^14.0.0",
+        "@types/react": "^18.2.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "rollup": "^3.29.0",
+        "rollup-plugin-terser": "^7.0.2",
+        "typescript": "^5.0.0",
+        "vitest": "^1.0.0"
+    },
+    "license": "MIT",
     "publishConfig": {
         "access": "public"
     }

@@ -1,0 +1,20 @@
+{
+  "name": "pulsemetrics",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "app/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "clean": "turbo run clean",
+    "publish:all": "./scripts/publish-all.sh"
+  },
+  "devDependencies": {
+    "turbo": "^1.10.0",
+    "typescript": "^5.0.0"
+  }
+}

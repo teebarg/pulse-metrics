@@ -1,11 +1,11 @@
-interface PulseMetricsConfig {
+export interface PulseMetricsConfig {
     apiKey: string;
     apiUrl?: string;
     autoTrack?: boolean;
     debug?: boolean;
 }
 
-interface EventProperties {
+export interface EventProperties {
     page?: string;
     product_id?: string;
     product_name?: string;
@@ -17,4 +17,4 @@ interface EventProperties {
     [key: string]: any;
 }
 
-type EventType = "page_view" | "product_view" | "add_to_cart" | "checkout" | "purchase";
+export type EventType = "page_view" | "product_view" | "add_to_cart" | "checkout" | "purchase";
