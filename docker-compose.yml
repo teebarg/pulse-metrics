@@ -60,7 +60,7 @@ services:
       - traefik.http.routers.app-api-http.rule=Host(`api.localhost`)
       - traefik.http.routers.app-api-http.entrypoints=http
       - traefik.http.routers.app-api-http.service=app-api
-    command: ["npm", "run", "dev"]
+    command: ["pnpm", "dev"]
     networks:
       - pm-public
       - default
