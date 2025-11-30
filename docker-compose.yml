@@ -1,6 +1,6 @@
 services:
   traefik:
-    image: traefik:v2.9
+    image: traefik:v3.6.1
     command:
       - --providers.docker
       - --providers.docker.constraints=Label(`traefik.constraint-label`, `pm-public`)
