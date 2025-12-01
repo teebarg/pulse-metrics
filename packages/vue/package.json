@@ -20,7 +20,7 @@
         "dev": "rollup -c -w",
         "test": "vitest",
         "clean": "rm -rf dist",
-        "prepublishOnly": "npm run build"
+        "prepublishOnly": "pnpm run build"
     },
     "peerDependencies": {
         "vue": "^3.0.0"
@@ -30,7 +30,6 @@
         "@rollup/plugin-typescript": "^11.1.0",
         "@vue/test-utils": "^2.4.0",
         "rollup": "^3.29.0",
-        "rollup-plugin-terser": "^7.0.2",
         "typescript": "^5.0.0",
         "vue": "^3.3.0",
         "vitest": "^1.0.0"

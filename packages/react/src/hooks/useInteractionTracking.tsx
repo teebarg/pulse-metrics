@@ -2,7 +2,6 @@ import { useCallback } from "react";
 import { EventProperties } from "../types";
 import { useAnalytics } from "./useAnalytics";
 
-
 export function useInteractionTracking() {
     const { track } = useAnalytics();
 

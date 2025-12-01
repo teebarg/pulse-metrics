@@ -54,7 +54,7 @@ export const Route = createRootRouteWithContext<{
         ],
     }),
     loader: async () => ({ _storedTheme: await getStoredTheme() }),
-    errorComponent: (props) => {
+    errorComponent: (props: any) => {
         return (
             <RootDocument>
                 <DefaultCatchBoundary {...props} />

@@ -22,8 +22,10 @@ app.use("*", cors());
 app.use("*", prettyJSON());
 app.onError(errorHandler);
 
-app.use("/v1/*", authMiddleware);
+app.use("/v1/analytics/*", authMiddleware);
+app.use("/v1/profile/*", authMiddleware);
 app.use("/v1/analytics/*", verifyApiKey);
+app.use("/v1/events/*", verifyApiKey);
 
 app.route("/", healthRoute);
 app.route("/v1/profile", profileRoutes);

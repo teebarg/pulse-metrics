@@ -44,7 +44,6 @@ function RouteComponent() {
 
     return (
         <div className="min-h-screen bg-slate-900 text-white">
-            {/* Header */}
             <header className="border-b border-slate-700 bg-slate-800/50 backdrop-blur-sm sticky top-0 z-10">
                 <div className="max-w-7xl mx-auto px-6 py-4">
                     <div className="flex justify-between items-center">

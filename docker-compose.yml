@@ -29,8 +29,8 @@ services:
       - traefik.http.middlewares.https-redirect.contenttype.autodetect=false
   app:
     build:
-      context: .
-      dockerfile: app/Dockerfile.dev
+      context: ./app
+      dockerfile: Dockerfile.dev
     container_name: pulse-metrics
     ports:
       - "7062:5173"  # Vite frontend
@@ -38,7 +38,8 @@ services:
     depends_on:
       - db
     volumes:
-      - ./app:/app
+      - ./app/src:/app/src
+      - ./app/public:/app/public
       - /app/node_modules
     environment:
       - NODE_ENV=development

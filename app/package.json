@@ -7,7 +7,8 @@
     "node": ">=18.17"
   },
   "scripts": {
-    "dev": "concurrently \"pnpm run dev:web\" \"pnpm run dev:api\"",
+    "dev-debug": "echo 'Debug mode - container will stay alive' && tail -f /dev/null",
+    "dev": "pnpm run dev:web & pnpm run dev:api",
     "dev:web": "vite dev --host 0.0.0.0",
     "dev:api": "tsx watch src/api/index.ts",
     "build": "vite build && tsup src/server/index.ts --format esm --out-dir dist/server",
@@ -55,7 +56,6 @@
     "ioredis": "^5.8.2",
     "lucide-react": "^0.544.0",
     "pg": "^8.16.3",
-    "prisma": "^6.16.3",
     "pulsews": "^1.0.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
