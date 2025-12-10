@@ -6,12 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { User, Key, Brain, LogOut, EyeOffIcon, EyeIcon } from "lucide-react";
-import { logoutFn } from "~/lib/auth-server";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import { Switch } from "~/components/ui/switch";
-import { getSettings, updateSettings, type Settings } from "~/lib/settings";
+import { type Settings } from "~/lib/settings";
 import { getProfile, updateProfile, type UserProfile } from "~/lib/profile";
+import { authClient } from "~/lib/auth-client";
+import { getSettingsFn, updateSettingsFn } from "~/server-fn/settings.fn";
 
 export const Route = createFileRoute("/_protected/account/settings")({
     component: RouteComponent,
@@ -34,7 +35,7 @@ function RouteComponent() {
     useEffect(() => {
         const loadAll = async () => {
             try {
-                const [settingsData, profileData] = await Promise.all([getSettings(), getProfile()]);
+                const [settingsData, profileData] = await Promise.all([getSettingsFn(), getProfile()]);
                 setSettings(settingsData);
                 setProfile(profileData);
                 if (settingsData.apiKey) {
@@ -75,9 +76,11 @@ function RouteComponent() {
         setIsSavingApiKey(true);
         const toastId = toast.loading("Saving API key...");
         try {
-            const updatedSettings = await updateSettings({
-                apiKey: key,
-                useOwnKey: Boolean(key),
+            const updatedSettings = await updateSettingsFn({
+                data: {
+                    apiKey: key,
+                    useOwnKey: Boolean(key),
+                },
             });
             setSettings(updatedSettings);
             if (key) {
@@ -96,7 +99,7 @@ function RouteComponent() {
     const handleModelChange = async (model: string) => {
         const toastId = toast.loading("Saving model preference...");
         try {
-            const updatedSettings = await updateSettings({ preferredModel: model });
+            const updatedSettings = await updateSettingsFn({ data: { preferredModel: model } });
             setSettings(updatedSettings);
             toast.success("Model preference saved", { id: toastId });
         } catch (error) {
@@ -106,17 +109,13 @@ function RouteComponent() {
     };
 
     const handleLogout = async () => {
-        setIsLoggingOut(true);
-        try {
-            await logoutFn();
-            toast.success("Signed out");
-            navigate({ to: "/" });
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Unable to sign out";
-            toast.error(message);
-        } finally {
-            setIsLoggingOut(false);
-        }
+        await authClient.signOut({
+            fetchOptions: {
+                onSuccess: () => {
+                    navigate({ to: "/" });
+                },
+            },
+        });
     };
 
     if (isLoading) {

@@ -4,16 +4,17 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signupFn, credentialsSchema } from "~/lib/auth-server";
 import { z } from "zod";
+import { authClient } from "~/lib/auth-client";
 
 interface SignupFormProps {
     isLoading: boolean;
 }
 
-// Form schema requires fullName, but server accepts it as optional
-const signupFormSchema = credentialsSchema.extend({
+const signupFormSchema = z.object({
     fullName: z.string().min(1, "Please enter your full name"),
+    email: z.email("Please enter a valid email address"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 type SignupFormData = z.infer<typeof signupFormSchema>;
@@ -33,26 +34,32 @@ export function SignupForm({ isLoading }: SignupFormProps) {
         },
     });
 
-    const onSubmit = async (data: SignupFormData) => {
+    const onSubmit = async (signUpData: SignupFormData) => {
         toast.loading("Creating your account...", { id: "signup" });
-        try {
-            const redirectUrl = typeof window !== "undefined" ? `${import.meta.env.VITE_SITE_URL}/auth` : undefined;
-
-            await signupFn({
-                data: {
-                    email: data.email,
-                    password: data.password,
-                    redirectUrl,
-                    fullName: data.fullName?.trim() || undefined,
+        const { data, error } = await authClient.signUp.email(
+            {
+                email: signUpData.email,
+                password: signUpData.password,
+                name: signUpData.fullName,
+                callbackURL: "/account", // A URL to redirect to after the user verifies their email (optional)
+            },
+            {
+                onRequest: (ctx) => {
+                    console.log("🚀 ~ file: SignupForm.tsx:48 ~ ctx:", ctx);
+                    toast.loading("Creating your account...", { id: "signup" });
                 },
-            });
-
-            toast.success("Account created! Please check your email to confirm your account.", { id: "signup", duration: 5000 });
-            reset();
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Unable to create account";
-            toast.error(message || "Something went wrong. Please try again later.", { id: "signup" });
-        }
+                onSuccess: (ctx) => {
+                    console.log("🚀 ~ file: SignupForm.tsx:51 ~ ctx:", ctx);
+                    //redirect to the dashboard or sign in page
+                },
+                onError: (ctx) => {
+                    // display the error message
+                    toast.error(ctx.error.message);
+                },
+            }
+        );
+        console.log("🚀 ~ file: SignupForm.tsx:40 ~ data:", data);
+        console.log("🚀 ~ file: SignupForm.tsx:40 ~ error:", error);
     };
 
     return (

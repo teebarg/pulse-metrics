@@ -8,7 +8,7 @@ import { Sparkles } from "lucide-react";
 import { LoginForm } from "./auth/LoginForm";
 import { SignupForm } from "./auth/SignupForm";
 import { MagicLinkForm } from "./auth/MagicLinkForm";
-import { getSupabaseClient } from "~/lib/supabase/supabase-client";
+import { authClient } from "~/lib/auth-client";
 
 const GoogleIcon = () => (
     <svg viewBox="0 0 24 24" className="h-5 w-5">
@@ -55,22 +55,13 @@ export default function Auth() {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSocialLogin = async () => {
-        const supabase = getSupabaseClient();
-        setIsLoading(true);
-
-        try {
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: "google",
-                options: {
-                    redirectTo: `${import.meta.env.VITE_SITE_URL}/auth/oauth?next=${location.pathname}`,
-                },
-            });
-
-            if (error) throw error;
-        } catch (error: unknown) {
-            toast.error(error instanceof Error ? error.message : "An error occurred");
-            setIsLoading(false);
-        }
+        const data = await authClient.signIn.social({
+            provider: "google",
+            callbackURL: location.pathname,
+            newUserCallbackURL: "/onboarding",
+            errorCallbackURL: "/error",
+        });
+        console.log("🚀 ~ file: Auth.tsx:60 ~ data:", data)
     };
 
     return (

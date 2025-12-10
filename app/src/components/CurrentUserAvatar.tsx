@@ -1,11 +1,12 @@
 "use client";
 
-import { useCurrentUser } from "@/hooks/use-current-user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { createAuthClient } from "better-auth/react";
+const { useSession } = createAuthClient();
 
 export const CurrentUserAvatar = () => {
-    const { name, image } = useCurrentUser();
-    const initials = name
+    const { data: session } = useSession();
+    const initials = session?.user?.name
         ?.split(" ")
         ?.map((word: string) => word[0])
         ?.join("")
@@ -13,7 +14,7 @@ export const CurrentUserAvatar = () => {
 
     return (
         <Avatar>
-            {image && <AvatarImage src={image} alt={initials} />}
+            {session?.user?.image && <AvatarImage src={session?.user?.image} alt={initials} />}
             <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
     );

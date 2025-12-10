@@ -1,27 +1,17 @@
-FROM node:22-alpine AS builder
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci
-
-COPY . .
-RUN npm run build
-
-# Production stage
 FROM node:22-alpine
 
+RUN corepack enable && corepack prepare pnpm@10.24.0 --activate
+
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+COPY package.json pnpm-lock.yaml ./
 
-# Install production dependencies only
-RUN npm ci --production
+COPY .npmrc ./
 
-# Copy built files from builder
-COPY --from=builder /app/dist ./dist
+RUN pnpm install --frozen-lockfile
 
-EXPOSE 5173
+COPY . ./
 
-CMD ["npm", "start"]
+EXPOSE 5173 8787
+
+CMD ["pnpm", "dev"]

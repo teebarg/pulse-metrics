@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import Auth from "~/components/Auth";
-import { fetchUser } from "~/lib/supabase/fetch-user-server-fn";
+import { fetchUser } from "~/lib/fetch-user-server-fn";
 
 export const Route = createFileRoute("/_protected")({
     component: ProtectedLayoutComponent,

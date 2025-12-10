@@ -9,28 +9,24 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "@tanstack/react-router";
-import { logoutFn } from "~/lib/auth-server";
 import { toast } from "sonner";
 import { useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
 import { CurrentUserAvatar } from "./CurrentUserAvatar";
+import { authClient } from "~/lib/auth-client";
 
 export function DashboardHeader() {
     const navigate = useNavigate();
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const handleLogout = async () => {
-        setIsLoggingOut(true);
-        try {
-            await logoutFn();
-            toast.success("Signed out");
-            navigate({ to: "/" });
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Unable to sign out";
-            toast.error(message);
-        } finally {
-            setIsLoggingOut(false);
-        }
+        await authClient.signOut({
+            fetchOptions: {
+                onSuccess: () => {
+                    navigate({ to: "/" });
+                },
+            },
+        });
     };
     return (
         <header className="h-16 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 flex items-center justify-between px-4 md:px-6 gap-4">

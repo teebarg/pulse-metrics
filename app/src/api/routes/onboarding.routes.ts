@@ -59,6 +59,38 @@ onBoardingRoutes.openapi(
 
 onBoardingRoutes.openapi(
     createRoute({
+        method: "patch",
+        path: "/update",
+        security: [{ Bearer: [] }],
+        tags: ["onboarding"],
+        description: "Update organization onboarding",
+        responses: {
+            200: {
+                description: "Get Today Analytics",
+                content: { "application/json": { schema: SuccessSchema } },
+            },
+            500: {
+                description: "Server error",
+                content: { "application/json": { schema: ErrorSchema } },
+            },
+        },
+    }),
+    async (c) => {
+        const user = c.get("user");
+        const data = c.req.valid("json");
+        try {
+            const resp = await onboardingService.UpdateOnboarding(user, data);
+            return c.json({
+                ...resp,
+            });
+        } catch (error: any) {
+            return errorResponse(c, error.message, error.details, error.statusCode || 500);
+        }
+    }
+);
+
+onBoardingRoutes.openapi(
+    createRoute({
         method: "post",
         path: "/complete",
         security: [{ Bearer: [] }],

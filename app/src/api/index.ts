@@ -14,7 +14,7 @@ import { onBoardingRoutes } from "@/api/routes/onboarding.routes";
 import { createNodeWebSocket } from "@hono/node-ws";
 import { createRealtimeListener, registerClient, unregisterClient } from "./realtime-listener";
 
-const port = Number(process.env.PORT || 8787);
+const port = Number(process.env.API_PORT || 8787);
 
 const app = new OpenAPIHono();
 

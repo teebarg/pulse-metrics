@@ -7,7 +7,7 @@ import Pricing from "~/components/landing/Pricing";
 import Footer from "~/components/Footer";
 import TrustedBy from "~/components/landing/TrustedBy";
 import { motion } from "framer-motion";
-import { fetchUser } from "~/lib/supabase/fetch-user-server-fn";
+import { fetchUser } from "~/lib/fetch-user-server-fn";
 
 export const Route = createFileRoute("/")({
     component: RouteComponent,

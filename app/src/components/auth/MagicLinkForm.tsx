@@ -4,20 +4,18 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { getSupabaseClient } from "~/lib/supabase/supabase-client";
-import { credentialsSchema } from "~/lib/auth-server";
 import { z } from "zod";
 import { useLocation } from "@tanstack/react-router";
+import { authClient } from "~/lib/auth-client";
 
 const magicLinkSchema = z.object({
-    email: credentialsSchema.shape.email,
+    email: z.email(),
 });
 
 type MagicLinkFormData = z.infer<typeof magicLinkSchema>;
 
 export function MagicLinkForm() {
     const location = useLocation();
-    const supabase = getSupabaseClient();
     const {
         register,
         handleSubmit,
@@ -30,29 +28,15 @@ export function MagicLinkForm() {
         },
     });
 
-    const onSubmit = async (data: MagicLinkFormData) => {
-        const emailRedirectTo = typeof window !== "undefined" ? `${import.meta.env.VITE_SITE_URL}/auth/oauth?next=${location.pathname}` : undefined;
-
-        toast.loading("Sending magic link...", { id: "magic" });
-        try {
-            const { error } = await supabase.auth.signInWithOtp({
-                email: data.email,
-                options: {
-                    shouldCreateUser: true,
-                    emailRedirectTo,
-                },
-            });
-
-            if (error) {
-                throw error;
-            }
-
-            toast.success("Magic link sent! Please check your inbox and click the link to sign in.", { id: "magic", duration: 6000 });
-            reset();
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to send magic link";
-            toast.error(message || "Unable to send magic link. Please try again.", { id: "magic" });
-        }
+    const onSubmit = async (formData: MagicLinkFormData) => {
+        const { data, error } = await authClient.signIn.magicLink({
+            email: formData.email,
+            callbackURL: location.pathname,
+            newUserCallbackURL: "/onboarding",
+            errorCallbackURL: "/error",
+        });
+        console.log("🚀 ~ file: MagicLinkForm.tsx:36 ~ data:", data);
+        console.log("🚀 ~ file: MagicLinkForm.tsx:36 ~ error:", error);
     };
 
     return (

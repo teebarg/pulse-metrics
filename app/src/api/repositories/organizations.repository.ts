@@ -15,6 +15,18 @@ export class OrganizationRepository {
         return org;
     }
 
+    async create(data: any, returnKeys: Record<any, any>) {
+        const [org] = await db
+            .insert(organizations)
+            .values({ ...data })
+            .returning({ ...returnKeys });
+
+        if (!org) {
+            throw new Error("Failed to create organization");
+        }
+        return org;
+    }
+
     async updateById(id: string, data: any) {
         const updatedUser = await db
             .update(organizations)

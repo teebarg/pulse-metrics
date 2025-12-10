@@ -1,7 +1,6 @@
 import React, { createContext, useContext } from "react";
-
 import { useQuery } from "@tanstack/react-query";
-import { getOrganizationFn } from "~/lib/organizations-server";
+import { getOrganizationFn } from "~/server-fn/organization.fn";
 
 type OrganizationContextType = {
     data?: any | null;

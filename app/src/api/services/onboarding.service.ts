@@ -3,8 +3,9 @@ import { OrganizationRepository } from "@/api/repositories/organizations.reposit
 import { UserRepository } from "../repositories/users.repository";
 import { EventsRepository } from "../repositories/events.repository";
 import { gt, eq, sql, and } from "drizzle-orm";
-import { db, pool } from "../db";
-import { events } from "../db/schema";
+import { db, pool } from "@/api/db";
+import { organizations, events } from "@/api/db/schema";
+import { generateApiKey } from "~/api/utils/common.utils";
 
 export class OnBoardingService {
     constructor(
@@ -33,34 +34,80 @@ export class OnBoardingService {
         };
     }
 
+    async UpdateOnboarding(user: any, data: any) {
+        const userData = await this.usersRepo.userOrg(user.id);
+        if (!userData[0].organizationId) {
+            const org = await this.organizationRepo.create(
+                {
+                    domain: user.email?.split("@")[1],
+                    apiKey: generateApiKey(),
+                    onboardingStep: data.step,
+                },
+                { id: organizations.id }
+            );
+            // const org = await db
+            //     .insert(organizations)
+            //     .values({
+            //         domain: user.email?.split("@")[1],
+            //         apiKey: generateApiKey(),
+            //         onboardingStep: data.step,
+            //     })
+            //     .returning({ id: organizations.id });
+            await this.usersRepo.updateById(user.id, {
+                organizationId: org.id,
+            });
+            // await db
+            //     .update(users)
+            //     .set({
+            //         organizationId: org[0].id,
+            //     })
+            //     .where(eq(users.id, user.id));
+            return { success: true, step: data.step };
+        }
+
+        await this.organizationRepo.updateById(userData[0].organizationId, {
+            ...data,
+            onboardingStep: data.step,
+            updatedAt: new Date(),
+        });
+        // await db
+        //     .update(organizations)
+        //     .set({
+        //         ...data,
+        //         onboardingStep: data.step,
+        //         updatedAt: new Date(),
+        //     })
+        //     .where(eq(organizations.id, dbUser[0].organizationId));
+
+        return { success: true, step: data.step };
+    }
+
     async CompleteOnboarding(user: any, data: any) {
         const userData = await this.usersRepo.userOrg(user.id);
 
         if (!userData[0]?.organizationId) {
-            return {
-                success: false,
-                message: "Organization not found",
-            };
+            const org = await this.organizationRepo.create(
+                {
+                    name: `${user.email}'s Store`,
+                    plan: "free",
+                    onboarding_completed: false,
+                },
+                { id: organizations.id }
+            );
+            await this.usersRepo.updateById(user.id, {
+                organizationId: org.id,
+            });
+            return { success: true, step: data.step };
         }
 
-        const organization = await this.organizationRepo.updateById(userData[0].organizationId, {
-            onboarding_completed: true,
-            name: data.store,
-            domain: data.domain,
-            metadata: { platform: data.platform },
+        await this.organizationRepo.updateById(userData[0].organizationId, {
             onboardingCompleted: true,
             onboardingCompletedAt: new Date(),
+            onboardingStep: data.step,
+            updatedAt: new Date(),
         });
 
-        await this.eventsRepo.insert({
-            organizationId: userData[0].organizationId,
-            event_type: "onboarding_completed",
-            properties: { platform: data.platform, has_url: !!data.domain },
-        });
-
-        return {
-            success: true,
-        };
+        return { success: true, completed: data.completed };
     }
 
     async VerifyEvents(user: any) {
@@ -93,6 +140,7 @@ export class OnBoardingService {
         if (!userData[0]?.organizationId) {
             return {
                 onboarding_completed: false,
+                onboardingStep: 0,
             };
         }
         const query = `

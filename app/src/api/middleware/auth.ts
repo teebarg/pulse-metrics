@@ -1,10 +1,10 @@
 import { Context, Next } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { createClient } from "@supabase/supabase-js";
 import { db } from "@/api/db";
 import { organizations, users } from "@/api/db/schema";
 import { generateApiKey } from "../utils/common.utils";
 import { eq } from "drizzle-orm";
+import { auth } from "~/lib/auth";
 
 export async function verifyApiKey(c: Context, next: Next) {
     const apiKey = c.req.header("X-API-Key");
@@ -29,7 +29,7 @@ export async function verifyApiKey(c: Context, next: Next) {
             return c.json({ error: "Invalid API key" }, 401);
         }
 
-        if (org.eventsUsed >= org.eventsLimit) {
+        if (org.eventsLimit && (org.eventsUsed || 0 >= org.eventsLimit)) {
             return c.json(
                 {
                     error: "Event limit exceeded",
@@ -50,25 +50,6 @@ export async function verifyApiKey(c: Context, next: Next) {
 }
 
 /**
- * Supabase client for JWT verification
- */
-function getSupabaseForAuth() {
-    const supabaseUrl = process.env.VITE_SUPABASE_URL;
-    const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-        throw new Error("SUPABASE_URL and SUPABASE_ANON_KEY must be set for authentication");
-    }
-
-    return createClient(supabaseUrl, supabaseAnonKey, {
-        auth: {
-            persistSession: false,
-            autoRefreshToken: false,
-        },
-    });
-}
-
-/**
  * Extract JWT token from Authorization header
  */
 function extractToken(c: Context): string | null {
@@ -84,7 +65,7 @@ function extractToken(c: Context): string | null {
 
 /**
  * Authentication middleware for Hono
- * Verifies Supabase JWT token and adds user info to context
+ * Verifies JWT token and adds user info to context
  *
  * Usage:
  * app.use("/v1/*", authMiddleware);
@@ -99,33 +80,22 @@ export async function authMiddleware(c: Context, next: Next) {
             });
         }
 
-        const supabase = getSupabaseForAuth();
-        const {
-            data: { user },
-            error,
-        } = await supabase.auth.getUser(token);
+        const session = await auth.api.getSession({
+            headers: c.req.raw.headers,
+        });
 
-        if (error || !user) {
+        console.log("🚀 ~ file: auth.ts:85 ~ session:", session);
+
+        if (!session) {
             throw new HTTPException(401, {
                 message: "Invalid or expired token",
             });
         }
 
-        const dbUser = await db.select().from(users).where(eq(users.id, user.id));
-        if (!dbUser[0]) {
-            const name = user.user_metadata?.name || user.email?.split("@")[0] || "User";
-            await db.insert(users).values({
-                id: user.id,
-                firstName: name,
-                lastName: name,
-                email: user.email,
-            });
-        }
-
         c.set("user", {
-            id: user.id,
-            email: user.email,
-            user_metadata: user.user_metadata,
+            id: session.user.id,
+            email: session.user.email,
+            user_metadata: session.user,
         });
 
         await next();
@@ -148,24 +118,20 @@ export async function authMiddleware(c: Context, next: Next) {
 export async function optionalAuthMiddleware(c: Context, next: Next) {
     try {
         const token = extractToken(c);
+        const session = await auth.api.getSession({
+            headers: c.req.raw.headers,
+        });
 
         if (token) {
-            const supabase = getSupabaseForAuth();
-            const {
-                data: { user },
-                error,
-            } = await supabase.auth.getUser(token);
-
-            if (!error && user) {
+            if (session) {
                 c.set("user", {
-                    id: user.id,
-                    email: user.email,
-                    user_metadata: user.user_metadata,
+                    id: session.user.id,
+                    email: session.user.email,
+                    user_metadata: session.user,
                 });
             }
         }
     } catch (error) {
-        // Silently fail for optional auth
         console.warn("Optional auth failed:", error);
     }
 

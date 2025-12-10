@@ -30,7 +30,7 @@ services:
   app:
     build:
       context: ./app
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: pulse-metrics
     ports:
       - "7062:5173"  # Vite frontend

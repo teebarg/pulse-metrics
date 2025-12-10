@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { getSupabaseClient } from "~/lib/supabase/supabase-client";
+import { getOnboardingStatusFn } from "~/server-fn/onboarding.fn";
+import { createAuthClient } from "better-auth/react";
 
 interface OnboardingStatus {
     onboarding_completed: boolean;
@@ -10,10 +11,11 @@ interface OnboardingStatus {
 }
 
 export function useOnboarding() {
-    const supabase = getSupabaseClient();
     const [status, setStatus] = useState<OnboardingStatus | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
+    const { useSession } = createAuthClient();
+    const { data: session } = useSession();
 
     useEffect(() => {
         checkOnboardingStatus();
@@ -21,25 +23,13 @@ export function useOnboarding() {
 
     const checkOnboardingStatus = async () => {
         try {
-            const {
-                data: { user },
-            } = await supabase.auth.getUser();
-
-            if (!user) {
+            if (!session) {
                 navigate({ to: "/auth" });
                 return;
             }
 
-            const response = await fetch("/api/onboarding/status", {
-                headers: {
-                    Authorization: `Bearer ${user.id}`,
-                },
-            });
-
-            const data = await response.json();
+            const data = await getOnboardingStatusFn();
             setStatus(data);
-
-            // Redirect to onboarding if not completed
             if (!data.onboarding_completed && window.location.pathname !== "/onboarding") {
                 navigate({ to: "/onboarding" });
             }

@@ -3,7 +3,7 @@ import { events } from "@/api/db/schema.js";
 import { eq, desc, and } from "drizzle-orm";
 
 export class EventsRepository {
-    async insert(data: any) {
+    async create(data: any) {
         const [org] = await db
             .insert(events)
             .values({ ...data })
@@ -22,12 +22,10 @@ export class EventsRepository {
             .set({ ...data, updatedAt: now })
             .where(eq(events.id, id));
 
-        const conversation = await db.select().from(events).where(eq(events.id, id));
+        const event = await db.select().from(events).where(eq(events.id, id));
 
         return {
-            id: conversation[0].id,
-            title: conversation[0].title,
-            created_at: conversation[0].createdAt.toISOString(),
+            id: event[0].id,
             updated_at: now.toISOString(),
         };
     }

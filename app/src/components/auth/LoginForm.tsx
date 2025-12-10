@@ -5,7 +5,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { loginFn, credentialsSchema } from "~/lib/auth-server";
+import { authClient } from "~/lib/auth-client";
+import z from "zod";
 
 interface LoginFormProps {
     isLoading: boolean;
@@ -24,46 +25,60 @@ export function LoginForm({ isLoading }: LoginFormProps) {
         formState: { errors, isSubmitting },
         reset,
     } = useForm<LoginFormData>({
-        resolver: zodResolver(credentialsSchema),
+        resolver: zodResolver(
+            z.object({
+                email: z.email(),
+                password: z.string().min(6, "Password must be at least 6 characters"),
+            })
+        ),
         defaultValues: {
             email: "",
             password: "",
         },
     });
 
-    const onSubmit = async (data: LoginFormData) => {
+    const onSubmit = async (loginData: LoginFormData) => {
         toast.loading("Signing in...", { id: "login" });
-        try {
-            await loginFn({
-                data: {
-                    email: data.email,
-                    password: data.password,
+        const { data, error } = await authClient.signIn.email(
+            {
+                email: loginData.email,
+                password: loginData.password,
+                callbackURL: "/account",
+                rememberMe: true,
+            },
+            {
+                onRequest: (ctx) => {
+                    console.log("🚀 ~ file: SignupForm.tsx:48 ~ ctx:", ctx);
+                    toast.loading("Creating your account...", { id: "login" });
                 },
-            });
-            toast.success("Welcome back! Redirecting...", { id: "login" });
-            reset();
-
-            const { getOnboardingStatusFn } = await import("~/lib/onboarding-server");
-            try {
-                const status = await getOnboardingStatusFn();
-                setTimeout(() => {
-                    if (!status.onboardingCompleted) {
-                        navigate({ to: "/onboarding" });
-                    } else {
-                        navigate({ to: "/account" });
+                onSuccess: async (ctx) => {
+                    console.log("🚀 ~ file: SignupForm.tsx:51 ~ ctx:", ctx);
+                    const { getOnboardingStatusFn } = await import("~/lib/onboarding-server");
+                    //redirect to the dashboard or sign in page
+                    try {
+                        const status = await getOnboardingStatusFn();
+                        setTimeout(() => {
+                            if (!status.onboardingCompleted) {
+                                navigate({ to: "/onboarding" });
+                            } else {
+                                navigate({ to: "/account" });
+                            }
+                        }, 500);
+                    } catch {
+                        setTimeout(() => {
+                            navigate({ to: "/onboarding" });
+                        }, 500);
                     }
-                }, 500);
-            } catch {
-                setTimeout(() => {
-                    navigate({ to: "/onboarding" });
-                }, 500);
+                },
+                onError: (ctx) => {
+                    toast.error(ctx.error.message, {
+                        id: "login",
+                    });
+                },
             }
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Unable to sign in";
-            toast.error(message || "Invalid email or password. Please try again.", {
-                id: "login",
-            });
-        }
+        );
+        console.log("🚀 ~ file: LoginForm.tsx:40 ~ data:", data);
+        console.log("🚀 ~ file: LoginForm.tsx:40 ~ error:", error);
     };
 
     return (
