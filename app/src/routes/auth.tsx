@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { fetchUser } from "~/lib/fetch-user-server-fn";
-import { getOnboardingStatusFn } from "~/lib/onboarding-server";
+import { getOnboardingStatusFn } from "~/server-fn/onboarding.fn";
 
 export const Route = createFileRoute("/auth")({
     component: RouteComponent,

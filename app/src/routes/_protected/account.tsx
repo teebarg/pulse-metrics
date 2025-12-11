@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "~/components/DashboardSidebar";
 import { DashboardHeader } from "~/components/DashboardHeader";
-import { getOnboardingStatusFn } from "~/lib/onboarding-server";
+import { getOnboardingStatusFn } from "~/server-fn/onboarding.fn";
 
 export const Route = createFileRoute("/_protected/account")({
     component: RouteComponent,

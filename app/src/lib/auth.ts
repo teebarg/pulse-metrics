@@ -3,6 +3,8 @@ import { betterAuth } from "better-auth";
 import { db } from "~/api/db";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import * as schema from "@/api/db/schema";
+import { magicLinkClient } from "better-auth/client/plugins";
+import { tanstackStartCookies } from "better-auth/tanstack-start";
 
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
@@ -12,5 +14,12 @@ export const auth = betterAuth({
     }),
     emailAndPassword: {
         enabled: true,
+    },
+    plugins: [magicLinkClient(), tanstackStartCookies()],
+    socialProviders: {
+        google: {
+            clientId: import.meta.env.GOOGLE_CLIENT_ID as string,
+            clientSecret: import.meta.env.GOOGLE_CLIENT_SECRET as string,
+        },
     },
 });

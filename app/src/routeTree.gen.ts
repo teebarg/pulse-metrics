@@ -15,11 +15,12 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthIndexRouteImport } from './routes/auth/index'
-import { Route as AuthOauthRouteImport } from './routes/auth/oauth'
 import { Route as AuthErrorRouteImport } from './routes/auth/error'
+import { Route as AuthSplatRouteImport } from './routes/auth/$'
 import { Route as ProtectedOnboardingRouteImport } from './routes/_protected/onboarding'
 import { Route as ProtectedAccountRouteImport } from './routes/_protected/account'
 import { Route as ProtectedAccountIndexRouteImport } from './routes/_protected/account/index'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ProtectedAccountSettingsRouteImport } from './routes/_protected/account/settings'
 
 const DocsRoute = DocsRouteImport.update({
@@ -51,14 +52,14 @@ const AuthIndexRoute = AuthIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthRoute,
 } as any)
-const AuthOauthRoute = AuthOauthRouteImport.update({
-  id: '/oauth',
-  path: '/oauth',
-  getParentRoute: () => AuthRoute,
-} as any)
 const AuthErrorRoute = AuthErrorRouteImport.update({
   id: '/error',
   path: '/error',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthSplatRoute = AuthSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
   getParentRoute: () => AuthRoute,
 } as any)
 const ProtectedOnboardingRoute = ProtectedOnboardingRouteImport.update({
@@ -76,6 +77,11 @@ const ProtectedAccountIndexRoute = ProtectedAccountIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ProtectedAccountRoute,
 } as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProtectedAccountSettingsRoute =
   ProtectedAccountSettingsRouteImport.update({
     id: '/settings',
@@ -90,10 +96,11 @@ export interface FileRoutesByFullPath {
   '/docs': typeof DocsRoute
   '/account': typeof ProtectedAccountRouteWithChildren
   '/onboarding': typeof ProtectedOnboardingRoute
+  '/auth/$': typeof AuthSplatRoute
   '/auth/error': typeof AuthErrorRoute
-  '/auth/oauth': typeof AuthOauthRoute
   '/auth/': typeof AuthIndexRoute
   '/account/settings': typeof ProtectedAccountSettingsRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/account/': typeof ProtectedAccountIndexRoute
 }
 export interface FileRoutesByTo {
@@ -101,10 +108,11 @@ export interface FileRoutesByTo {
   '/deferred': typeof DeferredRoute
   '/docs': typeof DocsRoute
   '/onboarding': typeof ProtectedOnboardingRoute
+  '/auth/$': typeof AuthSplatRoute
   '/auth/error': typeof AuthErrorRoute
-  '/auth/oauth': typeof AuthOauthRoute
   '/auth': typeof AuthIndexRoute
   '/account/settings': typeof ProtectedAccountSettingsRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/account': typeof ProtectedAccountIndexRoute
 }
 export interface FileRoutesById {
@@ -116,10 +124,11 @@ export interface FileRoutesById {
   '/docs': typeof DocsRoute
   '/_protected/account': typeof ProtectedAccountRouteWithChildren
   '/_protected/onboarding': typeof ProtectedOnboardingRoute
+  '/auth/$': typeof AuthSplatRoute
   '/auth/error': typeof AuthErrorRoute
-  '/auth/oauth': typeof AuthOauthRoute
   '/auth/': typeof AuthIndexRoute
   '/_protected/account/settings': typeof ProtectedAccountSettingsRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/_protected/account/': typeof ProtectedAccountIndexRoute
 }
 export interface FileRouteTypes {
@@ -131,10 +140,11 @@ export interface FileRouteTypes {
     | '/docs'
     | '/account'
     | '/onboarding'
+    | '/auth/$'
     | '/auth/error'
-    | '/auth/oauth'
     | '/auth/'
     | '/account/settings'
+    | '/api/auth/$'
     | '/account/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -142,10 +152,11 @@ export interface FileRouteTypes {
     | '/deferred'
     | '/docs'
     | '/onboarding'
+    | '/auth/$'
     | '/auth/error'
-    | '/auth/oauth'
     | '/auth'
     | '/account/settings'
+    | '/api/auth/$'
     | '/account'
   id:
     | '__root__'
@@ -156,10 +167,11 @@ export interface FileRouteTypes {
     | '/docs'
     | '/_protected/account'
     | '/_protected/onboarding'
+    | '/auth/$'
     | '/auth/error'
-    | '/auth/oauth'
     | '/auth/'
     | '/_protected/account/settings'
+    | '/api/auth/$'
     | '/_protected/account/'
   fileRoutesById: FileRoutesById
 }
@@ -169,6 +181,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   DeferredRoute: typeof DeferredRoute
   DocsRoute: typeof DocsRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -215,18 +228,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthIndexRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/auth/oauth': {
-      id: '/auth/oauth'
-      path: '/oauth'
-      fullPath: '/auth/oauth'
-      preLoaderRoute: typeof AuthOauthRouteImport
-      parentRoute: typeof AuthRoute
-    }
     '/auth/error': {
       id: '/auth/error'
       path: '/error'
       fullPath: '/auth/error'
       preLoaderRoute: typeof AuthErrorRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/$': {
+      id: '/auth/$'
+      path: '/$'
+      fullPath: '/auth/$'
+      preLoaderRoute: typeof AuthSplatRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_protected/onboarding': {
@@ -249,6 +262,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/account/'
       preLoaderRoute: typeof ProtectedAccountIndexRouteImport
       parentRoute: typeof ProtectedAccountRoute
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_protected/account/settings': {
       id: '/_protected/account/settings'
@@ -288,14 +308,14 @@ const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
 )
 
 interface AuthRouteChildren {
+  AuthSplatRoute: typeof AuthSplatRoute
   AuthErrorRoute: typeof AuthErrorRoute
-  AuthOauthRoute: typeof AuthOauthRoute
   AuthIndexRoute: typeof AuthIndexRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  AuthSplatRoute: AuthSplatRoute,
   AuthErrorRoute: AuthErrorRoute,
-  AuthOauthRoute: AuthOauthRoute,
   AuthIndexRoute: AuthIndexRoute,
 }
 
@@ -307,6 +327,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   DeferredRoute: DeferredRoute,
   DocsRoute: DocsRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

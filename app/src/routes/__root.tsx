@@ -97,7 +97,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 <ThemeProvider initialTheme={_storedTheme}>
                     <OrganizationProvider>
                         <WebSocketProvider
-                            url="ws://localhost:7063/ws"
+                            url={import.meta.env.VITE_WS}
                             debug={true}
                             onOpen={() => console.log("WebSocket connected!")}
                             onClose={() => console.log("WebSocket disconnected!")}

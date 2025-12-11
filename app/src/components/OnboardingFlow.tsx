@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Check, Rocket, Store, Key, BarChart3, Zap } from "lucide-react";
-import { updateOnboardingStepFn } from "~/lib/onboarding-server";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { IntegrationStep } from "./onboarding/IntegrationStep";
@@ -10,6 +9,7 @@ import { CompleteStep } from "./onboarding/CompleteStep";
 import { WelcomeStep } from "./onboarding/WelcomeStep";
 import { useOrganization } from "~/providers/organization-provider";
 import { cn } from "~/lib/utils";
+import { updateOnboardingStepFn } from "~/server-fn/onboarding.fn";
 
 const STEPS = [
     { id: "welcome", title: "Welcome", icon: Rocket },

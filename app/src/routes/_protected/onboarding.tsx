@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { getOnboardingStatusFn } from "~/lib/onboarding-server";
 import OnboardingFlow from "~/components/OnboardingFlow";
+import { getOnboardingStatusFn } from "~/server-fn/onboarding.fn";
 
 export const Route = createFileRoute("/_protected/onboarding")({
     component: RouteComponent,

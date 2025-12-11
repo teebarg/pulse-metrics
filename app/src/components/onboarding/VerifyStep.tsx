@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { Check, BarChart3, Zap, Activity, ChevronLeft } from "lucide-react";
-import { updateOnboardingStepFn } from "~/lib/onboarding-server";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRealtimeVerification } from "~/hooks/useRealtimeVerification";
 import { Button } from "../ui/button";
+import { updateOnboardingStepFn } from "~/server-fn/onboarding.fn";
 
 function formatEventType(type: string): string {
     return type

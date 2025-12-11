@@ -15,6 +15,9 @@ export const OrganizationProvider = ({ children }: { children: React.ReactNode }
         queryKey: ["organization"],
         queryFn: () => getOrganizationFn(),
     });
+    console.log("🚀 ~ OrganizationProvider ~ isLoading:", isLoading)
+    console.log("🚀 ~ OrganizationProvider ~ data:", data)
+    console.log("🚀 ~ OrganizationProvider ~ error:", error)
 
     return <OrganizationContext.Provider value={{ data, loading: isLoading, error }}>{children}</OrganizationContext.Provider>;
 };

@@ -1,24 +1,10 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import Auth from "~/components/Auth";
-import { fetchUser } from "~/lib/fetch-user-server-fn";
+import { authMiddleware } from "~/middleware/auth";
 
 export const Route = createFileRoute("/_protected")({
     component: ProtectedLayoutComponent,
-    beforeLoad: async ({ context }) => {
-        const user = await fetchUser();
-        if (!user) {
-            throw new Error("Not authenticated");
-        }
-        return {
-            user,
-        };
-    },
-    errorComponent: ({ error }) => {
-        if (error.message === "Not authenticated") {
-            return <Auth />;
-        }
-
-        throw error;
+    server: {
+        middleware: [authMiddleware],
     },
 });
 

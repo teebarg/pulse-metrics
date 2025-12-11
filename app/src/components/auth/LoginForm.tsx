@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "~/lib/auth-client";
 import z from "zod";
+import { auth } from "~/lib/auth";
 
 interface LoginFormProps {
     isLoading: boolean;
@@ -39,46 +40,58 @@ export function LoginForm({ isLoading }: LoginFormProps) {
 
     const onSubmit = async (loginData: LoginFormData) => {
         toast.loading("Signing in...", { id: "login" });
-        const { data, error } = await authClient.signIn.email(
-            {
+        const { redirect, token, user, url } = await auth.api.signInEmail({
+            body: {
                 email: loginData.email,
                 password: loginData.password,
                 callbackURL: "/account",
                 rememberMe: true,
             },
-            {
-                onRequest: (ctx) => {
-                    console.log("🚀 ~ file: SignupForm.tsx:48 ~ ctx:", ctx);
-                    toast.loading("Creating your account...", { id: "login" });
-                },
-                onSuccess: async (ctx) => {
-                    console.log("🚀 ~ file: SignupForm.tsx:51 ~ ctx:", ctx);
-                    const { getOnboardingStatusFn } = await import("~/lib/onboarding-server");
-                    //redirect to the dashboard or sign in page
-                    try {
-                        const status = await getOnboardingStatusFn();
-                        setTimeout(() => {
-                            if (!status.onboardingCompleted) {
-                                navigate({ to: "/onboarding" });
-                            } else {
-                                navigate({ to: "/account" });
-                            }
-                        }, 500);
-                    } catch {
-                        setTimeout(() => {
-                            navigate({ to: "/onboarding" });
-                        }, 500);
-                    }
-                },
-                onError: (ctx) => {
-                    toast.error(ctx.error.message, {
-                        id: "login",
-                    });
-                },
-            }
-        );
-        console.log("🚀 ~ file: LoginForm.tsx:40 ~ data:", data);
-        console.log("🚀 ~ file: LoginForm.tsx:40 ~ error:", error);
+        });
+        console.log("🚀 ~ onSubmit ~ url:", url);
+        console.log("🚀 ~ onSubmit ~ token:", token);
+        console.log("🚀 ~ onSubmit ~ redirect:", redirect);
+        console.log("🚀 ~ onSubmit ~  user:", user);
+        // const { data, error } = await authClient.signIn.email(
+        //     {
+        //         email: loginData.email,
+        //         password: loginData.password,
+        //         callbackURL: "/account",
+        //         rememberMe: true,
+        //     },
+        //     {
+        //         onRequest: (ctx) => {
+        //             console.log("🚀 ~ file: SignupForm.tsx:48 ~ ctx:", ctx);
+        //             toast.loading("Creating your account...", { id: "login" });
+        //         },
+        //         onSuccess: async (ctx) => {
+        //             console.log("🚀 ~ file: SignupForm.tsx:51 ~ ctx:", ctx);
+        //             const { getOnboardingStatusFn } = await import("~/server-fn/onboarding.fn");
+        //             //redirect to the dashboard or sign in page
+        //             try {
+        //                 const status = await getOnboardingStatusFn();
+        //                 setTimeout(() => {
+        //                     if (!status.onboardingCompleted) {
+        //                         navigate({ to: "/onboarding" });
+        //                     } else {
+        //                         navigate({ to: "/account" });
+        //                     }
+        //                 }, 500);
+        //             } catch {
+        //                 setTimeout(() => {
+        //                     navigate({ to: "/onboarding" });
+        //                 }, 500);
+        //             }
+        //         },
+        //         onError: (ctx) => {
+        //             toast.error(ctx.error.message, {
+        //                 id: "login",
+        //             });
+        //         },
+        //     }
+        // );
+        // console.log("🚀 ~ file: LoginForm.tsx:40 ~ data:", data);
+        // console.log("🚀 ~ file: LoginForm.tsx:40 ~ error:", error);
     };
 
     return (
