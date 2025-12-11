@@ -11,7 +11,7 @@
     "dev": "pnpm run dev:web & pnpm run dev:api",
     "dev:web": "vite dev --host 0.0.0.0",
     "dev:api": "tsx watch src/api/index.ts",
-    "build": "vite build && tsup src/server/index.ts --format esm --out-dir dist/server",
+    "build:api": "tsup src/server/index.ts --format esm --out-dir dist/server",
     "build:web": "vite build",
     "start:web": "node .output/server/index.mjs",
     "start": "vite start",

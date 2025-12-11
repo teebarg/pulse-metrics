@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export const Route = createFileRoute("/auth/error")({
+export const Route = createFileRoute("/_auth/error")({
     component: AuthError,
     validateSearch: (params) => {
         if (params.error && typeof params.error === "string") {

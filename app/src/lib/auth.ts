@@ -18,8 +18,8 @@ export const auth = betterAuth({
     plugins: [magicLinkClient(), tanstackStartCookies()],
     socialProviders: {
         google: {
-            clientId: import.meta.env.GOOGLE_CLIENT_ID as string,
-            clientSecret: import.meta.env.GOOGLE_CLIENT_SECRET as string,
+            clientId: process.env.GOOGLE_CLIENT_ID as string,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
         },
     },
 });

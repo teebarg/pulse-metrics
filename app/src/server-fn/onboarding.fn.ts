@@ -17,7 +17,10 @@ export const completeOnboardingSchema = z.object({
 });
 
 export const getOnboardingStatusFn = createServerFn().handler(async () => {
-    return await api.get<any>("/v1/onboarding/status");
+    console.log("calling endpoint............");
+    const res = await api.get<any>("/v1/onboarding/status");
+    console.log("🚀 ~ file: onboarding.fn.ts:21 ~ res:", res);
+    return res;
 });
 
 export const updateOnboardingStepFn = createServerFn({ method: "POST" })

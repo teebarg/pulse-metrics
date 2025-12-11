@@ -1,6 +1,7 @@
-import { authClient } from "~/lib/auth-client";
+// import { authClient } from "~/lib/auth-client";
 
 const baseURL = process.env.API_URL || "http://localhost.dev";
+console.log("🚀 ~ file: fetch-api.ts:4 ~ baseURL:", baseURL)
 
 interface HeaderOptions {
     cartId?: string | undefined;
@@ -12,10 +13,11 @@ type RequestOptions = RequestInit & {
 };
 
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
-    const { data: session, error } = await authClient.getSession()
+    // const { data: session, error } = await authClient.getSession();
+    // console.log("🚀 ~ file: fetch-api.ts:17 ~ session:", session)
     const { params, ...restOptions } = options;
 
-    const url = new URL(`/api${endpoint}`, baseURL);
+    const url = new URL(`${endpoint}`, baseURL);
 
     if (params) {
         Object.entries(params).forEach(([key, value]) => {
@@ -26,7 +28,7 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
 
     const headers = {
         "Content-Type": "application/json",
-        "X-Auth": session?.session.token ?? "jwt",
+        // "X-Auth": session?.session.token ?? "jwt",
         ...options.headers,
     };
 
@@ -35,6 +37,8 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
         headers,
         credentials: "include",
     });
+
+    console.log("🚀 ~ file: fetch-api.ts:36 ~ response:", response)
 
     return response.json();
 }

@@ -7,7 +7,7 @@ import { nitro } from "nitro/vite";
 
 export default defineConfig({
     server: {
-        port: 5173,
+        port: 5174,
         proxy: {
             "/v1": {
                 target: process.env.API_URL || "http://localhost:8787",
@@ -18,13 +18,13 @@ export default defineConfig({
                 changeOrigin: true,
             },
         },
-        watch: {
-            usePolling: true,
-            interval: 1000,
-        },
+        // watch: {
+        //     usePolling: true,
+        //     interval: 1000,
+        // },
     },
     plugins: [
-        nitro(),
+        nitro({}),
         tsConfigPaths({
             projects: ["./tsconfig.json"],
         }),

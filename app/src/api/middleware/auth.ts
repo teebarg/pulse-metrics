@@ -73,7 +73,6 @@ function extractToken(c: Context): string | null {
 export async function authMiddleware(c: Context, next: Next) {
     try {
         const token = extractToken(c);
-
         if (!token) {
             throw new HTTPException(401, {
                 message: "Authorization token required",
@@ -83,8 +82,6 @@ export async function authMiddleware(c: Context, next: Next) {
         const session = await auth.api.getSession({
             headers: c.req.raw.headers,
         });
-
-        console.log("🚀 ~ file: auth.ts:85 ~ session:", session);
 
         if (!session) {
             throw new HTTPException(401, {

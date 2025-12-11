@@ -1,4 +1,5 @@
 /// <reference types="vite/client" />
+
 import { HeadContent, Outlet, ScriptOnce, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
@@ -12,6 +13,7 @@ import { Toaster } from "sonner";
 import { getStoredTheme, ThemeProvider } from "~/lib/ThemeProvider";
 import { WebSocketProvider } from "pulsews";
 import { OrganizationProvider } from "~/providers/organization-provider";
+// import { AuthProvider } from "~/providers/auth-provider";
 
 export const Route = createRootRouteWithContext<{
     queryClient: QueryClient;
@@ -95,16 +97,18 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             </head>
             <body className="min-h-screen bg-background text-foreground">
                 <ThemeProvider initialTheme={_storedTheme}>
+                    {/* <AuthProvider> */}
                     <OrganizationProvider>
-                        <WebSocketProvider
-                            url={import.meta.env.VITE_WS}
-                            debug={true}
-                            onOpen={() => console.log("WebSocket connected!")}
-                            onClose={() => console.log("WebSocket disconnected!")}
-                        >
-                            {children}
-                        </WebSocketProvider>
+                    <WebSocketProvider
+                        url={import.meta.env.VITE_WS}
+                        debug={true}
+                        onOpen={() => console.log("WebSocket connected!")}
+                        onClose={() => console.log("WebSocket disconnected!")}
+                    >
+                        {children}
+                    </WebSocketProvider>
                     </OrganizationProvider>
+                    {/* </AuthProvider> */}
                     <TanStackRouterDevtools position="bottom-right" />
                     <ReactQueryDevtools buttonPosition="bottom-left" />
                     <Toaster closeButton richColors duration={3000} expand={false} position="top-right" />

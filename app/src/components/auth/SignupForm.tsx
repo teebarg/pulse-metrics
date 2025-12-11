@@ -7,10 +7,6 @@ import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { authClient } from "~/lib/auth-client";
 
-interface SignupFormProps {
-    isLoading: boolean;
-}
-
 const signupFormSchema = z.object({
     fullName: z.string().min(1, "Please enter your full name"),
     email: z.email("Please enter a valid email address"),
@@ -19,7 +15,7 @@ const signupFormSchema = z.object({
 
 type SignupFormData = z.infer<typeof signupFormSchema>;
 
-export function SignupForm({ isLoading }: SignupFormProps) {
+export function SignupForm() {
     const {
         register,
         handleSubmit,
@@ -72,7 +68,7 @@ export function SignupForm({ isLoading }: SignupFormProps) {
                         type="text"
                         placeholder="John Doe"
                         autoComplete="name"
-                        disabled={isSubmitting || isLoading}
+                        disabled={isSubmitting}
                         {...register("fullName")}
                     />
                     {errors.fullName && <p className="text-sm text-destructive">{errors.fullName.message}</p>}
@@ -84,7 +80,7 @@ export function SignupForm({ isLoading }: SignupFormProps) {
                         type="email"
                         placeholder="you@example.com"
                         autoComplete="email"
-                        disabled={isSubmitting || isLoading}
+                        disabled={isSubmitting}
                         {...register("email")}
                     />
                     {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
@@ -96,12 +92,12 @@ export function SignupForm({ isLoading }: SignupFormProps) {
                         type="password"
                         placeholder="••••••••"
                         autoComplete="new-password"
-                        disabled={isSubmitting || isLoading}
+                        disabled={isSubmitting}
                         {...register("password")}
                     />
                     {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
                 </div>
-                <Button type="submit" className="w-full" disabled={isSubmitting || isLoading}>
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
                     {isSubmitting ? "Creating account..." : "Create Account"}
                 </Button>
             </form>

@@ -7,18 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "~/lib/auth-client";
 import z from "zod";
-import { auth } from "~/lib/auth";
-
-interface LoginFormProps {
-    isLoading: boolean;
-}
 
 type LoginFormData = {
     email: string;
     password: string;
 };
 
-export function LoginForm({ isLoading }: LoginFormProps) {
+export function LoginForm() {
     const navigate = useNavigate();
     const {
         register,
@@ -39,59 +34,45 @@ export function LoginForm({ isLoading }: LoginFormProps) {
     });
 
     const onSubmit = async (loginData: LoginFormData) => {
-        toast.loading("Signing in...", { id: "login" });
-        const { redirect, token, user, url } = await auth.api.signInEmail({
-            body: {
+        const { data, error } = await authClient.signIn.email(
+            {
                 email: loginData.email,
                 password: loginData.password,
                 callbackURL: "/account",
                 rememberMe: true,
             },
-        });
-        console.log("🚀 ~ onSubmit ~ url:", url);
-        console.log("🚀 ~ onSubmit ~ token:", token);
-        console.log("🚀 ~ onSubmit ~ redirect:", redirect);
-        console.log("🚀 ~ onSubmit ~  user:", user);
-        // const { data, error } = await authClient.signIn.email(
-        //     {
-        //         email: loginData.email,
-        //         password: loginData.password,
-        //         callbackURL: "/account",
-        //         rememberMe: true,
-        //     },
-        //     {
-        //         onRequest: (ctx) => {
-        //             console.log("🚀 ~ file: SignupForm.tsx:48 ~ ctx:", ctx);
-        //             toast.loading("Creating your account...", { id: "login" });
-        //         },
-        //         onSuccess: async (ctx) => {
-        //             console.log("🚀 ~ file: SignupForm.tsx:51 ~ ctx:", ctx);
-        //             const { getOnboardingStatusFn } = await import("~/server-fn/onboarding.fn");
-        //             //redirect to the dashboard or sign in page
-        //             try {
-        //                 const status = await getOnboardingStatusFn();
-        //                 setTimeout(() => {
-        //                     if (!status.onboardingCompleted) {
-        //                         navigate({ to: "/onboarding" });
-        //                     } else {
-        //                         navigate({ to: "/account" });
-        //                     }
-        //                 }, 500);
-        //             } catch {
-        //                 setTimeout(() => {
-        //                     navigate({ to: "/onboarding" });
-        //                 }, 500);
-        //             }
-        //         },
-        //         onError: (ctx) => {
-        //             toast.error(ctx.error.message, {
-        //                 id: "login",
-        //             });
-        //         },
-        //     }
-        // );
-        // console.log("🚀 ~ file: LoginForm.tsx:40 ~ data:", data);
-        // console.log("🚀 ~ file: LoginForm.tsx:40 ~ error:", error);
+            {
+                onRequest: (ctx) => {
+                    console.log("🚀 ~ file: SignupForm.tsx:48 ~ ctx:", ctx);
+                    toast.loading("Signing into your account...", { id: "login" });
+                },
+                onSuccess: async (ctx) => {
+                    console.log("🚀 ~ file: SignupForm.tsx:51 ~ ctx:", ctx);
+                    const { getOnboardingStatusFn } = await import("~/server-fn/onboarding.fn");
+                    try {
+                        const status = await getOnboardingStatusFn();
+                        setTimeout(() => {
+                            if (!status.onboardingCompleted) {
+                                navigate({ to: "/onboarding" });
+                            } else {
+                                navigate({ to: "/account" });
+                            }
+                        }, 500);
+                    } catch {
+                        setTimeout(() => {
+                            navigate({ to: "/onboarding" });
+                        }, 500);
+                    }
+                },
+                onError: (ctx) => {
+                    toast.error(ctx.error.message, {
+                        id: "login",
+                    });
+                },
+            }
+        );
+        console.log("🚀 ~ file: LoginForm.tsx:40 ~ data:", data);
+        console.log("🚀 ~ file: LoginForm.tsx:40 ~ error:", error);
     };
 
     return (
@@ -104,7 +85,7 @@ export function LoginForm({ isLoading }: LoginFormProps) {
                         type="email"
                         placeholder="you@example.com"
                         autoComplete="email"
-                        disabled={isSubmitting || isLoading}
+                        disabled={isSubmitting}
                         {...register("email")}
                     />
                     {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
@@ -116,12 +97,12 @@ export function LoginForm({ isLoading }: LoginFormProps) {
                         type="password"
                         placeholder="••••••••"
                         autoComplete="current-password"
-                        disabled={isSubmitting || isLoading}
+                        disabled={isSubmitting}
                         {...register("password")}
                     />
                     {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
                 </div>
-                <Button type="submit" className="w-full" disabled={isSubmitting || isLoading}>
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
                     {isSubmitting ? "Signing in..." : "Sign In"}
                 </Button>
             </form>

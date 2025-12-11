@@ -1,6 +1,4 @@
 import { useLocation, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -31,8 +29,8 @@ const GoogleIcon = () => (
     </svg>
 );
 
-const GoogleButton = ({ onClick, disabled }: { onClick: () => void; disabled: boolean }) => (
-    <Button type="button" variant="outline" className="w-full" onClick={onClick} disabled={disabled}>
+const GoogleButton = ({ onClick }: { onClick: () => void }) => (
+    <Button type="button" variant="outline" className="w-full" onClick={onClick}>
         <GoogleIcon />
         Continue with Google
     </Button>
@@ -52,7 +50,6 @@ const Divider = () => (
 export default function Auth() {
     const navigate = useNavigate();
     const location = useLocation();
-    const [isLoading, setIsLoading] = useState(false);
 
     const handleSocialLogin = async () => {
         const data = await authClient.signIn.social({
@@ -61,7 +58,7 @@ export default function Auth() {
             newUserCallbackURL: "/onboarding",
             errorCallbackURL: "/error",
         });
-        console.log("🚀 ~ file: Auth.tsx:60 ~ data:", data)
+        console.log("🚀 ~ file: Auth.tsx:60 ~ data:", data);
     };
 
     return (
@@ -85,17 +82,17 @@ export default function Auth() {
 
                         <TabsContent value="login">
                             <div className="space-y-4">
-                                <GoogleButton onClick={handleSocialLogin} disabled={isLoading} />
+                                <GoogleButton onClick={handleSocialLogin} />
                                 <Divider />
-                                <LoginForm isLoading={isLoading} />
+                                <LoginForm />
                             </div>
                         </TabsContent>
 
                         <TabsContent value="signup">
                             <div className="space-y-4">
-                                <GoogleButton onClick={handleSocialLogin} disabled={isLoading} />
+                                <GoogleButton onClick={handleSocialLogin} />
                                 <Divider />
-                                <SignupForm isLoading={isLoading} />
+                                <SignupForm />
                             </div>
                         </TabsContent>
 

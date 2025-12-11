@@ -24,6 +24,7 @@ app.onError(errorHandler);
 
 // app.use("/v1/analytics/*", authMiddleware);
 app.use("/v1/profile/*", authMiddleware);
+app.use("/v1/onboarding/*", authMiddleware);
 app.use("/v1/analytics/*", verifyApiKey);
 app.use("/v1/events/*", verifyApiKey);
 

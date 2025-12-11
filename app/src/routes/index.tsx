@@ -8,18 +8,19 @@ import Footer from "~/components/Footer";
 import TrustedBy from "~/components/landing/TrustedBy";
 import { motion } from "framer-motion";
 import { fetchUser } from "~/lib/fetch-user-server-fn";
+import { authClient } from "~/lib/auth-client";
+// import { useAuth } from "~/providers/auth-provider";
 
 export const Route = createFileRoute("/")({
     component: RouteComponent,
-    loader: async () => {
-        const user = await fetchUser();
-        const isAuthenticated = user !== null;
-        return { isAuthenticated };
-    },
 });
 
 function RouteComponent() {
-    const { isAuthenticated } = Route.useLoaderData();
+    // const { isAuthenticated } = useAuth();
+    // const isAuthenticated = true;
+    const { data: session } = authClient.useSession();
+    console.log("🚀 ~ file: index.tsx:22 ~ session:", session)
+    const isAuthenticated = !!session;
     const navigate = useNavigate();
 
     const handleGetStarted = () => {
@@ -51,7 +52,6 @@ function RouteComponent() {
                 </div>
             </header>
 
-            {/* Hero Section */}
             <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
                 <div className="text-center">
                     <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
@@ -71,7 +71,6 @@ function RouteComponent() {
                         </button>
                     </div>
 
-                    {/* Trust indicators */}
                     <div className="mt-12 flex gap-8 justify-center items-center text-sm text-slate-400">
                         <div className="flex items-center gap-2">
                             <Check className="w-5 h-5 text-green-400" />
@@ -104,7 +103,6 @@ function RouteComponent() {
                 </div>
             </section>
 
-            {/* Features Section */}
             <section className="bg-slate-800/50 py-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
@@ -183,7 +181,6 @@ function RouteComponent() {
                 </div>
             </section>
 
-            {/* Pricing Section */}
             <Pricing />
 
             {/* CTA Section */}
@@ -196,8 +193,6 @@ function RouteComponent() {
                     </button>
                 </div>
             </section>
-
-            {/* Footer */}
             <footer className="border-t border-slate-700 py-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center">
