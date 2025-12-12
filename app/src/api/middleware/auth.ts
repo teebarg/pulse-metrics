@@ -73,6 +73,8 @@ function extractToken(c: Context): string | null {
 export async function authMiddleware(c: Context, next: Next) {
     try {
         const token = extractToken(c);
+        console.log("🚀 ~ authMiddleware ~ token:", token)
+        console.log("🚀 ~ authMiddleware ~ token:", c.req.raw.headers)
         if (!token) {
             throw new HTTPException(401, {
                 message: "Authorization token required",

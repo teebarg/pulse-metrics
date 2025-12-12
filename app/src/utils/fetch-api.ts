@@ -1,7 +1,6 @@
-// import { authClient } from "~/lib/auth-client";
+import { getCookie } from "@tanstack/react-start/server";
 
 const baseURL = process.env.API_URL || "http://localhost.dev";
-console.log("🚀 ~ file: fetch-api.ts:4 ~ baseURL:", baseURL)
 
 interface HeaderOptions {
     cartId?: string | undefined;
@@ -13,8 +12,6 @@ type RequestOptions = RequestInit & {
 };
 
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
-    // const { data: session, error } = await authClient.getSession();
-    // console.log("🚀 ~ file: fetch-api.ts:17 ~ session:", session)
     const { params, ...restOptions } = options;
 
     const url = new URL(`${endpoint}`, baseURL);
@@ -28,17 +25,15 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
 
     const headers = {
         "Content-Type": "application/json",
-        // "X-Auth": session?.session.token ?? "jwt",
+        "Authorization": getCookie("better-auth.session_token") ?? "jwt",
+        "Cookie": `better-auth.session_token=${getCookie("better-auth.session_token")}`,
         ...options.headers,
     };
 
     const response = await fetch(url, {
         ...restOptions,
         headers,
-        credentials: "include",
     });
-
-    console.log("🚀 ~ file: fetch-api.ts:36 ~ response:", response)
 
     return response.json();
 }

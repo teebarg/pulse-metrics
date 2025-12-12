@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { authClient } from "~/lib/auth-client";
+import { getOnboardingStatusFn } from "~/server-fn/onboarding.fn";
+import { useNavigate } from "@tanstack/react-router";
 
 const signupFormSchema = z.object({
     fullName: z.string().min(1, "Please enter your full name"),
@@ -16,6 +18,7 @@ const signupFormSchema = z.object({
 type SignupFormData = z.infer<typeof signupFormSchema>;
 
 export function SignupForm() {
+    const navigate = useNavigate();
     const {
         register,
         handleSubmit,
@@ -31,7 +34,6 @@ export function SignupForm() {
     });
 
     const onSubmit = async (signUpData: SignupFormData) => {
-        toast.loading("Creating your account...", { id: "signup" });
         const { data, error } = await authClient.signUp.email(
             {
                 email: signUpData.email,
@@ -44,13 +46,27 @@ export function SignupForm() {
                     console.log("🚀 ~ file: SignupForm.tsx:48 ~ ctx:", ctx);
                     toast.loading("Creating your account...", { id: "signup" });
                 },
-                onSuccess: (ctx) => {
+                onSuccess: async (ctx) => {
                     console.log("🚀 ~ file: SignupForm.tsx:51 ~ ctx:", ctx);
-                    //redirect to the dashboard or sign in page
+                    toast.success("Account created successfully", { id: "signup" });
+                    try {
+                        const status = await getOnboardingStatusFn();
+                        setTimeout(() => {
+                            if (!status.onboardingCompleted) {
+                                navigate({ to: "/onboarding" });
+                            } else {
+                                navigate({ to: "/account" });
+                            }
+                        }, 500);
+                    } catch {
+                        setTimeout(() => {
+                            navigate({ to: "/onboarding" });
+                        }, 500);
+                    }
                 },
                 onError: (ctx) => {
                     // display the error message
-                    toast.error(ctx.error.message);
+                    toast.error(ctx.error.message,  { id: "signup" });
                 },
             }
         );
