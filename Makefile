@@ -36,6 +36,18 @@ clean:
 deploy:
 	vercel deploy --prod
 
+.PHONY: serve-app
+serve-app:
+	@cd apps/web && pnpm dev
+
+.PHONY: serve-api
+serve-api:
+	@cd apps/api && pnpm dev
+
+.PHONY: dev
+dev:
+	make -j 2 serve-api serve-app
+
 .PHONY: help
 help:
 	@echo "Available commands:"
