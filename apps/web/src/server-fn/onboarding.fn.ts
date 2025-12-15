@@ -17,18 +17,14 @@ export const completeOnboardingSchema = z.object({
 });
 
 export const getOnboardingStatusFn = createServerFn().handler(async () => {
-    console.log("calling endpoint............");
     const res = await api.get<any>("/v1/onboarding/status");
-    console.log("🚀 ~ file: onboarding.fn.ts:21 ~ res:", res);
     return res;
 });
 
 export const updateOnboardingStepFn = createServerFn({ method: "POST" })
     .inputValidator((input: unknown) => updateOnboardingStepSchema.parse(input))
     .handler(async ({ data }) => {
-        console.log("🚀 ~ file: onboarding-server.ts:66 ~ data:", data);
         const res = await api.patch<{ success: boolean; step: number }>("/v1/onboarding/update", data);
-        console.log("🚀 ~ file: onboarding.fn.ts:31 ~ res:", res);
         return res;
     });
 

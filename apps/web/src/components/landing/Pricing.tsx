@@ -84,8 +84,8 @@ export default function Pricing() {
                         <Zap className="h-3 w-3 mr-2" />
                         Simple pricing
                     </Badge>
-                    <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Simple, transparent pricing</h2>
-                    <p className="text-xl text-slate-600 max-w-2xl mx-auto">Start free and scale as you grow. No hidden fees, cancel anytime.</p>
+                    <h2 className="text-4xl md:text-5xl font-bold mb-4">Simple, transparent pricing</h2>
+                    <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Start free and scale as you grow. No hidden fees, cancel anytime.</p>
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-8">
@@ -146,7 +146,7 @@ export default function Pricing() {
                 </div>
 
                 <div className="mt-16 text-center">
-                    <p className="text-slate-600 mb-6">All plans include 14-day free trial. No credit card required.</p>
+                    <p className="text-muted-foreground mb-6">All plans include 14-day free trial. No credit card required.</p>
                     <div className="flex flex-wrap justify-center gap-8 text-sm text-slate-500">
                         <div className="flex items-center gap-2">
                             <Check className="w-4 h-4 text-green-600" />

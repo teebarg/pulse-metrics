@@ -15,7 +15,6 @@ function formatEventType(type: string): string {
 
 export function VerifyStep({ formData, onPrev, onSkip }: { formData: any; onPrev: () => void; onSkip: () => void }) {
     const { isVerifying, eventsReceived, isVerified, startVerification, stopVerification } = useRealtimeVerification(formData.eventsReceived ?? 0);
-    const hasEvents = eventsReceived > 0;
     const queryClient = useQueryClient();
 
     useEffect(() => {

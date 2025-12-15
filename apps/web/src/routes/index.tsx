@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { BarChart3, Zap, Shield, TrendingUp, Code, Check } from "lucide-react";
 import Pricing from "~/components/landing/Pricing";
 import { authClient } from "~/lib/auth-client";
+import { usePulseMetrics } from "~/hooks/usePulseMetrics";
 
 export const Route = createFileRoute("/")({
     component: RouteComponent,
@@ -12,6 +13,7 @@ function RouteComponent() {
     const { data: session } = authClient.useSession();
     const isAuthenticated = !!session;
     const navigate = useNavigate();
+    const { track } = usePulseMetrics();
 
     const handleGetStarted = () => {
         navigate({ to: "/auth" });
@@ -25,6 +27,10 @@ function RouteComponent() {
                 },
             },
         });
+    };
+
+    const handleTest = () => {
+        track("product_view", { productId: 1, name: "Test", product_name: "Apple", price: 5000 });
     };
 
     return (
@@ -90,6 +96,11 @@ function RouteComponent() {
                             <span>2-Minute Setup</span>
                         </div>
                     </div>
+                </div>
+                <div>
+                    <Button variant="destructive" onClick={handleTest}>
+                        Test Metrics
+                    </Button>
                 </div>
 
                 {/* Demo Dashboard Preview */}

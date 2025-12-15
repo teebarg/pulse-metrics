@@ -32,7 +32,6 @@ class PulseMetricsSDK {
     private retryQueue: TrackedEvent[] = [];
 
     constructor() {
-        // Default configuration
         this.config = {
             apiKey: "",
             apiUrl: "https://api.pulsemetrics.io",
@@ -61,7 +60,6 @@ class PulseMetricsSDK {
             return;
         }
 
-        // Merge user config with defaults
         this.config = { ...this.config, ...config };
         this.isInitialized = true;
 
@@ -110,7 +108,6 @@ class PulseMetricsSDK {
 
         this.log("Tracking event:", event);
 
-        // Add to queue
         this.addToQueue(event);
 
         // Flush immediately for critical events
@@ -139,7 +136,6 @@ class PulseMetricsSDK {
         this.userId = userId;
         this.log("User identified:", userId);
 
-        // Track identification event
         this.track("identify", { user_id: userId });
     }
 
@@ -199,7 +195,6 @@ class PulseMetricsSDK {
         return this.isInitialized;
     }
 
-    // Private methods
 
     private addToQueue(event: TrackedEvent): void {
         // Check queue size limit
@@ -241,7 +236,7 @@ class PulseMetricsSDK {
                     "X-API-Key": this.config.apiKey,
                 },
                 body: JSON.stringify(payload),
-                keepalive: true, // Important for page unload
+                keepalive: true,
             });
 
             if (!response.ok) {
@@ -257,7 +252,6 @@ class PulseMetricsSDK {
     }
 
     private generateSessionId(): string {
-        // Try to get from sessionStorage first
         if (typeof window !== "undefined" && window.sessionStorage) {
             const existingId = sessionStorage.getItem("pulse_session_id");
             if (existingId) return existingId;
@@ -267,7 +261,6 @@ class PulseMetricsSDK {
             return newId;
         }
 
-        // Fallback for environments without sessionStorage
         return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     }
 
@@ -293,5 +286,4 @@ if (typeof window !== "undefined") {
     (window as any).PulseMetrics = pulsemetrics;
 }
 
-// Type exports
 export type { PulseMetricsConfig, EventProperties, TrackedEvent };

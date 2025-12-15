@@ -29,7 +29,7 @@ export const Route = createFileRoute("/_protected/onboarding")({
     component: RouteComponent,
     loader: async ({ context: { queryClient } }) => {
         const data = await queryClient.ensureQueryData(organizationQueryOptions());
-        if (data.onboarding_completed) {
+        if (data.onboardingCompleted) {
             throw redirect({ to: "/account" });
         }
         return data;

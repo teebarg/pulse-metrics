@@ -48,7 +48,7 @@ export class OnBoardingService {
                 {
                     name: `${user.email}'s Store`,
                     plan: "free",
-                    onboarding_completed: false,
+                    onboardingCompleted: false,
                 },
                 { id: organizations.id }
             );
@@ -108,22 +108,24 @@ export class OnBoardingService {
                 organizationId: org.id,
             });
             return {
-                onboarding_completed: false,
+                onboardingCompleted: false,
                 onboardingStep: 0,
             };
         }
-        const query = `
-            SELECT onboarding_completed, onboarding_step
-            FROM organizations
-            WHERE id = $1
-            LIMIT 1
-        `;
-        const result = await pool.query(query, [userData[0].organizationId]);
-        const org = result.rows[0] ?? {};
+        // const query = `
+        //     SELECT onboardingCompleted, onboardingStep
+        //     FROM organization
+        //     WHERE id = $1
+        //     LIMIT 1
+        // `;
+        // const result = await pool.query(query, [userData[0].organizationId]);
+        // const org = result.rows[0] ?? {};
+        const res = await this.organizationRepo.getOrg(userData[0].organizationId);
+        const org = res[0]
 
         return {
-            onboardingCompleted: org.onboarding_completed ?? false,
-            onboardingStep: org.onboarding_step ?? 0,
+            onboardingCompleted: org.onboardingCompleted ?? false,
+            onboardingStep: org.onboardingStep ?? 0,
         };
     }
 }

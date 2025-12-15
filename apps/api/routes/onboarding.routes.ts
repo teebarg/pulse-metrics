@@ -24,6 +24,7 @@ const OnboardingSchema = z.object({
     store: z.string().optional(),
     domain: z.string().optional(),
     platform: z.enum(["shopify", "woocommerce", "custom"]).or(z.literal("")).optional(),
+    onboardingCompleted: z.boolean().optional()
 });
 
 export const onBoardingRoutes = new OpenAPIHono();

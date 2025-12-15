@@ -1,11 +1,22 @@
+APP_NAME        ?= pulse-api
+DOCKER_USERNAME ?= beafdocker
+IMAGE_NAME      ?= $(DOCKER_USERNAME)/$(APP_NAME)
+
+# Versioning
+VERSION         ?= $(shell git describe --tags --always --dirty)
+TAG             ?= $(VERSION)
+
+DOCKERFILE      ?= apps/api/Dockerfile
+PLATFORM        ?= linux/amd6
+
 DOCKER_COMPOSE = docker compose
 SERVICE = pulse-metrics
 
 .PHONY: all
 all: build up
 
-.PHONY: build
-build:
+.PHONY: build-dev
+build-dev:
 	$(DOCKER_COMPOSE) build
 
 .PHONY: up
@@ -47,6 +58,22 @@ serve-api:
 .PHONY: dev
 dev:
 	make -j 2 serve-api serve-app
+
+.PHONY: build
+build:
+	docker build --platform $(PLATFORM) -f $(DOCKERFILE) -t $(IMAGE_NAME):$(TAG) .
+
+.PHONY: tag
+tag:
+	docker tag $(IMAGE_NAME):$(TAG) $(IMAGE_NAME):latest
+
+.PHONY: push
+push:
+	docker push $(IMAGE_NAME):$(TAG)
+	docker push $(IMAGE_NAME):latest
+
+.PHONY: release
+release: build tag push
 
 .PHONY: help
 help:

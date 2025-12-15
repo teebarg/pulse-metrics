@@ -1,8 +1,7 @@
 import { type Context, type Next } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { db } from "~/db";
-import { organizations, users } from "~/db/schema";
-import { generateApiKey } from "../utils/common.utils";
+import { organizations } from "~/db/schema";
 import { eq } from "drizzle-orm";
 import { auth } from "~/lib/auth";
 
@@ -29,7 +28,7 @@ export async function verifyApiKey(c: Context, next: Next) {
             return c.json({ error: "Invalid API key" }, 401);
         }
 
-        if (org.eventsLimit && (org.eventsUsed || 0 >= org.eventsLimit)) {
+        if (typeof org.eventsLimit === "number" && (org.eventsUsed ?? 0) >= org.eventsLimit) {
             return c.json(
                 {
                     error: "Event limit exceeded",
@@ -73,7 +72,6 @@ function extractToken(c: Context): string | null {
 export async function authMiddleware(c: Context, next: Next) {
     try {
         const token = extractToken(c);
-        console.log("🚀 ~ file: auth.ts:76 ~ token:", token);
         if (!token) {
             throw new HTTPException(401, {
                 message: "Authorization token required",
@@ -83,8 +81,6 @@ export async function authMiddleware(c: Context, next: Next) {
         const session = await auth.api.getSession({
             headers: c.req.raw.headers,
         });
-
-        console.log("🚀 ~ file: auth.ts:84 ~ session:", session);
 
         if (!session) {
             throw new HTTPException(401, {
