@@ -8,16 +8,6 @@ import { nitro } from "nitro/vite";
 export default defineConfig({
     server: {
         port: 5174,
-        proxy: {
-            "/v1": {
-                target: process.env.API_URL || "http://localhost:8787",
-                changeOrigin: true,
-            },
-            "/health": {
-                target: process.env.API_URL || "http://localhost:8787",
-                changeOrigin: true,
-            },
-        },
     },
     plugins: [
         nitro(),
@@ -26,6 +16,9 @@ export default defineConfig({
         }),
         tailwindcss(),
         tanstackStart(),
+        tanstackRouter({
+            autoCodeSplitting: true,
+        }),
         viteReact(),
     ],
 });
