@@ -6,7 +6,7 @@ IMAGE_NAME      ?= $(DOCKER_USERNAME)/$(APP_NAME)
 VERSION         ?= $(shell git describe --tags --always --dirty)
 TAG             ?= $(VERSION)
 
-DOCKERFILE      ?= apps/api/Dockerfile
+DOCKERFILE      ?= apps/api/Dockerfile.prod
 PLATFORM        ?= linux/amd6
 
 DOCKER_COMPOSE = docker compose
@@ -17,7 +17,7 @@ all: build up
 
 .PHONY: build-dev
 build-dev:
-	$(DOCKER_COMPOSE) build
+	$(DOCKER_COMPOSE) build -f apps/api/Dockerfile .
 
 .PHONY: up
 up:
