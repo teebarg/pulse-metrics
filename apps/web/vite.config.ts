@@ -4,6 +4,7 @@ import tsConfigPaths from "vite-tsconfig-paths";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { nitro } from "nitro/vite";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 
 export default defineConfig({
     server: {

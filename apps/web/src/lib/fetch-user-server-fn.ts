@@ -1,9 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { authClient } from "./auth-client";
 
-export const fetchUser: () => Promise<any | null> = createServerFn({
-    method: "GET",
-}).handler(async () => {
+export const fetchUser: () => Promise<any | null> = createServerFn().handler(async () => {
     const { data, error } = await authClient.getSession();
 
     if (error) {
