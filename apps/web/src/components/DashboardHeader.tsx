@@ -9,15 +9,12 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "@tanstack/react-router";
-import { toast } from "sonner";
-import { useState } from "react";
-import { ThemeToggle } from "./theme-toggle";
 import { CurrentUserAvatar } from "./CurrentUserAvatar";
 import { authClient } from "~/lib/auth-client";
+import { ThemeToggle } from "./theme-toggle";
 
 export function DashboardHeader() {
     const navigate = useNavigate();
-    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const handleLogout = async () => {
         await authClient.signOut({
@@ -44,9 +41,7 @@ export function DashboardHeader() {
                         <DropdownMenuLabel>My Account</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => navigate({ to: "/account/settings" })}>Settings</DropdownMenuItem>
-                        <DropdownMenuItem onClick={handleLogout} disabled={isLoggingOut}>
-                            {isLoggingOut ? "Signing out..." : "Log out"}
-                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>

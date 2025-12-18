@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { api } from "~/utils/fetch-api";
+import { getRequest } from "@tanstack/react-start/server";
 
 export const updateOnboardingStepSchema = z.object({
     step: z.number().int().min(0),
@@ -17,7 +18,8 @@ export const completeOnboardingSchema = z.object({
 });
 
 export const getOnboardingStatusFn = createServerFn().handler(async () => {
-    const res = await api.get<any>("/v1/onboarding/status");
+    const request = getRequest();
+    const res = await api.get<any>("/v1/onboarding/status", { from: new URL(request.url).pathname });
     return res;
 });
 

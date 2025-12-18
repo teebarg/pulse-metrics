@@ -5,8 +5,6 @@ import { api } from "~/utils/fetch-api";
 export interface Settings {
     name?: string;
     apiKey?: string;
-    useOwnKey: boolean;
-    preferredModel: string;
     createdAt?: string;
     updatedAt?: string;
 }
@@ -24,8 +22,6 @@ export const updateSettingsFn = createServerFn({ method: "POST" })
         z.object({
             name: z.string().optional(),
             apiKey: z.string().optional(),
-            useOwnKey: z.boolean().optional(),
-            preferredModel: z.string().optional(),
         })
     )
     .handler(async ({ data }) => {

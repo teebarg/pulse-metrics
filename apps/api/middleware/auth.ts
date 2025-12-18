@@ -1,18 +1,29 @@
 import { type Context, type Next } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { db } from "~/db";
-import { organizations } from "~/db/schema";
+import { organizations, users } from "~/db/schema";
 import { eq } from "drizzle-orm";
 import { auth } from "~/lib/auth";
 
 export async function verifyApiKey(c: Context, next: Next) {
-    const apiKey = c.req.header("X-API-Key");
-
-    if (!apiKey) {
-        return c.json({ error: "API key required" }, 401);
-    }
-
     try {
+        const token = extractToken(c);
+        if (!token) {
+            throw new HTTPException(401, {
+                message: "Authorization token required",
+            });
+        }
+
+        const session = await auth.api.getSession({
+            headers: c.req.raw.headers,
+        });
+
+        if (!session) {
+            throw new HTTPException(401, {
+                message: "Invalid or expired token",
+            });
+        }
+
         const [org] = await db
             .select({
                 id: organizations.id,
@@ -20,26 +31,22 @@ export async function verifyApiKey(c: Context, next: Next) {
                 eventsLimit: organizations.eventsLimit,
                 eventsUsed: organizations.eventsUsed,
             })
-            .from(organizations)
-            .where(eq(organizations.apiKey, apiKey))
+            .from(users)
+            .where(eq(users.id, session.user.id))
+            .innerJoin(organizations, eq(organizations.id, users.organizationId))
             .limit(1);
 
         if (!org) {
-            return c.json({ error: "Invalid API key" }, 401);
-        }
-
-        if (typeof org.eventsLimit === "number" && (org.eventsUsed ?? 0) >= org.eventsLimit) {
-            return c.json(
-                {
-                    error: "Event limit exceeded",
-                    message: `Your ${org.plan} plan limit of ${org.eventsLimit} events has been reached.`,
-                },
-                429
-            );
+            return c.json({ error: "Invalid Organization" }, 401);
         }
 
         c.set("organizationId", org.id);
         c.set("organization", org);
+        c.set("user", {
+            id: session.user.id,
+            email: session.user.email,
+            user_metadata: session.user,
+        });
 
         await next();
     } catch (err) {

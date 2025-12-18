@@ -1,19 +1,18 @@
+import { redirect } from "@tanstack/react-router";
 import { getCookie } from "@tanstack/react-start/server";
 
 const baseURL = process.env.API_URL || "http://localhost.dev";
 
-interface HeaderOptions {
-    cartId?: string | undefined;
-}
+interface HeaderOptions {}
 
 type RequestOptions = RequestInit & {
     params?: Record<string, string | number | boolean | null | undefined>;
     headers?: HeaderOptions;
+    from?: string;
 };
 
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
-    const { params, ...restOptions } = options;
-
+    const { params, from, ...restOptions } = options;
     const url = new URL(`${endpoint}`, baseURL);
 
     if (params) {
@@ -23,10 +22,12 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
         });
     }
 
+    const token = getCookie("better-auth.session_token") ?? "";
+
     const headers = {
         "Content-Type": "application/json",
-        "Authorization": getCookie("better-auth.session_token") ?? "",
-        "Cookie": `better-auth.session_token=${getCookie("better-auth.session_token")}`,
+        Authorization: token,
+        Cookie: `better-auth.session_token=${token}`,
         ...options.headers,
     };
 
@@ -34,6 +35,14 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
         ...restOptions,
         headers,
     });
+    if (response.status === 401 && from) {
+        throw redirect({
+            to: "/auth",
+            search: {
+                callbackUrl: encodeURIComponent(from),
+            },
+        });
+    }
 
     return response.json();
 }

@@ -4,109 +4,32 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User, Key, Brain, LogOut, EyeOffIcon, EyeIcon } from "lucide-react";
-import { toast } from "sonner";
-import { useState, useEffect } from "react";
-import { Switch } from "~/components/ui/switch";
-import { type Settings } from "~/lib/settings";
-import { getProfile, updateProfile, type UserProfile } from "~/lib/profile";
+import { User, LogOut, Key, EyeOffIcon, EyeIcon } from "lucide-react";
+import { useState } from "react";
 import { authClient } from "~/lib/auth-client";
-import { getSettingsFn, updateSettingsFn } from "~/server-fn/settings.fn";
+import { getOrganizationFn } from "~/server-fn/organization.fn";
+import { useSuspenseQuery } from "@tanstack/react-query";
+
+const organizationQueryOptions = () => ({
+    queryKey: ["organization"],
+    queryFn: () => getOrganizationFn(),
+});
 
 export const Route = createFileRoute("/_protected/account/settings")({
+    loader: async ({ context: { queryClient } }) => {
+        const data = await queryClient.ensureQueryData(organizationQueryOptions());
+
+        return {
+            data,
+        };
+    },
     component: RouteComponent,
 });
 
 function RouteComponent() {
     const navigate = useNavigate();
-    const [isLoggingOut, setIsLoggingOut] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isSavingApiKey, setIsSavingApiKey] = useState(false);
+    const { data } = useSuspenseQuery(organizationQueryOptions());
     const [showApiKey, setShowApiKey] = useState(false);
-    const [settings, setSettings] = useState<Settings>({
-        useOwnKey: false,
-        preferredModel: "gemini",
-    });
-    const [profile, setProfile] = useState<UserProfile | null>(null);
-    const [apiKey, setApiKey] = useState("");
-
-    // Load settings on mount
-    useEffect(() => {
-        const loadAll = async () => {
-            try {
-                const [settingsData, profileData] = await Promise.all([getSettingsFn(), getProfile()]);
-                setSettings(settingsData);
-                setProfile(profileData);
-                if (settingsData.apiKey) {
-                    setApiKey("********");
-                }
-            } catch (error) {
-                const message = error instanceof Error ? error.message : "Failed to load settings";
-                toast.error(message);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        loadAll();
-    }, []);
-
-    const handleSaveProfile = async () => {
-        if (!profile) return;
-        const toastId = toast.loading("Saving profile...");
-        try {
-            const updatedProfile = await updateProfile({ name: profile.name });
-            setProfile(updatedProfile);
-            toast.success("Profile saved", { id: toastId });
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to save profile";
-            toast.error(message, { id: toastId });
-        }
-    };
-
-    const handleApiKeyChange = (value: boolean) => {
-        setSettings((prev) => ({ ...prev, useOwnKey: value }));
-        if (!value) {
-            setApiKey("");
-            handleSaveApiKey("");
-        }
-    };
-
-    const handleSaveApiKey = async (key: string = apiKey) => {
-        setIsSavingApiKey(true);
-        const toastId = toast.loading("Saving API key...");
-        try {
-            const updatedSettings = await updateSettingsFn({
-                data: {
-                    apiKey: key,
-                    useOwnKey: Boolean(key),
-                },
-            });
-            setSettings(updatedSettings);
-            if (key) {
-                toast.success("API key saved", { id: toastId });
-            } else {
-                toast.success("API key removed", { id: toastId });
-            }
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to save API key";
-            toast.error(message, { id: toastId });
-        } finally {
-            setIsSavingApiKey(false);
-        }
-    };
-
-    const handleModelChange = async (model: string) => {
-        const toastId = toast.loading("Saving model preference...");
-        try {
-            const updatedSettings = await updateSettingsFn({ data: { preferredModel: model } });
-            setSettings(updatedSettings);
-            toast.success("Model preference saved", { id: toastId });
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Failed to save model preference";
-            toast.error(message, { id: toastId });
-        }
-    };
 
     const handleLogout = async () => {
         await authClient.signOut({
@@ -117,10 +40,6 @@ function RouteComponent() {
             },
         });
     };
-
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
 
     return (
         <div className="max-w-3xl space-y-8 animate-fade-in">
@@ -136,19 +55,13 @@ function RouteComponent() {
                 </div>
                 <div className="space-y-4">
                     <div className="space-y-2">
-                        <Label htmlFor="name">Full Name</Label>
-                        <Input
-                            id="name"
-                            placeholder="John Doe"
-                            value={profile?.name || ""}
-                            onChange={(e) => setProfile((prev) => (prev ? { ...prev, name: e.target.value } : null))}
-                        />
+                        <Label htmlFor="name">Name</Label>
+                        <Input id="name" value={data?.name || ""} readOnly />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input id="email" type="email" placeholder="you@example.com" readOnly value={profile?.email || ""} />
+                        <Label htmlFor="domain">Domain</Label>
+                        <Input id="domain" readOnly value={data?.domain || ""} />
                     </div>
-                    <Button onClick={handleSaveProfile}>Save Changes</Button>
                 </div>
             </Card>
 
@@ -157,73 +70,28 @@ function RouteComponent() {
                     <Key className="h-5 w-5 text-primary" />
                     <h2 className="text-xl font-semibold">API Keys</h2>
                 </div>
-                <div className="space-y-6">
-                    <div className="flex items-center justify-between p-4 border rounded-lg">
-                        <div className="space-y-0.5">
-                            <Label htmlFor="use-own-key" className="text-base">
-                                Use Your Own API Key
-                            </Label>
-                            <p className="text-sm text-muted-foreground">
-                                {settings.useOwnKey
-                                    ? "Using your personal API key with no throttling"
-                                    : "Using default key (rate limited to 10 requests/hour)"}
-                            </p>
-                        </div>
-                        <Switch id="use-own-key" checked={settings.useOwnKey} onCheckedChange={handleApiKeyChange} />
+                <div className="space-y-2 animate-fade-in">
+                    <Label htmlFor="api-key">Your API Key</Label>
+                    <div className="flex gap-2 items-center">
+                        <Input
+                            id="api-key"
+                            type={showApiKey ? "text" : "password"}
+                            placeholder="sk-••••••••••••••••"
+                            className="flex-1"
+                            value={data.apiKey}
+                            disabled={true}
+                        />
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={() => setShowApiKey((v) => !v)}
+                            tabIndex={-1}
+                            aria-label={showApiKey ? "Hide API key" : "Show API key"}
+                        >
+                            {showApiKey ? <EyeOffIcon /> : <EyeIcon />}
+                        </Button>
                     </div>
-
-                    {settings.useOwnKey && (
-                        <div className="space-y-2 animate-fade-in">
-                            <Label htmlFor="api-key">Your API Key</Label>
-                            <div className="flex gap-2 items-center">
-                                <Input
-                                    id="api-key"
-                                    type={showApiKey ? "text" : "password"}
-                                    placeholder="sk-••••••••••••••••"
-                                    className="flex-1"
-                                    value={apiKey}
-                                    onChange={(e) => setApiKey(e.target.value)}
-                                    disabled={isSavingApiKey}
-                                />
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    onClick={() => setShowApiKey((v) => !v)}
-                                    tabIndex={-1}
-                                    aria-label={showApiKey ? "Hide API key" : "Show API key"}
-                                >
-                                    {showApiKey ? <EyeOffIcon /> : <EyeIcon />}
-                                </Button>
-                                <Button variant="outline" onClick={() => handleSaveApiKey()} disabled={isSavingApiKey}>
-                                    {isSavingApiKey ? "Saving..." : "Save"}
-                                </Button>
-                            </div>
-                            <p className="text-xs text-muted-foreground">Your API key is encrypted and stored securely</p>
-                        </div>
-                    )}
-                </div>
-            </Card>
-
-            <Card className="p-6">
-                <div className="flex items-center gap-2 mb-6">
-                    <Brain className="h-5 w-5 text-primary" />
-                    <h2 className="text-xl font-semibold">AI Model Preferences</h2>
-                </div>
-                <div className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="model">Preferred AI Model</Label>
-                        <Select value={settings.preferredModel} onValueChange={handleModelChange}>
-                            <SelectTrigger id="model">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="gemini">Google Gemini</SelectItem>
-                                <SelectItem value="claude">Anthropic Claude</SelectItem>
-                                <SelectItem value="gpt">OpenAI GPT</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <p className="text-xs text-muted-foreground">Choose the AI model for search and chat responses</p>
-                    </div>
+                    <p className="text-xs text-muted-foreground">Your API key is encrypted and stored securely</p>
                 </div>
             </Card>
 
@@ -234,8 +102,8 @@ function RouteComponent() {
                     <LogOut className="h-5 w-5 text-destructive" />
                     <h2 className="text-xl font-semibold">Account Actions</h2>
                 </div>
-                <Button variant="destructive" onClick={handleLogout} disabled={isLoggingOut}>
-                    {isLoggingOut ? "Signing out..." : "Log Out"}
+                <Button variant="destructive" onClick={handleLogout}>
+                    Log Out
                 </Button>
             </Card>
         </div>

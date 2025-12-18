@@ -8,11 +8,8 @@ export class EventsService {
         data: {
             name?: string;
             apiKey?: string;
-            useOwnKey?: boolean;
-            preferredModel?: string;
         }
     ) {
-
         return this.eventsRepo.create(data);
     }
 

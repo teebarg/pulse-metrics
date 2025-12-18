@@ -2,9 +2,12 @@ import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 import { ErrorSchema, SuccessSchema } from "~/schemas/common.schemas.js";
 import { AnalyticsRepository } from "~/repositories/analytics.repository";
 import { AnalyticsService } from "~/services/analytics.service";
+import { EcommerceService } from "~/services/ecommerce.service";
+import { EcommerceRepository } from "~/repositories/ecommerce.repository";
 
 export const analyticsRoutes = new OpenAPIHono();
 const analyticsService = new AnalyticsService(new AnalyticsRepository());
+const ecommerceService = new EcommerceService();
 
 analyticsRoutes.openAPIRegistry.registerComponent("securitySchemes", "Bearer", {
     type: "http",
@@ -129,11 +132,151 @@ analyticsRoutes.openapi(
 
         try {
             const data = await analyticsService.GetTopProducts(organizationId, days, metric);
-
             return c.json({ products: data.topProducts });
         } catch (error) {
             console.error("Top products error:", error);
             return c.json({ error: "Failed to fetch top products" }, 500);
         }
+    }
+);
+
+analyticsRoutes.openapi(
+    createRoute({
+        method: "get",
+        path: "/metrics",
+        security: [{ Bearer: [] }],
+        tags: ["analytics"],
+        description: "Get e-commerce metrics and analytics",
+        request: {
+            query: z.object({
+                timeRange: z.enum(["24h", "7d", "30d"]).default("24h").openapi({
+                    example: "24h",
+                    description: "Time range for the metrics (24h, 7d, 30d)",
+                }),
+            }),
+        },
+        responses: {
+            200: {
+                description: "E-commerce metrics",
+                content: {
+                    "application/json": {
+                        schema: z.object({
+                            totalRevenue: z.number(),
+                            totalOrders: z.number(),
+                            averageOrderValue: z.number(),
+                            conversionRate: z.number(),
+                            topProducts: z.array(z.object({
+                                productId: z.string(),
+                                name: z.string(),
+                                views: z.number(),
+                                addToCarts: z.number(),
+                                purchases: z.number(),
+                                revenue: z.number(),
+                                conversionRate: z.number(),
+                            })),
+                            hourlyData: z.array(z.object({
+                                hour: z.string(),
+                                pageViews: z.number(),
+                                productViews: z.number(),
+                                addToCarts: z.number(),
+                                checkouts: z.number(),
+                                purchases: z.number(),
+                            })),
+                            recentEvents: z.array(z.object({
+                                id: z.string(),
+                                eventType: z.string(),
+                                timestamp: z.string(),
+                                metadata: z.any(),
+                            })),
+                        }),
+                    },
+                },
+            },
+            500: {
+                description: "Server error",
+                content: { "application/json": { schema: ErrorSchema } },
+            },
+        },
+    }),
+    async (c) => {
+        const organizationId = c.get("organizationId");
+        const timeRange = c.req.query("timeRange") as "24h" | "7d" | "30d";
+
+        try {
+            const metrics = await ecommerceService.getMetrics(organizationId, timeRange);
+            return c.json(metrics);
+        } catch (error) {
+            console.error("E-commerce metrics error:", error);
+            return c.json({ error: "Failed to fetch e-commerce metrics" }, 500);
+        }
+    }
+);
+
+
+analyticsRoutes.openapi(
+    createRoute({
+        method: "get",
+        path: "/events/realtime",
+        security: [{ Bearer: [] }],
+        tags: ["analytics"],
+        description: "Stream real-time e-commerce events",
+        responses: {
+            200: {
+                description: "Real-time event stream",
+                content: {
+                    "text/event-stream": {
+                        schema: {
+                            type: "string",
+                            format: "binary",
+                        },
+                    },
+                },
+            },
+            500: {
+                description: "Server error",
+                content: { "application/json": { schema: ErrorSchema } },
+            },
+        },
+    }),
+    async (c) => {
+        const organizationId = c.get("organizationId");
+        
+        // Set headers for Server-Sent Events
+        c.header("Content-Type", "text/event-stream");
+        c.header("Cache-Control", "no-cache");
+        c.header("Connection", "keep-alive");
+        
+        // Create a simple stream that sends a ping every 5 seconds
+        const stream = new ReadableStream({
+            async start(controller) {
+                // Send initial data
+                const initialData = await ecommerceService.getMetrics(organizationId, "24h");
+                controller.enqueue(`data: ${JSON.stringify(initialData)}\n\n`);
+                
+                // Set up interval for updates
+                const interval = setInterval(async () => {
+                    try {
+                        const data = await ecommerceService.getMetrics(organizationId, "24h");
+                        controller.enqueue(`data: ${JSON.stringify(data)}\n\n`);
+                    } catch (error) {
+                        console.error("Error in real-time stream:", error);
+                        controller.enqueue(`event: error\ndata: ${JSON.stringify({ error: "Error fetching real-time data" })}\n\n`);
+                    }
+                }, 5000);
+                
+                // Clean up on stream close
+                return () => {
+                    clearInterval(interval);
+                };
+            },
+        });
+        
+        return new Response(stream, {
+            headers: {
+                "Content-Type": "text/event-stream",
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+            },
+        });
     }
 );

@@ -34,6 +34,17 @@ eventsRoute.openapi(
     async (c) => {
         const event = c.req.valid("json");
         const organizationId = c.get("organizationId");
+        const org = c.get("organization") as unknown as any;
+
+        if (typeof org.eventsLimit === "number" && (org.eventsUsed ?? 0) >= org.eventsLimit) {
+            return c.json(
+                {
+                    error: "Event limit exceeded",
+                    message: `Your ${org.plan} plan limit of ${org.eventsLimit} events has been reached.`,
+                },
+                429
+            );
+        }
 
         try {
             await db.insert(events).values({

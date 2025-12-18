@@ -16,7 +16,6 @@ export const EventSchema = z.object({
   }).optional(),
 });
 
-// Batch event schema
 export const BatchEventSchema = z.object({
   events: z.array(EventSchema).max(100), // Max 100 events per batch
 });
