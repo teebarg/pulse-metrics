@@ -1,30 +1,30 @@
 import { useCallback } from "react";
-import { EventProperties } from "../types";
+import { EventMetadata } from "../types";
 import { useAnalytics } from "./useAnalytics";
 
 export function useTrack() {
     const { track } = useAnalytics();
 
     const trackEvent = useCallback(
-        (event: string, properties?: EventProperties) => {
-            track(event, properties);
+        (event: string, metadata?: EventMetadata) => {
+            track(event, metadata);
         },
         [track]
     );
 
     const trackClick = useCallback(
-        (element: string, properties?: EventProperties) => {
-            track("click", { element, ...properties });
+        (element: string, metadata?: EventMetadata) => {
+            track("click", { element, ...metadata });
         },
         [track]
     );
 
     const trackPageView = useCallback(
-        (properties?: EventProperties) => {
+        (metadata?: EventMetadata) => {
             track("page_view", {
                 page: window.location.pathname,
                 title: document.title,
-                ...properties,
+                ...metadata,
             });
         },
         [track]

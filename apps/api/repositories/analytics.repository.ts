@@ -45,7 +45,7 @@ export class AnalyticsRepository {
         try {
             const purchases = await db
                 .select({
-                    properties: events.properties,
+                    metadata: events.metadata,
                 })
                 .from(events)
                 .where(and(eq(events.organizationId, organizationId), eq(events.eventType, "purchase"), gte(events.timestamp, fiveMinutesAgo)));
@@ -79,7 +79,7 @@ export class AnalyticsRepository {
         todayStart.setHours(0, 0, 0, 0);
         try {
             const purchases = await db
-                .select({ properties: events.properties })
+                .select({ metadata: events.metadata })
                 .from(events)
                 .where(and(eq(events.organizationId, organizationId), eq(events.eventType, "purchase"), gte(events.timestamp, todayStart)));
 
@@ -113,14 +113,14 @@ export class AnalyticsRepository {
 
             const topProducts = await db
                 .select({
-                    product_id: sql<string>`properties->>'product_id'`,
-                    product_name: sql<string>`COALESCE(properties->>'product_name', 'Unknown')`,
+                    product_id: sql<string>`metadata->>'product_id'`,
+                    product_name: sql<string>`COALESCE(metadata->>'product_name', 'Unknown')`,
                     count: sql<number>`COUNT(*)`,
-                    revenue: sql<number>`SUM(COALESCE((properties->>'revenue')::numeric, 0))`,
+                    revenue: sql<number>`SUM(COALESCE((metadata->>'revenue')::numeric, 0))`,
                 })
                 .from(events)
                 .where(and(eq(events.organizationId, organizationId), eq(events.eventType, eventType), gte(events.timestamp, startDate)))
-                .groupBy(sql`properties->>'product_id'`, sql`properties->>'product_name'`)
+                .groupBy(sql`metadata->>'product_id'`, sql`metadata->>'product_name'`)
                 .orderBy(sql`COUNT(*) DESC`)
                 .limit(10);
 

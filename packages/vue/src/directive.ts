@@ -19,8 +19,8 @@ export const vTrack = {
             if (typeof value === "string") {
                 analytics.track(value);
             } else {
-                const { event, ...properties } = value;
-                analytics.track(event || eventType, properties);
+                const { event, ...metadata } = value;
+                analytics.track(event || eventType, metadata);
             }
         };
 

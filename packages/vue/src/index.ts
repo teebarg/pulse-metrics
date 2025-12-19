@@ -1,6 +1,6 @@
 import { PulseMetricsPlugin } from "./plugin";
 import { AnalyticsInstance, PulseMetricsConfig, TrackedEvent } from "./types";
-import { EventProperties } from "../react";
+import { EventMetadata } from "../react";
 
 // ============================================================================
 // Options API Support
@@ -18,4 +18,4 @@ declare module "@vue/runtime-core" {
 
 export default PulseMetricsPlugin;
 
-export type { PulseMetricsConfig, EventProperties, TrackedEvent, AnalyticsInstance };
+export type { PulseMetricsConfig, EventMetadata, TrackedEvent, AnalyticsInstance };

@@ -250,8 +250,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "properties": {
-          "name": "properties",
+        "metadata": {
+          "name": "metadata",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": false

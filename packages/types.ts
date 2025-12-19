@@ -5,7 +5,7 @@ export interface PulseMetricsConfig {
     debug?: boolean;
 }
 
-export interface EventProperties {
+export interface EventMetadata {
     page?: string;
     product_id?: string;
     product_name?: string;

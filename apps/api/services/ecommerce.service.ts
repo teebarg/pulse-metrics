@@ -82,7 +82,7 @@ export class EcommerceService {
         }>();
 
         allEvents.forEach(event => {
-            const metadata = event.properties as any;
+            const metadata = event.metadata as any;
             
             // Track product metrics
             if (metadata.product_id) {
@@ -144,7 +144,7 @@ export class EcommerceService {
                 id: event.id,
                 eventType: event.eventType,
                 timestamp: event.timestamp,
-                metadata: event.properties
+                metadata: event.metadata
             }));
 
         return {

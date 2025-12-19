@@ -1,20 +1,20 @@
 import { useEffect } from "react";
-import { EventProperties } from "../types";
+import { EventMetadata } from "../types";
 import { useAnalytics } from "./useAnalytics";
 
-export function useComponentTracking(componentName: string, properties?: EventProperties) {
+export function useComponentTracking(componentName: string, metadata?: EventMetadata) {
     const { track } = useAnalytics();
 
     useEffect(() => {
         track("component_mounted", {
             component: componentName,
-            ...properties,
+            ...metadata,
         });
 
         return () => {
             track("component_unmounted", {
                 component: componentName,
-                ...properties,
+                ...metadata,
             });
         };
     }, [componentName, track]);

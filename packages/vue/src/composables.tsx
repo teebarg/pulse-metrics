@@ -1,5 +1,5 @@
 import { AnalyticsInstance } from ".";
-import { EventProperties } from "./types";
+import { EventMetadata } from "./types";
 
 /**
  * Main composable to access analytics
@@ -20,19 +20,19 @@ export function useAnalytics(): AnalyticsInstance {
 export function useTrack() {
     const analytics = useAnalytics();
 
-    const track = (event: string, properties?: EventProperties) => {
-        analytics.track(event, properties);
+    const track = (event: string, metadata?: EventMetadata) => {
+        analytics.track(event, metadata);
     };
 
-    const trackClick = (element: string, properties?: EventProperties) => {
-        analytics.track("click", { element, ...properties });
+    const trackClick = (element: string, metadata?: EventMetadata) => {
+        analytics.track("click", { element, ...metadata });
     };
 
-    const trackPageView = (properties?: EventProperties) => {
+    const trackPageView = (metadata?: EventMetadata) => {
         analytics.track("page_view", {
             page: window.location.pathname,
             title: document.title,
-            ...properties,
+            ...metadata,
         });
     };
 
@@ -62,20 +62,20 @@ export function usePageTracking(route: Ref<any>) {
 /**
  * Track component lifecycle
  */
-export function useComponentTracking(componentName: string, properties?: EventProperties) {
+export function useComponentTracking(componentName: string, metadata?: EventMetadata) {
     const analytics = useAnalytics();
 
     onMounted(() => {
         analytics.track("component_mounted", {
             component: componentName,
-            ...properties,
+            ...metadata,
         });
     });
 
     onUnmounted(() => {
         analytics.track("component_unmounted", {
             component: componentName,
-            ...properties,
+            ...metadata,
         });
     });
 }
@@ -90,7 +90,7 @@ export function useFormTracking(formName: string) {
         analytics.track("form_started", { form: formName });
     };
 
-    const trackFormSubmit = (success: boolean, data?: EventProperties) => {
+    const trackFormSubmit = (success: boolean, data?: EventMetadata) => {
         analytics.track(success ? "form_submitted" : "form_error", {
             form: formName,
             ...data,
@@ -117,8 +117,8 @@ export function useFormTracking(formName: string) {
 export function useInteractionTracking() {
     const analytics = useAnalytics();
 
-    const trackClick = (element: string, properties?: EventProperties) => {
-        analytics.track("click", { element, ...properties });
+    const trackClick = (element: string, metadata?: EventMetadata) => {
+        analytics.track("click", { element, ...metadata });
     };
 
     const trackScroll = (depth: number) => {

@@ -5,8 +5,8 @@ export const PulseMetricsPlugin: Plugin = {
         const sdk = new PulseMetricsCore(config);
 
         const analyticsInstance: AnalyticsInstance = {
-            track: (event: string, properties?: EventProperties) => {
-                sdk.track(event, properties);
+            track: (event: string, metadata?: EventMetadata) => {
+                sdk.track(event, metadata);
             },
             identify: (userId: string) => {
                 sdk.identify(userId);

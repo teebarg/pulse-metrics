@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { EventProperties } from "../types";
+import { EventMetadata } from "../types";
 import { useAnalytics } from "./useAnalytics";
 
 export function useFormTracking(formName: string) {
@@ -10,7 +10,7 @@ export function useFormTracking(formName: string) {
     }, [track, formName]);
 
     const trackFormSubmit = useCallback(
-        (success: boolean, data?: EventProperties) => {
+        (success: boolean, data?: EventMetadata) => {
             track(success ? "form_submitted" : "form_error", {
                 form: formName,
                 ...data,

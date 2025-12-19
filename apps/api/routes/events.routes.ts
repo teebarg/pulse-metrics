@@ -10,6 +10,38 @@ export const eventsRoute = new OpenAPIHono();
 
 eventsRoute.openapi(
     createRoute({
+        method: "get",
+        path: "/",
+        security: [{ Bearer: [] }],
+        tags: ["events"],
+        description: "Get organization events",
+        responses: {
+            200: {
+                description: "Org Events",
+                content: { "application/json": { schema: z.object({ events: z.array(EventSchema) }) } },
+            },
+            500: {
+                description: "Server error",
+                content: { "application/json": { schema: ErrorSchema } },
+            },
+        },
+    }),
+    async (c: any) => {
+        const organizationId = c.get("organizationId");
+        try {
+            const res = await db.select().from(events).where(eq(events.organizationId, organizationId));
+            return c.json({
+                events: res,
+            });
+        } catch (error: any) {
+            console.error("Event ingestion error:", error);
+            return errorResponse(c, "Failed to process chat", error.message);
+        }
+    }
+);
+
+eventsRoute.openapi(
+    createRoute({
         method: "post",
         path: "/",
         security: [{ Bearer: [] }],
@@ -52,7 +84,7 @@ eventsRoute.openapi(
                 eventType: event.event_type,
                 sessionId: event.session_id,
                 userId: event.user_id,
-                properties: event.properties,
+                metadata: event.metadata,
                 timestamp: new Date(),
             });
 
@@ -107,7 +139,7 @@ eventsRoute.openapi(
                 eventType: event.event_type,
                 sessionId: event.session_id,
                 userId: event.user_id,
-                properties: event.properties,
+                metadata: event.metadata,
                 timestamp: new Date(),
             }));
 

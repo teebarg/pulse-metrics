@@ -9,7 +9,7 @@ interface PulseMetricsConfig {
     retryAttempts?: number;
 }
 
-interface EventProperties {
+interface EventMetadata {
     [key: string]: any;
 }
 
@@ -17,7 +17,7 @@ interface TrackedEvent {
     event_type: string;
     session_id: string;
     user_id?: string;
-    properties?: EventProperties;
+    metadata?: EventMetadata;
     timestamp: string;
 }
 
@@ -87,7 +87,7 @@ class PulseMetricsSDK {
     /**
      * Track a custom event
      */
-    track(eventType: string, properties?: EventProperties): void {
+    track(eventType: string, metadata?: EventMetadata): void {
         if (!this.isInitialized) {
             this.error("SDK not initialized. Call init() first.");
             return;
@@ -97,8 +97,8 @@ class PulseMetricsSDK {
             event_type: eventType,
             session_id: this.sessionId,
             user_id: this.userId,
-            properties: {
-                ...properties,
+            metadata: {
+                ...metadata,
                 url: typeof window !== "undefined" ? window.location.href : undefined,
                 referrer: typeof document !== "undefined" ? document.referrer : undefined,
                 user_agent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
@@ -119,13 +119,13 @@ class PulseMetricsSDK {
     /**
      * Track page view
      */
-    trackPageView(properties?: EventProperties): void {
+    trackPageView(metadata?: EventMetadata): void {
         if (typeof window === "undefined") return;
 
         this.track("page_view", {
             page: window.location.pathname,
             title: document.title,
-            ...properties,
+            ...metadata,
         });
     }
 
@@ -286,4 +286,4 @@ if (typeof window !== "undefined") {
     (window as any).PulseMetrics = pulsemetrics;
 }
 
-export type { PulseMetricsConfig, EventProperties, TrackedEvent };
+export type { PulseMetricsConfig, EventMetadata, TrackedEvent };

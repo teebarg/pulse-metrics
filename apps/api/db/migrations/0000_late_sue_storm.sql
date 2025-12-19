@@ -32,7 +32,7 @@ CREATE TABLE "events" (
 	"organizationId" uuid NOT NULL,
 	"eventType" text NOT NULL,
 	"sessionId" text,
-	"properties" jsonb,
+	"metadata" jsonb,
 	"timestamp" timestamp with time zone DEFAULT now() NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now(),
 	"updated_at" timestamp with time zone DEFAULT now()

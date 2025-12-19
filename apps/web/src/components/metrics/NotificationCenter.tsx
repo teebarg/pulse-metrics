@@ -19,14 +19,14 @@ export function NotificationCenter({ notifications, onMarkAsRead, onMarkAllAsRea
 
     const formatTime = (date: Date) => {
         const now = new Date();
-        const diff = now.getTime() - date.getTime();
+        const diff = now.getTime() - new Date(date).getTime();
         const minutes = Math.floor(diff / 60000);
 
         if (minutes < 1) return "Just now";
         if (minutes < 60) return `${minutes}m ago`;
         const hours = Math.floor(minutes / 60);
         if (hours < 24) return `${hours}h ago`;
-        return date.toLocaleDateString();
+        return new Date(date).toLocaleDateString();
     };
 
     return (

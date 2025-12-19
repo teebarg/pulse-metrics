@@ -45,7 +45,11 @@ export function getProductHourlyData(events: AnalyticsEvent[]) {
     }
 
     events.forEach((event) => {
-        const hour = event.timestamp.toLocaleTimeString("en-US", { hour: "2-digit", hour12: true });
+        const hour = new Date(event.timestamp).toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            hour12: true,
+        });
+
         if (hourlyMap.has(hour)) {
             const data = hourlyMap.get(hour)!;
             if (event.event_type === "product_view") data.views++;
@@ -164,7 +168,7 @@ export function getEventBgColor(eventType: EventType): string {
 
 export function formatEventType(eventType: EventType): string {
     return eventType
-        .split("_")
+        ?.split("_")
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
 }
@@ -190,7 +194,10 @@ export function getHourlyData(events: AnalyticsEvent[]) {
     }
 
     events.forEach((event) => {
-        const hour = event.timestamp.toLocaleTimeString("en-US", { hour: "2-digit", hour12: true });
+        const hour = new Date(event.timestamp).toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            hour12: true,
+        });
         if (hourlyMap.has(hour)) {
             const data = hourlyMap.get(hour)!;
             data.count++;

@@ -25,12 +25,25 @@ import { TimeRangeSelector } from "@/components/metrics/TimeRangeSelector";
 import { EventFilters, FilterState } from "@/components/metrics/EventFilters";
 import { useNotifications } from "@/hooks/useNotifications";
 import { generateEvents, generateRealtimeEvent, getHourlyData, calculateMetrics, AnalyticsEvent, EventType } from "@/lib/dummy-data";
+import { useWebSocket } from "pulsews";
+import { getOrgEventsFn } from "~/server-fn/event.fn";
+import { useSuspenseQuery } from "@tanstack/react-query";
+
+const orgEventsQueryOptions = () => ({
+    queryKey: ["organization", "events"],
+    queryFn: () => getOrgEventsFn(),
+});
 
 export const Route = createFileRoute("/_protected/account/")({
+    loader: async ({ context: { queryClient } }) => {
+        await queryClient.ensureQueryData(orgEventsQueryOptions());
+    },
     component: RouteComponent,
 });
 
 function RouteComponent() {
+    const { data } = useSuspenseQuery(orgEventsQueryOptions());
+    console.log("🚀 ~ file: index.tsx:46 ~ data:", data);
     const [events, setEvents] = useState<AnalyticsEvent[]>([]);
     const [timeRange, setTimeRange] = useState("24h");
     const [filters, setFilters] = useState<FilterState>({
@@ -52,6 +65,8 @@ function RouteComponent() {
         updateThresholds,
     } = useNotifications();
     const eventsRef = useRef<AnalyticsEvent[]>([]);
+    const { lastMessage } = useWebSocket();
+    console.log("🚀 ~ file: index.tsx:57 ~ lastMessage:", lastMessage);
 
     // Keep ref in sync for notification processing
     useEffect(() => {
@@ -60,26 +75,27 @@ function RouteComponent() {
 
     useEffect(() => {
         // Generate initial events
-        setEvents(generateEvents(500, 24));
+        // setEvents(generateEvents(500, 24));
+        setEvents(data.events);
 
         // Simulate real-time events
-        const interval = setInterval(() => {
-            const newEvent = generateRealtimeEvent();
-            setEvents((prev) => {
-                const updated = [newEvent, ...prev.slice(0, 499)];
-                // Process event for notifications
-                processEvent(newEvent, updated);
-                return updated;
-            });
-        }, 3000);
+        // const interval = setInterval(() => {
+        //     const newEvent = generateRealtimeEvent();
+        //     setEvents((prev) => {
+        //         const updated = [newEvent, ...prev.slice(0, 499)];
+        //         // Process event for notifications
+        //         processEvent(newEvent, updated);
+        //         return updated;
+        //     });
+        // }, 3000);
 
-        return () => clearInterval(interval);
-    }, [processEvent]);
+        // return () => clearInterval(interval);
+    }, [processEvent, data]);
 
     // Extract available products and sessions for filters
     const availableProducts = useMemo(() => {
         const productMap = new Map<string, string>();
-        events.forEach((e) => {
+        events?.forEach((e) => {
             if (e.metadata.product_id && e.metadata.product_name) {
                 productMap.set(e.metadata.product_id, e.metadata.product_name);
             }
@@ -93,7 +109,6 @@ function RouteComponent() {
         return Array.from(sessions);
     }, [events]);
 
-    // Filter events based on current filters
     const filteredEvents = useMemo(() => {
         return events.filter((event) => {
             if (filters.eventType !== "all" && event.event_type !== filters.eventType) {
@@ -163,7 +178,6 @@ function RouteComponent() {
             </div>
 
             <main className="container mx-auto px-6 py-8 relative">
-                {/* Top Controls */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                     <div>
                         <h2 className="text-2xl font-bold text-foreground">Dashboard</h2>
@@ -172,7 +186,6 @@ function RouteComponent() {
                     <TimeRangeSelector selected={timeRange} onChange={setTimeRange} />
                 </div>
 
-                {/* Filters */}
                 <div className="mb-6">
                     <EventFilters
                         filters={filters}
@@ -181,8 +194,6 @@ function RouteComponent() {
                         availableSessions={availableSessions}
                     />
                 </div>
-
-                {/* Metric Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
                     <MetricCard
                         title="Total Events"
@@ -225,15 +236,11 @@ function RouteComponent() {
                         accentColor="purchase"
                     />
                 </div>
-
-                {/* Charts Row */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                     <EventChart data={hourlyData} className="lg:col-span-2" />
                     <FunnelChart data={metrics.counts} />
                 </div>
-
-                {/* Event Feed */}
-                <EventFeed events={filteredEvents} />
+                {/* <EventFeed events={filteredEvents} /> */}
             </main>
         </div>
     );

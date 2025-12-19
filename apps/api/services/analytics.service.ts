@@ -9,7 +9,7 @@ export class AnalyticsService {
             this.analyticsRepo.getRecentPurchases(organizationId),
         ]);
 
-        const recentRevenue = purchases.reduce((sum: number, p: any) => sum + (p.properties?.revenue || 0), 0);
+        const recentRevenue = purchases.reduce((sum: number, p: any) => sum + (p.metadata?.revenue || 0), 0);
         return {
             activeVisitors,
             recentPurchases: purchases.length,
@@ -24,7 +24,7 @@ export class AnalyticsService {
             this.analyticsRepo.getTodayUniqueVisitors(organizationId),
         ]);
 
-        const totalRevenue = totalPurchasesData.reduce((sum: number, p: any) => sum + ((p.properties as any)?.revenue || 0), 0);
+        const totalRevenue = totalPurchasesData.reduce((sum: number, p: any) => sum + ((p.metadata as any)?.revenue || 0), 0);
         return {
             totalEvents,
             totalPurchases: totalPurchasesData.length,

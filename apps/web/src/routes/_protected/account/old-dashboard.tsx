@@ -219,8 +219,8 @@ function RouteComponent() {
                                     <div className="flex-1 min-w-0">
                                         <div className="font-medium text-sm">{formatEventType(event.event_type)}</div>
                                         <div className="text-xs text-slate-400 truncate">
-                                            {event.properties.page}
-                                            {event.properties.product_name && ` • ${event.properties.product_name}`}
+                                            {event.metadata.page}
+                                            {event.metadata.product_name && ` • ${event.metadata.product_name}`}
                                         </div>
                                     </div>
                                     <div className="text-xs text-slate-500 whitespace-nowrap">{formatTimeAgo(event.timestamp)}</div>

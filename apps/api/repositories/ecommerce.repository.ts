@@ -32,19 +32,19 @@ export class EcommerceRepository {
     async getProductMetrics(organizationId: string, fromDate: Date): Promise<ProductMetrics[]> {
         const result = await db.execute(sql`
             SELECT 
-                properties->>'product_id' as product_id,
-                properties->>'product_name' as product_name,
+                metadata->>'product_id' as product_id,
+                metadata->>'product_name' as product_name,
                 event_type,
                 COUNT(*) as count,
-                COALESCE(SUM(CAST(properties->>'order_value' AS DECIMAL)), 0) as total_value
+                COALESCE(SUM(CAST(metadata->>'order_value' AS DECIMAL)), 0) as total_value
             FROM events
             WHERE 
                 organization_id = ${organizationId}
                 AND timestamp >= ${fromDate}
-                AND properties->>'product_id' IS NOT NULL
+                AND metadata->>'product_id' IS NOT NULL
             GROUP BY 
-                properties->>'product_id',
-                properties->>'product_name',
+                metadata->>'product_id',
+                metadata->>'product_name',
                 event_type
         `);
 

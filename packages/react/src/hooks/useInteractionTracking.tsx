@@ -1,13 +1,13 @@
 import { useCallback } from "react";
-import { EventProperties } from "../types";
+import { EventMetadata } from "../types";
 import { useAnalytics } from "./useAnalytics";
 
 export function useInteractionTracking() {
     const { track } = useAnalytics();
 
     const trackClick = useCallback(
-        (element: string, properties?: EventProperties) => {
-            track("click", { element, ...properties });
+        (element: string, metadata?: EventMetadata) => {
+            track("click", { element, ...metadata });
         },
         [track]
     );

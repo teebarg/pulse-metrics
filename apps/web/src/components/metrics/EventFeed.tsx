@@ -19,12 +19,12 @@ const eventIcons = {
 export function EventFeed({ events, className }: EventFeedProps) {
     const formatTime = (date: Date) => {
         const now = new Date();
-        const diff = now.getTime() - date.getTime();
+        const diff = now.getTime() - new Date(date).getTime();
 
         if (diff < 60000) return "Just now";
         if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
         if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
-        return date.toLocaleDateString();
+        return new Date(date).toLocaleDateString();
     };
 
     return (

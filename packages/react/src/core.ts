@@ -1,4 +1,4 @@
-import { EventProperties, PulseMetricsConfig, TrackedEvent } from "./types";
+import { EventMetadata, PulseMetricsConfig, TrackedEvent } from "./types";
 
 export class PulseMetricsCore {
     private config: Required<PulseMetricsConfig>;
@@ -34,7 +34,7 @@ export class PulseMetricsCore {
         this.log("Initialized");
     }
 
-    track(eventType: string, properties?: EventProperties): void {
+    track(eventType: string, metadata?: EventMetadata): void {
         if (!this.isInitialized) {
             this.error("SDK not initialized");
             return;
@@ -44,8 +44,8 @@ export class PulseMetricsCore {
             event_type: eventType,
             session_id: this.sessionId,
             user_id: this.userId,
-            properties: {
-                ...properties,
+            metadata: {
+                ...metadata,
                 url: typeof window !== "undefined" ? window.location.href : undefined,
                 path: typeof window !== "undefined" ? window.location.pathname : undefined,
             },

@@ -7,7 +7,7 @@ export interface PulseMetricsConfig {
     maxBatchSize?: number;
 }
 
-export interface EventProperties {
+export interface EventMetadata {
     [key: string]: any;
 }
 
@@ -15,10 +15,10 @@ export interface TrackedEvent {
     event_type: string;
     session_id: string;
     user_id?: string;
-    properties?: EventProperties;
+    metadata?: EventMetadata;
     timestamp: string;
 }
 
 export interface TrackFunction {
-    (event: string, properties?: EventProperties): void;
+    (event: string, metadata?: EventMetadata): void;
 }

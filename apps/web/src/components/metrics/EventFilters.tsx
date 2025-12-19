@@ -70,9 +70,9 @@ export function EventFilters({ filters, onFiltersChange, availableProducts, avai
                 </SelectTrigger>
                 <SelectContent className="bg-card border-border z-50 max-h-[200px]">
                     <SelectItem value="all">All Sessions</SelectItem>
-                    {availableSessions.slice(0, 20).map((session) => (
-                        <SelectItem key={session} value={session}>
-                            {session.slice(0, 12)}...
+                    {availableSessions.slice(0, 20).map((session, idx: number) => (
+                        <SelectItem key={idx} value={session}>
+                            {session?.slice(0, 12)}...
                         </SelectItem>
                     ))}
                 </SelectContent>

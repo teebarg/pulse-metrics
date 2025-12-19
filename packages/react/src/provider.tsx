@@ -39,9 +39,9 @@ export function AnalyticsProvider({ children, config, enabled = true }: Analytic
     }, [config.apiKey, enabled]);
 
     const track = useCallback<TrackFunction>(
-        (event: any, properties: any) => {
+        (event: any, metadata: any) => {
             if (!enabled) return;
-            sdkRef.current?.track(event, properties);
+            sdkRef.current?.track(event, metadata);
         },
         [enabled]
     );

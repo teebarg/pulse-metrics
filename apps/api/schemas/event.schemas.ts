@@ -4,7 +4,7 @@ export const EventSchema = z.object({
   event_type: z.enum(['page_view', 'product_view', 'add_to_cart', 'checkout', 'purchase']),
   session_id: z.string().optional(),
   user_id: z.string().optional(),
-  properties: z.object({
+  metadata: z.object({
     page: z.string().optional(),
     product_id: z.string().optional(),
     product_name: z.string().optional(),

@@ -43,6 +43,11 @@ code {
     --destructive: hsl(0 84% 60%);
     --destructive-foreground: hsl(0 0% 100%);
 
+    --error: 15 90% 60%;
+    --error-foreground: 0 0% 100%;
+    --error-light: 15 100% 97%;
+    --error-border: 15 80% 85%;
+
     --border: hsl(214 32% 91%);
     --input: hsl(214 32% 91%);
     --ring: hsl(243 75% 59%);
@@ -96,6 +101,11 @@ code {
     --destructive: hsl(0 63% 31%);
     --destructive-foreground: hsl(210 40% 98%);
 
+    --error: 15 85% 55%;
+    --error-foreground: 0 0% 100%;
+    --error-light: 15 40% 15%;
+    --error-border: 15 50% 30%;
+
     --border: hsl(217 33% 24%);
     --input: hsl(217 33% 24%);
     --ring: hsl(243 75% 59%);
@@ -144,6 +154,10 @@ code {
     --color-accent-foreground: var(--accent-foreground);
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
+    --color-error: hsl(var(--error));
+    --color-error-foreground: hsl(var(--error-foreground));
+    --color-error-light: hsl(var(--error-light));
+    --color-error-border: hsl(var(--error-border));
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);

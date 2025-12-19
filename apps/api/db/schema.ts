@@ -113,7 +113,7 @@ export const events = pgTable(
             .references(() => organizations.id, { onDelete: "cascade" }),
         eventType: text("eventType").notNull(),
         sessionId: text("sessionId"),
-        properties: jsonb("properties"),
+        metadata: jsonb("metadata"),
         timestamp: timestamp("timestamp", {
             withTimezone: true,
         })
