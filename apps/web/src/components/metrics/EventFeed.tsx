@@ -54,7 +54,7 @@ export function EventFeed({ events, className }: EventFeedProps) {
                                 style={{ animationDelay: `${index * 50}ms` }}
                             >
                                 <div className={cn("p-2 rounded-lg", bgColorClass, "bg-opacity-20")}>
-                                    <Icon className={cn("h-4 w-4", colorClass)} />
+                                    {Icon && <Icon className={cn("h-4 w-4", colorClass)} />}
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center justify-between gap-2">

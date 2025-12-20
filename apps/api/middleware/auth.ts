@@ -5,6 +5,40 @@ import { organizations, users } from "~/db/schema";
 import { eq } from "drizzle-orm";
 import { auth } from "~/lib/auth";
 
+export async function apiKeyMiddleware(c: Context, next: Next) {
+    const apiKey = c.req.header("X-API-Key");
+
+    if (!apiKey) {
+        throw new HTTPException(401, { message: "API key required" });
+    }
+
+    const [org] = await db
+        .select({
+            id: organizations.id,
+            plan: organizations.plan,
+            eventsLimit: organizations.eventsLimit,
+            eventsUsed: organizations.eventsUsed,
+        })
+        .from(organizations)
+        .where(eq(organizations.apiKey, apiKey))
+        .limit(1);
+
+    if (!org) {
+        throw new HTTPException(401, { message: "Invalid API key" });
+    }
+
+    if (typeof org.eventsLimit === "number" && (org.eventsUsed ?? 0) >= org.eventsLimit) {
+        throw new HTTPException(429, {
+            message: `Your ${org.plan} plan limit of ${org.eventsLimit} events has been reached.`,
+        });
+    }
+
+    c.set("organizationId", org.id);
+    c.set("organization", org);
+
+    return next();
+}
+
 export async function verifyApiKey(c: Context, next: Next) {
     try {
         const token = extractToken(c);
@@ -51,7 +85,7 @@ export async function verifyApiKey(c: Context, next: Next) {
         await next();
     } catch (err) {
         console.error("API key verification error:", err);
-        return c.json({ error: "Authentication failed" }, 500);
+        return c.json({ error: "Authentication failed in verifyApiKey" }, 500);
     }
 }
 

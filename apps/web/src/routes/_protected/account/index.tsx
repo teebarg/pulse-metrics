@@ -43,7 +43,6 @@ export const Route = createFileRoute("/_protected/account/")({
 
 function RouteComponent() {
     const { data } = useSuspenseQuery(orgEventsQueryOptions());
-    console.log("🚀 ~ file: index.tsx:46 ~ data:", data);
     const [events, setEvents] = useState<AnalyticsEvent[]>([]);
     const [timeRange, setTimeRange] = useState("24h");
     const [filters, setFilters] = useState<FilterState>({
@@ -129,7 +128,6 @@ function RouteComponent() {
 
     return (
         <div className="min-h-screen bg-background">
-            {/* Ambient glow effect */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden">
                 <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
                 <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-event-purchase/5 rounded-full blur-3xl" />
@@ -240,7 +238,7 @@ function RouteComponent() {
                     <EventChart data={hourlyData} className="lg:col-span-2" />
                     <FunnelChart data={metrics.counts} />
                 </div>
-                {/* <EventFeed events={filteredEvents} /> */}
+                <EventFeed events={filteredEvents} />
             </main>
         </div>
     );

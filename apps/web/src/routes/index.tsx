@@ -29,8 +29,27 @@ function RouteComponent() {
         });
     };
 
-    const handleTest = () => {
-        track("product_view", { productId: 1, name: "Test", product_name: "Apple", price: 5000 });
+    const handleTest = (type: string) => {
+        switch (type) {
+            case "page_view":
+                track(type, { page: "/collections" });
+                break;
+            case "product_view":
+                track(type, { product_id: "1", product_name: "Apple", price: 5000 });
+                break;
+            case "add_to_cart":
+                track(type, { product_id: "1", product_name: "Apple", price: 5000, quantity: 1, cart_value: 5000 });
+                break;
+            case "checkout":
+                track(type, { cart_value: 15000 });
+                break;
+            case "purchase":
+                track(type, { order_value: 25000 });
+                break;
+            default:
+                break;
+        }
+        // track(type, { productId: 1, name: "Test", product_name: "Apple", price: 5000 });
     };
 
     return (
@@ -97,9 +116,21 @@ function RouteComponent() {
                         </div>
                     </div>
                 </div>
-                <div>
-                    <Button variant="destructive" onClick={handleTest}>
-                        Test Metrics
+                <div className="gap-4">
+                    <Button variant="destructive" onClick={() => handleTest("page_view")}>
+                        Page View
+                    </Button>
+                    <Button variant="destructive" onClick={() => handleTest("product_view")}>
+                        Product View
+                    </Button>
+                    <Button variant="destructive" onClick={() => handleTest("add_to_cart")}>
+                        Add To Cart
+                    </Button>
+                    <Button variant="destructive" onClick={() => handleTest("checkout")}>
+                        Checkout
+                    </Button>
+                    <Button variant="destructive" onClick={() => handleTest("purchase")}>
+                        Purchase
                     </Button>
                 </div>
 
