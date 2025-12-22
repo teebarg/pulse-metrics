@@ -14,9 +14,8 @@ interface EventMetadata {
 }
 
 interface TrackedEvent {
-    event_type: string;
-    session_id: string;
-    user_id?: string;
+    eventType: string;
+    sessionId: string;
     metadata?: EventMetadata;
     timestamp: string;
 }
@@ -94,9 +93,8 @@ class PulseMetricsSDK {
         }
 
         const event: TrackedEvent = {
-            event_type: eventType,
-            session_id: this.sessionId,
-            user_id: this.userId,
+            eventType: eventType,
+            sessionId: this.sessionId,
             metadata: {
                 ...metadata,
                 url: typeof window !== "undefined" ? window.location.href : undefined,
@@ -135,8 +133,6 @@ class PulseMetricsSDK {
     identify(userId: string): void {
         this.userId = userId;
         this.log("User identified:", userId);
-
-        this.track("identify", { user_id: userId });
     }
 
     /**
