@@ -41,9 +41,8 @@ export class PulseMetricsCore {
         }
 
         const event: TrackedEvent = {
-            event_type: eventType,
-            session_id: this.sessionId,
-            user_id: this.userId,
+            eventType: eventType,
+            sessionId: this.sessionId,
             metadata: {
                 ...metadata,
                 url: typeof window !== "undefined" ? window.location.href : undefined,
@@ -64,7 +63,6 @@ export class PulseMetricsCore {
     identify(userId: string): void {
         this.userId = userId;
         this.log("User identified:", userId);
-        this.track("identify", { user_id: userId });
     }
 
     reset(): void {

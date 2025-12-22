@@ -8,18 +8,16 @@ import { authMiddleware } from "~/middleware/auth.js";
 import { errorHandler } from "~/middleware/error-handler.js";
 import { profileRoutes } from "~/routes/profile.routes";
 import { healthRoute } from "~/routes/health.routes";
-import { eventsRoute } from "~/routes/events.routes";
 import { analyticsRoutes } from "~/routes/analytics.routes";
 import { onBoardingRoutes } from "~/routes/onboarding.routes";
 import { createNodeWebSocket } from "@hono/node-ws";
 import { createRealtimeListener, registerClient, unregisterClient } from "./realtime-listener";
 import { organizationRoutes } from "~/routes/organization.routes";
-import { eventsPublicRoute } from "~/routes/events.public.routes";
+import { eventsRoute } from "~/routes/events.routes";
 
 const port = Number(process.env.API_PORT || 8787);
 
 const app = new OpenAPIHono();
-const events = new OpenAPIHono();
 
 app.use("*", cors());
 app.use("*", prettyJSON());
@@ -29,16 +27,10 @@ app.use("/v1/profile/*", authMiddleware);
 app.use("/v1/onboarding/*", authMiddleware);
 app.use("/v1/organization/*", authMiddleware);
 
-// eventsRoute.route("/", eventsPublicRoute);
-// events.route("/", eventsRoute);
-// events.route("/", eventsPublicRoute);
-
 app.route("/", healthRoute);
 app.route("/v1/profile", profileRoutes);
 app.route("/v1/analytics", analyticsRoutes);
-// app.route("/v1/events", events);
-// app.route("/v1/events", eventsRoute);
-app.route("/v1/events", eventsPublicRoute);
+app.route("/v1/events", eventsRoute);
 app.route("/v1/onboarding", onBoardingRoutes);
 app.route("/v1/organization", organizationRoutes);
 
@@ -101,7 +93,6 @@ app.get(
                 }
             },
             onClose(event, ws) {
-                console.log("🚀 ~ file: index.ts:93 ~ event:", event);
                 console.log("Connection closed");
                 unregisterClient(ws);
             },

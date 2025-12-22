@@ -78,7 +78,6 @@ function RouteComponent() {
                 data: { step: nextStep, ...formData, name: formData.store },
             })
                 .then(() => {
-                    console.log("Onboarding step updated successfully.......invalidating queries");
                     queryClient.invalidateQueries({ queryKey: ["organization"] });
                 })
                 .catch((error) => {

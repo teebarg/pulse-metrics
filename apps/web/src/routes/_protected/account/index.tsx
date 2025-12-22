@@ -1,20 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-    Activity,
-    FileText,
-    Search,
-    MessageSquare,
-    DollarSign,
-    ShoppingCart,
-    TrendingUp,
-    Users,
-    Package,
-    ArrowUp,
-    ArrowDown,
-    RefreshCw,
-    Target,
-} from "lucide-react";
-import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
+import { Activity, DollarSign, ShoppingCart, TrendingUp, Target } from "lucide-react";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Header } from "@/components/metrics/Header";
 import { MetricCard } from "@/components/metrics/MetricCard";
@@ -24,10 +9,13 @@ import { FunnelChart } from "@/components/metrics/FunnelChart";
 import { TimeRangeSelector } from "@/components/metrics/TimeRangeSelector";
 import { EventFilters, FilterState } from "@/components/metrics/EventFilters";
 import { useNotifications } from "@/hooks/useNotifications";
-import { generateEvents, generateRealtimeEvent, getHourlyData, calculateMetrics, AnalyticsEvent, EventType } from "@/lib/dummy-data";
+import { getHourlyData, calculateMetrics, AnalyticsEvent } from "@/lib/dummy-data";
 import { useWebSocket } from "pulsews";
 import { getOrgEventsFn } from "~/server-fn/event.fn";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { currency } from "~/lib/utils";
+import { Button } from "~/components/ui/button";
+import { usePulseMetrics } from "~/hooks/usePulseMetrics";
 
 const orgEventsQueryOptions = () => ({
     queryKey: ["organization", "events"],
@@ -48,7 +36,6 @@ function RouteComponent() {
     const [filters, setFilters] = useState<FilterState>({
         eventType: "all",
         productId: "all",
-        sessionId: "all",
     });
     const {
         notifications,
@@ -64,8 +51,12 @@ function RouteComponent() {
         updateThresholds,
     } = useNotifications();
     const eventsRef = useRef<AnalyticsEvent[]>([]);
-    const { lastMessage } = useWebSocket();
-    console.log("🚀 ~ file: index.tsx:57 ~ lastMessage:", lastMessage);
+    const { lastMessage, send } = useWebSocket();
+    const { track } = usePulseMetrics();
+
+    useEffect(() => {
+        send(JSON.stringify({ type: "subscribe", tables: ["events"], filters: { id: data.organizationId } }));
+    }, [data.organizationId]);
 
     // Keep ref in sync for notification processing
     useEffect(() => {
@@ -73,25 +64,19 @@ function RouteComponent() {
     }, [events]);
 
     useEffect(() => {
-        // Generate initial events
-        // setEvents(generateEvents(500, 24));
         setEvents(data.events);
-
-        // Simulate real-time events
-        // const interval = setInterval(() => {
-        //     const newEvent = generateRealtimeEvent();
-        //     setEvents((prev) => {
-        //         const updated = [newEvent, ...prev.slice(0, 499)];
-        //         // Process event for notifications
-        //         processEvent(newEvent, updated);
-        //         return updated;
-        //     });
-        // }, 3000);
-
-        // return () => clearInterval(interval);
     }, [processEvent, data]);
 
-    // Extract available products and sessions for filters
+    useEffect(() => {
+        if (lastMessage?.action == "INSERT" && lastMessage?.table == "events") {
+            setEvents((prev) => {
+                const updated = [lastMessage.data, ...prev.slice(0, 499)];
+                processEvent(lastMessage.data, updated);
+                return updated;
+            });
+        }
+    }, [lastMessage]);
+
     const availableProducts = useMemo(() => {
         const productMap = new Map<string, string>();
         events?.forEach((e) => {
@@ -102,21 +87,12 @@ function RouteComponent() {
         return Array.from(productMap.entries()).map(([id, name]) => ({ id, name }));
     }, [events]);
 
-    const availableSessions = useMemo(() => {
-        const sessions = new Set<string>();
-        events.forEach((e) => sessions.add(e.session_id));
-        return Array.from(sessions);
-    }, [events]);
-
     const filteredEvents = useMemo(() => {
         return events.filter((event) => {
-            if (filters.eventType !== "all" && event.event_type !== filters.eventType) {
+            if (filters.eventType !== "all" && event.eventType !== filters.eventType) {
                 return false;
             }
             if (filters.productId !== "all" && event.metadata.product_id !== filters.productId) {
-                return false;
-            }
-            if (filters.sessionId !== "all" && event.session_id !== filters.sessionId) {
                 return false;
             }
             return true;
@@ -125,6 +101,28 @@ function RouteComponent() {
 
     const metrics = calculateMetrics(filteredEvents);
     const hourlyData = getHourlyData(filteredEvents);
+
+    const handleTest = (type: string) => {
+        switch (type) {
+            case "page_view":
+                track(type, { page: "/account" });
+                break;
+            case "product_view":
+                track(type, { product_id: "12", product_name: "Orange", price: 5000 });
+                break;
+            case "add_to_cart":
+                track(type, { product_id: "12", product_name: "Orange", price: 5000, quantity: 2, cart_value: 10000 });
+                break;
+            case "checkout":
+                track(type, { cart_value: 15000 });
+                break;
+            case "purchase":
+                track(type, { order_value: 25000 });
+                break;
+            default:
+                break;
+        }
+    };
 
     return (
         <div className="min-h-screen bg-background">
@@ -146,12 +144,11 @@ function RouteComponent() {
                 onThresholdsChange={updateThresholds}
             />
 
-            {/* Navigation */}
             <div className="border-b border-border bg-card/30">
                 <div className="container mx-auto px-6">
                     <nav className="flex gap-1">
                         <Link
-                            to="/"
+                            to="/account"
                             className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors border-b-2 border-transparent"
                             activeProps={{ className: "text-primary border-primary" }}
                         >
@@ -163,13 +160,6 @@ function RouteComponent() {
                             activeProps={{ className: "text-primary border-primary" }}
                         >
                             Products
-                        </Link>
-                        <Link
-                            to="/account/sessions"
-                            className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors border-b-2 border-transparent"
-                            activeProps={{ className: "text-primary border-primary" }}
-                        >
-                            Sessions
                         </Link>
                     </nav>
                 </div>
@@ -185,12 +175,7 @@ function RouteComponent() {
                 </div>
 
                 <div className="mb-6">
-                    <EventFilters
-                        filters={filters}
-                        onFiltersChange={setFilters}
-                        availableProducts={availableProducts}
-                        availableSessions={availableSessions}
-                    />
+                    <EventFilters filters={filters} onFiltersChange={setFilters} availableProducts={availableProducts} />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
                     <MetricCard
@@ -203,7 +188,7 @@ function RouteComponent() {
                     />
                     <MetricCard
                         title="Revenue"
-                        value={`$${metrics.totalRevenue.toLocaleString()}`}
+                        value={currency(metrics.totalRevenue)}
                         subtitle="From purchases"
                         icon={DollarSign}
                         trend={{ value: 8.2, isPositive: true }}
@@ -227,7 +212,7 @@ function RouteComponent() {
                     />
                     <MetricCard
                         title="Avg Order Value"
-                        value={`$${metrics.avgOrderValue}`}
+                        value={currency(Number(metrics.avgOrderValue))}
                         subtitle="Per purchase"
                         icon={TrendingUp}
                         trend={{ value: 5.4, isPositive: true }}
@@ -237,6 +222,23 @@ function RouteComponent() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                     <EventChart data={hourlyData} className="lg:col-span-2" />
                     <FunnelChart data={metrics.counts} />
+                </div>
+                <div className="gap-4">
+                    <Button variant="destructive" onClick={() => handleTest("page_view")}>
+                        Page View
+                    </Button>
+                    <Button variant="destructive" onClick={() => handleTest("product_view")}>
+                        Product View
+                    </Button>
+                    <Button variant="destructive" onClick={() => handleTest("add_to_cart")}>
+                        Add To Cart
+                    </Button>
+                    <Button variant="destructive" onClick={() => handleTest("checkout")}>
+                        Checkout
+                    </Button>
+                    <Button variant="destructive" onClick={() => handleTest("purchase")}>
+                        Purchase
+                    </Button>
                 </div>
                 <EventFeed events={filteredEvents} />
             </main>

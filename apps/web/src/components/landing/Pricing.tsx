@@ -80,7 +80,7 @@ export default function Pricing() {
         <section id="pricing" ref={sectionRef} className="bg-slate-800/50 py-24">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="text-center mb-16">
-                    <Badge variant="secondary" className="mb-4">
+                    <Badge variant="accent" className="mb-4">
                         <Zap className="h-3 w-3 mr-2" />
                         Simple pricing
                     </Badge>

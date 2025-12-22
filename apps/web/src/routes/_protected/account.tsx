@@ -6,7 +6,7 @@ import { getOnboardingStatusFn } from "~/server-fn/onboarding.fn";
 
 export const Route = createFileRoute("/_protected/account")({
     component: RouteComponent,
-    beforeLoad: async ({ context }) => {
+    beforeLoad: async () => {
         const { onboardingCompleted } = await getOnboardingStatusFn();
         if (!onboardingCompleted) {
             throw redirect({ to: "/onboarding" });

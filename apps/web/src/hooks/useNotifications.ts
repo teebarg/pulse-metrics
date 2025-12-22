@@ -27,7 +27,6 @@ export function useNotifications() {
     const lastMilestoneRef = useRef(0);
     const lastSpikeCheckRef = useRef(0);
 
-    // Request browser notification permission on mount
     useEffect(() => {
         requestNotificationPermission().then((granted) => {
             setBrowserNotificationsEnabled(granted);
@@ -38,19 +37,16 @@ export function useNotifications() {
         (notification: Notification) => {
             setNotifications((prev) => [notification, ...prev].slice(0, 50));
 
-            // Show toast notification
             toast(notification.title, {
                 description: notification.message,
                 duration: 5000,
             });
 
-            // Play sound based on severity
             if (soundEnabled) {
                 const soundType = notification.severity === "success" ? "success" : notification.severity === "warning" ? "warning" : "info";
                 playNotificationSound(soundType);
             }
 
-            // Show browser notification for critical/important alerts
             if (browserNotificationsEnabled && (notification.severity === "success" || notification.severity === "warning")) {
                 showBrowserNotification(notification.title, notification.message);
             }

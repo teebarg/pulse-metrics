@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { currency } from "~/lib/utils";
 
 export interface NotificationThresholds {
     highValueThreshold: number;
@@ -96,7 +97,7 @@ export function NotificationSettings({
                         <div className="space-y-3">
                             <div className="flex items-center justify-between">
                                 <Label className="text-foreground">High-Value Purchase</Label>
-                                <span className="text-sm font-medium text-primary">${localThresholds.highValueThreshold}</span>
+                                <span className="text-sm font-medium text-primary">{currency(localThresholds.highValueThreshold)}</span>
                             </div>
                             <Slider
                                 value={[localThresholds.highValueThreshold]}

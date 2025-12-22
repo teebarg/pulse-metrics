@@ -14,9 +14,8 @@ export interface EventMetadata {
 }
 
 export interface TrackedEvent {
-    event_type: string;
-    session_id: string;
-    user_id?: string;
+    eventType: string;
+    sessionId: string;
     metadata?: EventMetadata;
     timestamp: string;
 }

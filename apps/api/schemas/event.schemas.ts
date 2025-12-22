@@ -1,17 +1,17 @@
 import { z } from "@hono/zod-openapi";
 
 export const EventSchema = z.object({
-  event_type: z.enum(['page_view', 'product_view', 'add_to_cart', 'checkout', 'purchase']),
-  session_id: z.string().optional(),
-  user_id: z.string().optional(),
+  eventType: z.enum(['page_view', 'product_view', 'add_to_cart', 'checkout', 'purchase']),
+  sessionId: z.string().optional(),
   metadata: z.object({
     page: z.string().optional(),
     product_id: z.string().optional(),
     product_name: z.string().optional(),
     price: z.coerce.number().optional(),
+    cart_value: z.coerce.number().optional(),
+    order_value: z.coerce.number().optional(),
     quantity: z.number().optional(),
     revenue: z.number().optional(),
-    currency: z.string().default('USD'),
     referrer: z.string().optional(),
   }).optional(),
 });

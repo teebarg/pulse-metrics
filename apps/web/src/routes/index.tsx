@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { BarChart3, Zap, Shield, TrendingUp, Code, Check } from "lucide-react";
 import Pricing from "~/components/landing/Pricing";
 import { authClient } from "~/lib/auth-client";
-import { usePulseMetrics } from "~/hooks/usePulseMetrics";
+import { currency } from "~/lib/utils";
 
 export const Route = createFileRoute("/")({
     component: RouteComponent,
@@ -13,7 +13,6 @@ function RouteComponent() {
     const { data: session } = authClient.useSession();
     const isAuthenticated = !!session;
     const navigate = useNavigate();
-    const { track } = usePulseMetrics();
 
     const handleGetStarted = () => {
         navigate({ to: "/auth" });
@@ -23,33 +22,10 @@ function RouteComponent() {
         await authClient.signOut({
             fetchOptions: {
                 onSuccess: () => {
-                    navigate({ to: "/auth" }); // redirect to login page
+                    navigate({ to: "/auth" });
                 },
             },
         });
-    };
-
-    const handleTest = (type: string) => {
-        switch (type) {
-            case "page_view":
-                track(type, { page: "/collections" });
-                break;
-            case "product_view":
-                track(type, { product_id: "1", product_name: "Apple", price: 5000 });
-                break;
-            case "add_to_cart":
-                track(type, { product_id: "1", product_name: "Apple", price: 5000, quantity: 1, cart_value: 5000 });
-                break;
-            case "checkout":
-                track(type, { cart_value: 15000 });
-                break;
-            case "purchase":
-                track(type, { order_value: 25000 });
-                break;
-            default:
-                break;
-        }
-        // track(type, { productId: 1, name: "Test", product_name: "Apple", price: 5000 });
     };
 
     return (
@@ -116,29 +92,10 @@ function RouteComponent() {
                         </div>
                     </div>
                 </div>
-                <div className="gap-4">
-                    <Button variant="destructive" onClick={() => handleTest("page_view")}>
-                        Page View
-                    </Button>
-                    <Button variant="destructive" onClick={() => handleTest("product_view")}>
-                        Product View
-                    </Button>
-                    <Button variant="destructive" onClick={() => handleTest("add_to_cart")}>
-                        Add To Cart
-                    </Button>
-                    <Button variant="destructive" onClick={() => handleTest("checkout")}>
-                        Checkout
-                    </Button>
-                    <Button variant="destructive" onClick={() => handleTest("purchase")}>
-                        Purchase
-                    </Button>
-                </div>
-
-                {/* Demo Dashboard Preview */}
                 <div className="mt-16 rounded-2xl border border-slate-700 bg-slate-800/50 p-8 shadow-2xl">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                         <MetricCard title="Active Visitors" value="127" change="+12%" positive />
-                        <MetricCard title="Today's Sales" value="$2,847" change="+23%" positive />
+                        <MetricCard title="Today's Sales" value={currency(2847)} change="+23%" positive />
                         <MetricCard title="Conversion Rate" value="3.2%" change="+0.4%" positive />
                     </div>
                     <div className="bg-slate-900/50 rounded-lg p-6 h-64 flex items-center justify-center">

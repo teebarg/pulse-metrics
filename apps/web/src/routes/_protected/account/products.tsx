@@ -1,20 +1,32 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Header } from "@/components/metrics/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { generateEvents, AnalyticsEvent, getProductAnalytics } from "@/lib/dummy-data";
+import { AnalyticsEvent, getProductAnalytics } from "@/lib/dummy-data";
 import { useNotifications } from "@/hooks/useNotifications";
 import { TrendingUp, Eye, ShoppingCart, Package, DollarSign, ChevronRight } from "lucide-react";
+import { currency } from "~/lib/utils";
+import { getOrgEventsFn } from "~/server-fn/event.fn";
+import { useSuspenseQuery } from "@tanstack/react-query";
+
+const orgEventsQueryOptions = () => ({
+    queryKey: ["organization", "events"],
+    queryFn: () => getOrgEventsFn(),
+});
 
 export const Route = createFileRoute("/_protected/account/products")({
+    loader: async ({ context: { queryClient } }) => {
+        await queryClient.ensureQueryData(orgEventsQueryOptions());
+    },
     component: RouteComponent,
 });
 
 function RouteComponent() {
-    const [events] = useState<AnalyticsEvent[]>(() => generateEvents(500, 24));
+    const { data } = useSuspenseQuery(orgEventsQueryOptions());
+    const [events, setEvents] = useState<AnalyticsEvent[]>();
     const {
         notifications,
         markAsRead,
@@ -36,6 +48,10 @@ function RouteComponent() {
     const avgConversion =
         productAnalytics.length > 0 ? (productAnalytics.reduce((sum, p) => sum + p.conversionRate, 0) / productAnalytics.length).toFixed(1) : "0.0";
 
+    useEffect(() => {
+        setEvents(data.events);
+    }, [data]);
+
     return (
         <div className="min-h-screen bg-background">
             <Header
@@ -50,8 +66,6 @@ function RouteComponent() {
                 thresholds={thresholds}
                 onThresholdsChange={updateThresholds}
             />
-
-            {/* Navigation */}
             <div className="border-b border-border bg-card/30">
                 <div className="container mx-auto px-6">
                     <nav className="flex gap-1">
@@ -69,19 +83,11 @@ function RouteComponent() {
                         >
                             Products
                         </Link>
-                        <Link
-                            to="/account/sessions"
-                            className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors border-b-2 border-transparent"
-                            activeProps={{ className: "text-primary border-primary" }}
-                        >
-                            Sessions
-                        </Link>
                     </nav>
                 </div>
             </div>
 
             <main className="container mx-auto px-6 py-8">
-                {/* Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
                     <Card className="bg-card/50 border-border backdrop-blur-sm">
                         <CardContent className="pt-6">
@@ -116,7 +122,7 @@ function RouteComponent() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Revenue</p>
-                                    <p className="text-2xl font-bold text-foreground mt-1">${totalRevenue.toLocaleString()}</p>
+                                    <p className="text-2xl font-bold text-foreground mt-1">{currency(totalRevenue)}</p>
                                 </div>
                                 <div className="p-3 rounded-xl bg-event-purchase/10">
                                     <DollarSign className="h-5 w-5 text-event-purchase" />
@@ -159,7 +165,7 @@ function RouteComponent() {
                                             <span className="text-foreground font-medium">{topProduct.purchases}</span> purchases
                                         </span>
                                         <span className="text-sm text-muted-foreground">
-                                            <span className="text-event-purchase font-medium">${topProduct.revenue.toLocaleString()}</span> revenue
+                                            <span className="text-event-purchase font-medium">{currency(topProduct.revenue)}</span> revenue
                                         </span>
                                         <Badge variant="secondary" className="bg-primary/20 text-primary">
                                             {topProduct.conversionRate.toFixed(1)}% conversion
@@ -204,7 +210,7 @@ function RouteComponent() {
                                                     <p className="font-medium text-foreground group-hover:text-primary transition-colors">
                                                         {product.name}
                                                     </p>
-                                                    <p className="text-xs text-muted-foreground">${product.price.toFixed(2)}</p>
+                                                    <p className="text-xs text-muted-foreground">{currency(product.price)}</p>
                                                 </div>
                                                 <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </Link>
@@ -228,7 +234,7 @@ function RouteComponent() {
                                             </div>
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            <span className="text-event-purchase font-medium">${product.revenue.toLocaleString()}</span>
+                                            <span className="text-event-purchase font-medium">{currency(product.revenue)}</span>
                                         </TableCell>
                                         <TableCell>
                                             <div className="flex items-center gap-3">

@@ -6,13 +6,6 @@ import { useRealtimeVerification } from "~/hooks/useRealtimeVerification";
 import { Button } from "../ui/button";
 import { updateOnboardingStepFn } from "~/server-fn/onboarding.fn";
 
-function formatEventType(type: string): string {
-    return type
-        .split("_")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
-}
-
 export function VerifyStep({ formData, onPrev, onSkip }: { formData: any; onPrev: () => void; onSkip: () => void }) {
     const { isVerifying, eventsReceived, isVerified, startVerification, stopVerification } = useRealtimeVerification(formData.eventsReceived ?? 0);
     const queryClient = useQueryClient();
@@ -93,7 +86,7 @@ export function VerifyStep({ formData, onPrev, onSkip }: { formData: any; onPrev
                                     {recentEvents.map((event, i) => (
                                         <div key={i} className="text-sm text-green-400 animate-fadeIn flex items-center gap-2">
                                             <Check className="w-4 h-4" />
-                                            {formatEventType(event.event_type)}
+                                            {formatEventType(event.eventType)}
                                             <span className="text-slate-500 text-xs">{new Date(event.timestamp).toLocaleTimeString()}</span>
                                         </div>
                                     ))}

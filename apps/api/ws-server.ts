@@ -157,7 +157,6 @@ class RealtimeWebSocketServer {
         }
     }
 
-    // Broadcast to specific channels
     public broadcast(data: any, channels?: string[]) {
         const payload = JSON.stringify(data);
 
@@ -170,14 +169,12 @@ class RealtimeWebSocketServer {
                         ws.send(payload);
                     }
                 } else {
-                    // Broadcast to all if no channels specified
                     ws.send(payload);
                 }
             }
         }
     }
 
-    // Broadcast to specific user
     public broadcastToUser(userId: string, data: any) {
         const payload = JSON.stringify(data);
 

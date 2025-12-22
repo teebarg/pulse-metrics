@@ -39,8 +39,6 @@ function broadcast(payload: RealtimePayload) {
     let sentCount = 0;
 
     for (const [ws, options] of wsClients.entries()) {
-        console.log("🚀 ~ file: realtime-listener.ts:70 ~ options:", options);
-        // Check if client is interested in this table
         if (options.tables && !options.tables.includes(payload.table)) {
             continue;
         }
@@ -80,6 +78,7 @@ export async function createRealtimeListener() {
         await client.query("LISTEN table_changes");
 
         client.on("notification", (msg) => {
+            console.log("🚀 ~ file: realtime-listener.ts:84 ~ msg:", msg)
             if (msg.channel === "table_changes") {
                 try {
                     const payload: RealtimePayload = JSON.parse(msg.payload || "{}");

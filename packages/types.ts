@@ -12,7 +12,6 @@ export interface EventMetadata {
     price?: number;
     quantity?: number;
     revenue?: number;
-    currency?: string;
     referrer?: string;
     [key: string]: any;
 }

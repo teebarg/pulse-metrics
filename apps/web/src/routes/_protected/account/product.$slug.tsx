@@ -1,15 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Header } from "@/components/metrics/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { generateEvents, AnalyticsEvent, getEventColor, formatEventType, getProductById, getProductHourlyData } from "@/lib/dummy-data";
+import { AnalyticsEvent, getEventColor, formatEventType, getProductHourlyData } from "@/lib/dummy-data";
 import { useNotifications } from "@/hooks/useNotifications";
 import { ArrowLeft, Eye, ShoppingCart, Package, DollarSign, TrendingUp, Clock } from "lucide-react";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Area, AreaChart, XAxis, YAxis } from "recharts";
+import { currency, formatDate } from "~/lib/utils";
+import { getOrgEventsFn } from "~/server-fn/event.fn";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 const chartConfig = {
     views: { label: "Views", color: "hsl(var(--event-product-view))" },
@@ -17,13 +20,22 @@ const chartConfig = {
     purchases: { label: "Purchases", color: "hsl(var(--event-purchase))" },
 };
 
+const orgEventsQueryOptions = () => ({
+    queryKey: ["organization", "events"],
+    queryFn: () => getOrgEventsFn(),
+});
+
 export const Route = createFileRoute("/_protected/account/product/$slug")({
+    loader: async ({ context: { queryClient } }) => {
+        await queryClient.ensureQueryData(orgEventsQueryOptions());
+    },
     component: RouteComponent,
 });
 
 function RouteComponent() {
     const { slug: productId } = Route.useParams();
-    const [events] = useState<AnalyticsEvent[]>(() => generateEvents(500, 24));
+    const { data } = useSuspenseQuery(orgEventsQueryOptions());
+    const [events, setEvents] = useState<AnalyticsEvent[]>();
     const {
         notifications,
         markAsRead,
@@ -37,16 +49,30 @@ function RouteComponent() {
         updateThresholds,
     } = useNotifications();
 
-    const product = useMemo(() => getProductById(productId || ""), [productId]);
+    useEffect(() => {
+        setEvents(data.events);
+    }, [data]);
+
+    const availableProducts = useMemo(() => {
+        const productMap = new Map<string, any>();
+        events?.forEach((e) => {
+            if (e.metadata.product_id && e.metadata.product_name) {
+                productMap.set(e.metadata.product_id, { name: e.metadata.product_name, price: e.metadata.price });
+            }
+        });
+        return Array.from(productMap.entries()).map(([id, { name, price }]) => ({ id, name, price }));
+    }, [events]);
+
+    const product = useMemo(() => availableProducts.find((p) => p.id === productId), [productId]);
 
     const productEvents = useMemo(() => {
-        return events.filter((e) => e.metadata.product_id === productId);
+        return events?.filter((e) => e.metadata.product_id === productId);
     }, [events, productId]);
 
     const stats = useMemo(() => {
-        const views = productEvents.filter((e) => e.event_type === "product_view").length;
-        const addToCart = productEvents.filter((e) => e.event_type === "add_to_cart").length;
-        const purchases = productEvents.filter((e) => e.event_type === "purchase").length;
+        const views = productEvents?.filter((e) => e.eventType === "product_view").length || 0;
+        const addToCart = productEvents?.filter((e) => e.eventType === "add_to_cart").length || 0;
+        const purchases = productEvents?.filter((e) => e.eventType === "purchase").length || 0;
         const revenue = purchases * (product?.price || 0);
         const conversionRate = views > 0 ? (purchases / views) * 100 : 0;
         const cartRate = views > 0 ? (addToCart / views) * 100 : 0;
@@ -54,9 +80,9 @@ function RouteComponent() {
         return { views, addToCart, purchases, revenue, conversionRate, cartRate };
     }, [productEvents, product]);
 
-    const hourlyData = useMemo(() => getProductHourlyData(productEvents), [productEvents]);
+    const hourlyData = useMemo(() => getProductHourlyData(productEvents || []), [productEvents]);
 
-    const recentEvents = useMemo(() => productEvents.slice(0, 20), [productEvents]);
+    const recentEvents = useMemo(() => productEvents?.slice(0, 20), [productEvents]);
 
     if (!product) {
         return (
@@ -89,8 +115,6 @@ function RouteComponent() {
                 thresholds={thresholds}
                 onThresholdsChange={updateThresholds}
             />
-
-            {/* Navigation */}
             <div className="border-b border-border bg-card/30">
                 <div className="container mx-auto px-6">
                     <nav className="flex gap-1">
@@ -108,19 +132,11 @@ function RouteComponent() {
                         >
                             Products
                         </Link>
-                        <Link
-                            to="/account/sessions"
-                            className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors border-b-2 border-transparent"
-                            activeProps={{ className: "text-primary border-primary" }}
-                        >
-                            Sessions
-                        </Link>
                     </nav>
                 </div>
             </div>
 
             <main className="container mx-auto px-6 py-8">
-                {/* Back Button & Product Header */}
                 <div className="mb-8">
                     <Link to="/account/products">
                         <Button variant="ghost" size="sm" className="mb-4 text-muted-foreground hover:text-foreground">
@@ -134,7 +150,7 @@ function RouteComponent() {
                             <h1 className="text-3xl font-bold text-foreground">{product.name}</h1>
                             <div className="flex items-center gap-3 mt-2">
                                 <Badge variant="secondary" className="bg-primary/10 text-primary">
-                                    ${product.price.toFixed(2)}
+                                    {currency(product.price)}
                                 </Badge>
                                 <span className="text-sm text-muted-foreground">ID: {product.id}</span>
                             </div>
@@ -198,7 +214,7 @@ function RouteComponent() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-xs text-muted-foreground uppercase tracking-wider">Revenue</p>
-                                    <p className="text-2xl font-bold text-event-purchase mt-1">${stats.revenue.toLocaleString()}</p>
+                                    <p className="text-2xl font-bold text-event-purchase mt-1">{currency(stats.revenue)}</p>
                                 </div>
                                 <div className="p-3 rounded-xl bg-event-purchase/10">
                                     <DollarSign className="h-5 w-5 text-event-purchase" />
@@ -281,7 +297,6 @@ function RouteComponent() {
                         </CardContent>
                     </Card>
 
-                    {/* Recent Events */}
                     <Card className="bg-card/50 border-border backdrop-blur-sm">
                         <CardHeader>
                             <CardTitle className="text-foreground flex items-center gap-2">
@@ -292,20 +307,19 @@ function RouteComponent() {
                         <CardContent>
                             <ScrollArea className="h-[300px] pr-4">
                                 <div className="space-y-3">
-                                    {recentEvents.length === 0 ? (
+                                    {recentEvents?.length === 0 ? (
                                         <p className="text-sm text-muted-foreground text-center py-8">No events for this product</p>
                                     ) : (
-                                        recentEvents.map((event) => (
-                                            <div
-                                                key={event.id}
-                                                className="flex items-center gap-3 p-3 rounded-lg bg-background/50 border border-border"
-                                            >
-                                                <div className={`w-2 h-2 rounded-full bg-${getEventColor(event.event_type)}`} />
+                                        recentEvents?.map((event, index) => (
+                                            <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-background/50 border border-border">
+                                                <div className={`w-2 h-2 rounded-full bg-${getEventColor(event.eventType)}`} />
                                                 <div className="flex-1 min-w-0">
-                                                    <p className="text-sm font-medium text-foreground">{formatEventType(event.event_type)}</p>
-                                                    <p className="text-xs text-muted-foreground truncate">{event.timestamp.toLocaleTimeString()}</p>
+                                                    <p className="text-sm font-medium text-foreground">{formatEventType(event.eventType)}</p>
+                                                    <p className="text-xs text-muted-foreground truncate">
+                                                        {formatDate(event.timestamp as unknown as string)}
+                                                    </p>
                                                 </div>
-                                                {event.event_type === "add_to_cart" && event.metadata.quantity && (
+                                                {event.eventType === "add_to_cart" && event.metadata.quantity && (
                                                     <Badge variant="secondary" className="text-xs">
                                                         Qty: {event.metadata.quantity}
                                                     </Badge>

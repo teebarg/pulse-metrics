@@ -1,4 +1,5 @@
 import { AnalyticsEvent } from "./dummy-data";
+import { currency } from "./utils";
 
 export type NotificationType = "high_value_purchase" | "activity_spike" | "conversion_milestone" | "cart_abandonment_surge";
 
@@ -31,7 +32,7 @@ function generateNotificationId(): string {
 }
 
 export function checkForHighValuePurchase(event: AnalyticsEvent, threshold: number = DEFAULT_HIGH_VALUE_THRESHOLD): Notification | null {
-    if (event.event_type !== "purchase") return null;
+    if (event.eventType !== "purchase") return null;
 
     const orderValue = event.metadata.order_value || 0;
 
@@ -40,11 +41,11 @@ export function checkForHighValuePurchase(event: AnalyticsEvent, threshold: numb
             id: generateNotificationId(),
             type: "high_value_purchase",
             title: "High-Value Purchase! 🎉",
-            message: `New order worth $${orderValue.toLocaleString()} just came in`,
+            message: `New order worth ${currency(orderValue)} just came in`,
             timestamp: new Date(),
             severity: "success",
             read: false,
-            metadata: { orderValue, userId: event.user_id },
+            metadata: { orderValue },
         };
     }
 
@@ -84,7 +85,7 @@ export function checkForActivitySpike(events: AnalyticsEvent[], spikeMultiplier:
 }
 
 export function checkForConversionMilestone(events: AnalyticsEvent[], lastMilestone: number): Notification | null {
-    const purchases = events.filter((e) => e.event_type === "purchase").length;
+    const purchases = events.filter((e) => e.eventType === "purchase").length;
     const milestones = [10, 25, 50, 100, 250, 500, 1000];
 
     for (const milestone of milestones) {

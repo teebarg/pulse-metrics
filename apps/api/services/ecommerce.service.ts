@@ -123,7 +123,6 @@ export class EcommerceService {
         // Calculate hourly data
         const hourlyData = this.calculateHourlyData(allEvents);
 
-        // Prepare top products
         const topProducts = Array.from(productMetrics.entries())
             .map(([productId, metrics]) => ({
                 productId,

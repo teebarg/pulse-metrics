@@ -8,23 +8,21 @@ import { cn } from "@/lib/utils";
 export interface FilterState {
     eventType: EventType | "all";
     productId: string;
-    sessionId: string;
 }
 
 interface EventFiltersProps {
     filters: FilterState;
     onFiltersChange: (filters: FilterState) => void;
     availableProducts: { id: string; name: string }[];
-    availableSessions: string[];
 }
 
 const eventTypes: (EventType | "all")[] = ["all", "page_view", "product_view", "add_to_cart", "checkout", "purchase"];
 
-export function EventFilters({ filters, onFiltersChange, availableProducts, availableSessions }: EventFiltersProps) {
-    const hasActiveFilters = filters.eventType !== "all" || filters.productId !== "all" || filters.sessionId !== "all";
+export function EventFilters({ filters, onFiltersChange, availableProducts }: EventFiltersProps) {
+    const hasActiveFilters = filters.eventType !== "all" || filters.productId !== "all";
 
     const clearFilters = () => {
-        onFiltersChange({ eventType: "all", productId: "all", sessionId: "all" });
+        onFiltersChange({ eventType: "all", productId: "all" });
     };
 
     return (
@@ -64,20 +62,6 @@ export function EventFilters({ filters, onFiltersChange, availableProducts, avai
                 </SelectContent>
             </Select>
 
-            <Select value={filters.sessionId} onValueChange={(value) => onFiltersChange({ ...filters, sessionId: value })}>
-                <SelectTrigger className="w-[150px] bg-background border-border">
-                    <SelectValue placeholder="Session" />
-                </SelectTrigger>
-                <SelectContent className="bg-card border-border z-50 max-h-[200px]">
-                    <SelectItem value="all">All Sessions</SelectItem>
-                    {availableSessions.slice(0, 20).map((session, idx: number) => (
-                        <SelectItem key={idx} value={session}>
-                            {session?.slice(0, 12)}...
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
-
             {hasActiveFilters && (
                 <Button variant="ghost" size="sm" onClick={clearFilters} className="text-muted-foreground hover:text-foreground">
                     <X className="h-4 w-4 mr-1" />
@@ -96,11 +80,6 @@ export function EventFilters({ filters, onFiltersChange, availableProducts, avai
                     {filters.productId !== "all" && (
                         <Badge variant="secondary" className="text-xs">
                             {availableProducts.find((p) => p.id === filters.productId)?.name || filters.productId}
-                        </Badge>
-                    )}
-                    {filters.sessionId !== "all" && (
-                        <Badge variant="secondary" className="text-xs">
-                            Session: {filters.sessionId.slice(0, 8)}...
                         </Badge>
                     )}
                 </div>

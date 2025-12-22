@@ -7,7 +7,7 @@ import { z } from "zod";
 export const ProductMetricsSchema = z.object({
     product_id: z.string(),
     product_name: z.string().optional(),
-    event_type: z.string(),
+    eventType: z.string(),
     count: z.number(),
     total_value: z.number().default(0)
 });
@@ -34,7 +34,7 @@ export class EcommerceRepository {
             SELECT 
                 metadata->>'product_id' as product_id,
                 metadata->>'product_name' as product_name,
-                event_type,
+                eventType,
                 COUNT(*) as count,
                 COALESCE(SUM(CAST(metadata->>'order_value' AS DECIMAL)), 0) as total_value
             FROM events
@@ -45,7 +45,7 @@ export class EcommerceRepository {
             GROUP BY 
                 metadata->>'product_id',
                 metadata->>'product_name',
-                event_type
+                eventType
         `);
 
         return ProductMetricsSchema.array().parse(result.rows);
@@ -55,7 +55,7 @@ export class EcommerceRepository {
         const result = await db.execute(sql`
             SELECT 
                 to_char(timestamp, 'HH12:00 AM') as hour,
-                event_type as event_type,
+                eventType as eventType,
                 COUNT(*) as count
             FROM events
             WHERE 
@@ -63,13 +63,13 @@ export class EcommerceRepository {
                 AND timestamp >= ${fromDate}
             GROUP BY 
                 to_char(timestamp, 'HH12:00 AM'),
-                event_type
+                eventType
             ORDER BY hour
         `);
 
         return result.rows as Array<{
             hour: string;
-            event_type: string;
+            eventType: string;
             count: number;
         }>;
     }
