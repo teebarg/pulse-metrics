@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { BarChart3, Zap, Shield, TrendingUp, Code, Check } from "lucide-react";
+import { BarChart3, Zap, Shield, TrendingUp, Code, Check, Sparkles, Pencil } from "lucide-react";
 import Pricing from "~/components/landing/Pricing";
 import { authClient } from "~/lib/auth-client";
 import { currency } from "~/lib/utils";
+import { Badge } from "~/components/ui/badge";
 
 export const Route = createFileRoute("/")({
     component: RouteComponent,
@@ -29,13 +30,13 @@ function RouteComponent() {
     };
 
     return (
-        <div className="min-h-screen bg-linear-to-b from-slate-900 via-slate-800 to-slate-900">
-            <header className="border-b border-slate-700">
+        <div className="min-h-screen">
+            <header className="border-b border-muted">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
                             <BarChart3 className="w-8 h-8 text-blue-400" />
-                            <span className="text-2xl font-bold text-white">PulseMetrics</span>
+                            <span className="text-2xl font-bold">PulseMetrics</span>
                         </div>
                         {isAuthenticated ? (
                             <div className="flex items-center gap-4">
@@ -60,24 +61,24 @@ function RouteComponent() {
 
             <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
                 <div className="text-center">
-                    <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+                    <h1 className="text-5xl md:text-6xl font-bold mb-6">
                         Real-Time Analytics for
                         <span className="block text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-purple-400">Modern E-Commerce</span>
                     </h1>
-                    <p className="text-xl text-slate-300 mb-8 max-w-3xl mx-auto">
+                    <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
                         Get instant insights into your store's performance. Track visitors, sales, and conversions in real-time. Install in under 60
                         seconds.
                     </p>
                     <div className="flex gap-4 justify-center">
-                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition shadow-lg shadow-blue-500/50">
+                        <Button size="xl" className="rounded-lg">
                             Start Free Trial
-                        </button>
-                        <button className="border-2 border-slate-600 hover:border-slate-500 text-white px-8 py-4 rounded-lg font-semibold text-lg transition">
+                        </Button>
+                        <Button size="xl" variant="outline" className="rounded-lg">
                             View Demo
-                        </button>
+                        </Button>
                     </div>
 
-                    <div className="mt-12 flex gap-8 justify-center items-center text-sm text-slate-400">
+                    <div className="mt-12 flex gap-8 justify-center items-center text-sm text-muted-foreground">
                         <div className="flex items-center gap-2">
                             <Check className="w-5 h-5 text-green-400" />
                             <span>Free Forever</span>
@@ -92,14 +93,14 @@ function RouteComponent() {
                         </div>
                     </div>
                 </div>
-                <div className="mt-16 rounded-2xl border border-slate-700 bg-slate-800/50 p-8 shadow-2xl">
+                <div className="mt-16 rounded-2xl border border-muted bg-secondary p-8 shadow-2xl">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                         <MetricCard title="Active Visitors" value="127" change="+12%" positive />
                         <MetricCard title="Today's Sales" value={currency(2847)} change="+23%" positive />
                         <MetricCard title="Conversion Rate" value="3.2%" change="+0.4%" positive />
                     </div>
-                    <div className="bg-slate-900/50 rounded-lg p-6 h-64 flex items-center justify-center">
-                        <div className="text-slate-500">
+                    <div className="bg-card rounded-lg p-6 h-64 flex items-center justify-center">
+                        <div className="text-muted-foreground">
                             <TrendingUp className="w-16 h-16 mx-auto mb-4" />
                             <p className="text-center">Real-time sales chart would go here</p>
                         </div>
@@ -107,11 +108,15 @@ function RouteComponent() {
                 </div>
             </section>
 
-            <section className="bg-slate-800/50 py-20">
+            <section className="bg-secondary py-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
-                        <h2 className="text-4xl font-bold text-white mb-4">Everything You Need to Grow</h2>
-                        <p className="text-xl text-slate-300">Powerful analytics made simple</p>
+                        <Badge variant="contrast" className="mb-4">
+                            <BarChart3 className="h-3 w-3 mr-2" />
+                            Growth Assured
+                        </Badge>
+                        <h2 className="text-4xl font-bold mb-4">Everything You Need to Grow</h2>
+                        <p className="text-xl text-muted-foreground">Powerful analytics made simple</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -149,19 +154,22 @@ function RouteComponent() {
                 </div>
             </section>
 
-            {/* Integration Section */}
             <section className="py-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
-                        <h2 className="text-4xl font-bold text-white mb-4">Works With Your Stack</h2>
-                        <p className="text-xl text-slate-300">Integrate in minutes, not hours</p>
+                        <Badge variant="contrast" className="mb-4">
+                            <Sparkles className="h-3 w-3 mr-2" />
+                            Works With Your Stack
+                        </Badge>
+                        <h2 className="text-4xl font-bold mb-4">Works With Your Stack</h2>
+                        <p className="text-xl text-muted-foreground">Integrate in minutes, not hours</p>
                     </div>
 
-                    <div className="bg-slate-800/50 rounded-2xl p-8 max-w-3xl mx-auto border border-slate-700">
+                    <div className="bg-secondary rounded-2xl p-8 max-w-3xl mx-auto border border-muted">
                         <div className="mb-4">
-                            <span className="text-sm text-slate-400">JavaScript SDK</span>
+                            <span className="text-sm">JavaScript SDK</span>
                         </div>
-                        <pre className="bg-slate-900 rounded-lg p-6 overflow-x-auto">
+                        <pre className="bg-slate-800 rounded-lg p-6 overflow-x-auto">
                             <code className="text-green-400 text-sm">
                                 {`<!-- Add to your <head> -->
 <script src="https://cdn.pulsemetrics.io/sdk.js"></script>
@@ -172,7 +180,7 @@ function RouteComponent() {
 </script>`}
                             </code>
                         </pre>
-                        <p className="text-sm text-slate-400 mt-4 text-center">That's it! You're now tracking visitors and sales.</p>
+                        <p className="text-sm text-muted-foreground mt-4 text-center">That's it! You're now tracking visitors and sales.</p>
                     </div>
 
                     <div className="mt-12 flex justify-center gap-6 flex-wrap">
@@ -187,24 +195,27 @@ function RouteComponent() {
 
             <Pricing />
 
-            {/* CTA Section */}
             <section className="py-20">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 className="text-4xl font-bold text-white mb-6">Ready to Get Started?</h2>
-                    <p className="text-xl text-slate-300 mb-8">Join hundreds of e-commerce stores already using PulseMetrics</p>
+                    <Badge variant="contrast" className="mb-4">
+                        <Pencil className="h-3 w-3 mr-2" />
+                        Get Started
+                    </Badge>
+                    <h2 className="text-4xl font-bold mb-6">Ready to Get Started?</h2>
+                    <p className="text-xl text-muted-foreground mb-8">Join hundreds of e-commerce stores already using PulseMetrics</p>
                     <button className="bg-blue-500 hover:bg-blue-600 text-white px-12 py-4 rounded-lg font-semibold text-lg transition shadow-lg shadow-blue-500/50">
                         Start Your Free Trial
                     </button>
                 </div>
             </section>
-            <footer className="border-t border-slate-700 py-12">
+            <footer className="border-t border-muted py-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
                             <BarChart3 className="w-6 h-6 text-blue-400" />
-                            <span className="text-lg font-bold text-white">PulseMetrics</span>
+                            <span className="text-lg font-bold">PulseMetrics</span>
                         </div>
-                        <div className="text-sm text-slate-400">© 2024 PulseMetrics. All rights reserved.</div>
+                        <div className="text-sm text-muted-foreground">© 2024 PulseMetrics. All rights reserved.</div>
                     </div>
                 </div>
             </footer>
@@ -214,9 +225,9 @@ function RouteComponent() {
 
 function MetricCard({ title, value, change, positive }: any) {
     return (
-        <div className="bg-slate-900/50 rounded-lg p-6 border border-slate-700">
-            <div className="text-sm text-slate-400 mb-2">{title}</div>
-            <div className="text-3xl font-bold text-white mb-2">{value}</div>
+        <div className="bg-card rounded-lg p-6 border border-muted">
+            <div className="text-sm text-muted-foreground mb-2">{title}</div>
+            <div className="text-3xl font-bold mb-2">{value}</div>
             <div className={`text-sm ${positive ? "text-green-400" : "text-red-400"}`}>{change}</div>
         </div>
     );
@@ -224,10 +235,10 @@ function MetricCard({ title, value, change, positive }: any) {
 
 function FeatureCard({ icon, title, description }: any) {
     return (
-        <div className="bg-slate-900/50 rounded-lg p-6 border border-slate-700 hover:border-slate-600 transition">
+        <div className="bg-card rounded-lg p-6 border">
             <div className="mb-4">{icon}</div>
-            <h3 className="text-xl font-semibold text-white mb-2">{title}</h3>
-            <p className="text-slate-400">{description}</p>
+            <h3 className="text-xl font-semibold mb-2">{title}</h3>
+            <p className="text-muted-foreground">{description}</p>
         </div>
     );
 }

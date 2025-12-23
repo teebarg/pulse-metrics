@@ -43,6 +43,9 @@ code {
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
+    --contrast: 14 90% 58%;
+    --contrast-foreground: 0 0% 100%;
+
     --error: 15 90% 60%;
     --error-foreground: 0 0% 100%;
     --error-light: 15 100% 97%;
@@ -108,6 +111,9 @@ code {
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
+    --contrast: 43 74% 66%;
+    --contrast-foreground: 20 14.3% 4.1%;
+
     --error: 15 85% 55%;
     --error-foreground: 0 0% 100%;
     --error-light: 15 40% 15%;
@@ -169,6 +175,8 @@ code {
     --color-accent-foreground: hsl(var(--accent-foreground));
     --color-destructive: hsl(var(--destructive));
     --color-destructive-foreground: hsl(var(--destructive-foreground));
+    --color-contrast: hsl(var(--contrast));
+    --color-contrast-foreground: hsl(var(--contrast-foreground));
     --color-error: hsl(var(--error));
     --color-error-foreground: hsl(var(--error-foreground));
     --color-error-light: hsl(var(--error-light));

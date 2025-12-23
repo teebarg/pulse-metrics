@@ -1,42 +1,3 @@
-// import { Hono } from "hono";
-// import { createRealtimeListener } from "./realtime-listener";
-
-// const wsClients = new Set<WebSocket>();
-
-// export const wsApp = new Hono();
-
-// wsApp.get("/realtime", (c) => {
-//     const upgrade = c.req.raw.headers.get("upgrade") || "";
-//     if (upgrade.toLowerCase() !== "websocket") return c.text("Not a WS", 400);
-
-//     // @ts-expect-error Deno types not available in this context
-//     const { socket, response } = Deno.upgradeWebSocket(c.req.raw);
-
-//     socket.onopen = () => {
-//         wsClients.add(socket);
-//         console.log("🔌 WS Client Connected");
-//     };
-
-//     socket.onclose = () => {
-//         wsClients.delete(socket);
-//     };
-
-//     return response;
-// });
-
-// // Broadcast helper
-// function broadcast(data: any) {
-//     for (const ws of wsClients) {
-//         ws.send(JSON.stringify(data));
-//     }
-// }
-
-// // Start Postgres listener
-// createRealtimeListener(broadcast);
-
-// export default wsApp;
-
-import { createServer } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { parse } from "url";
 
@@ -78,7 +39,6 @@ class RealtimeWebSocketServer {
         this.clients.set(ws, client);
         console.log("🔌 Client connected. Total clients:", this.clients.size);
 
-        // Send welcome message
         this.sendToClient(ws, {
             type: "connected",
             message: "Connected to realtime server",

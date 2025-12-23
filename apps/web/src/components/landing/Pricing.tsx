@@ -77,15 +77,17 @@ export default function Pricing() {
     };
 
     return (
-        <section id="pricing" ref={sectionRef} className="bg-slate-800/50 py-24">
+        <section id="pricing" ref={sectionRef} className="bg-secondary py-24">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="text-center mb-16">
-                    <Badge variant="accent" className="mb-4">
+                    <Badge variant="contrast" className="mb-4">
                         <Zap className="h-3 w-3 mr-2" />
                         Simple pricing
                     </Badge>
                     <h2 className="text-4xl md:text-5xl font-bold mb-4">Simple, transparent pricing</h2>
-                    <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Start free and scale as you grow. No hidden fees, cancel anytime.</p>
+                    <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                        Start free and scale as you grow. No hidden fees, cancel anytime.
+                    </p>
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-8">
@@ -95,7 +97,7 @@ export default function Pricing() {
                             className={`relative rounded-2xl p-8 transition-all duration-700 ${
                                 plan.popular
                                     ? "bg-slate-900 text-white shadow-2xl scale-105 border-4 border-slate-900"
-                                    : "bg-white border-2 border-slate-200 hover:border-slate-300 hover:shadow-lg"
+                                    : "bg-white border hover:shadow-lg"
                             } ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
                             style={{ transitionDelay: `${index * 150}ms` }}
                         >
@@ -146,8 +148,8 @@ export default function Pricing() {
                 </div>
 
                 <div className="mt-16 text-center">
-                    <p className="text-muted-foreground mb-6">All plans include 14-day free trial. No credit card required.</p>
-                    <div className="flex flex-wrap justify-center gap-8 text-sm text-slate-500">
+                    <p className="mb-6">All plans include 14-day free trial. No credit card required.</p>
+                    <div className="flex flex-wrap justify-center gap-8 text-sm text-muted-foreground">
                         <div className="flex items-center gap-2">
                             <Check className="w-4 h-4 text-green-600" />
                             <span>SOC 2 Compliant</span>
