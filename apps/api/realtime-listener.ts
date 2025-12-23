@@ -78,7 +78,6 @@ export async function createRealtimeListener() {
         await client.query("LISTEN table_changes");
 
         client.on("notification", (msg) => {
-            console.log("🚀 ~ file: realtime-listener.ts:84 ~ msg:", msg)
             if (msg.channel === "table_changes") {
                 try {
                     const payload: RealtimePayload = JSON.parse(msg.payload || "{}");

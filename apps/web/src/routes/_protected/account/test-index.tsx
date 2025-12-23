@@ -22,7 +22,7 @@ const orgEventsQueryOptions = () => ({
     queryFn: () => getOrgEventsFn(),
 });
 
-export const Route = createFileRoute("/_protected/account/")({
+export const Route = createFileRoute("/_protected/account/test-index")({
     loader: async ({ context: { queryClient } }) => {
         await queryClient.ensureQueryData(orgEventsQueryOptions());
     },

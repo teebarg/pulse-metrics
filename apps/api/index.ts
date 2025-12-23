@@ -14,6 +14,7 @@ import { createNodeWebSocket } from "@hono/node-ws";
 import { createRealtimeListener, registerClient, unregisterClient } from "./realtime-listener";
 import { organizationRoutes } from "~/routes/organization.routes";
 import { eventsRoute } from "~/routes/events.routes";
+import { settingsRoutes } from "~/routes/settings.routes";
 
 const port = Number(process.env.API_PORT || 8787);
 
@@ -33,6 +34,7 @@ app.route("/v1/analytics", analyticsRoutes);
 app.route("/v1/events", eventsRoute);
 app.route("/v1/onboarding", onBoardingRoutes);
 app.route("/v1/organization", organizationRoutes);
+app.route("/v1/settings", settingsRoutes);
 
 app.doc("/doc", {
     openapi: "3.0.0",

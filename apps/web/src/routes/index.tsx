@@ -5,6 +5,7 @@ import Pricing from "~/components/landing/Pricing";
 import { authClient } from "~/lib/auth-client";
 import { currency } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
+import { ThemeToggle } from "~/components/theme-toggle";
 
 export const Route = createFileRoute("/")({
     component: RouteComponent,
@@ -38,23 +39,26 @@ function RouteComponent() {
                             <BarChart3 className="w-8 h-8 text-blue-400" />
                             <span className="text-2xl font-bold">PulseMetrics</span>
                         </div>
-                        {isAuthenticated ? (
-                            <div className="flex items-center gap-4">
-                                <Button variant="ghost" onClick={handleSignOut}>
-                                    Sign Out
-                                </Button>
-                                <Button onClick={() => navigate({ to: "/account" })}>Dashboard</Button>
-                            </div>
-                        ) : (
-                            <div className="flex items-center gap-4">
-                                <Button variant="ghost" onClick={handleGetStarted}>
-                                    Sign In
-                                </Button>
-                                <Button className="animate-scale-in cursor-pointer" onClick={handleGetStarted}>
-                                    Get Started
-                                </Button>
-                            </div>
-                        )}
+                        <div className="flex items-center gap-4">
+                            <ThemeToggle />
+                            {isAuthenticated ? (
+                                <>
+                                    <Button variant="ghost" onClick={handleSignOut}>
+                                        Sign Out
+                                    </Button>
+                                    <Button onClick={() => navigate({ to: "/account" })}>Dashboard</Button>
+                                </>
+                            ) : (
+                                <>
+                                    <Button variant="ghost" onClick={handleGetStarted}>
+                                        Sign In
+                                    </Button>
+                                    <Button className="animate-scale-in cursor-pointer" onClick={handleGetStarted}>
+                                        Get Started
+                                    </Button>
+                                </>
+                            )}
+                        </div>
                     </div>
                 </div>
             </header>

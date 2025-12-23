@@ -165,3 +165,22 @@ export const analyticsCache = pgTable(
         uniqCache: uniqueIndex("analytics_cache_unique").on(table.organizationId, table.metricType, table.timeWindow, table.periodStart),
     })
 );
+
+export const settings = pgTable(
+    "settings",
+    {
+        id: uuid("id").primaryKey().defaultRandom(),
+        userId: text("userId")
+            .notNull()
+            .references(() => users.id, { onDelete: "cascade" }),
+        soundEnabled: boolean("soundEnabled").notNull().default(true),
+        browserNotificationsEnabled: boolean("browserNotificationsEnabled").notNull().default(true),
+        highValueThreshold: integer("highValueThreshold").notNull().default(100),
+        activitySpikeMultiplier: integer("activitySpikeMultiplier").notNull().default(2),
+        createdAt: timestamp("createdAt").defaultNow(),
+        updatedAt: timestamp("updatedAt").defaultNow(),
+    },
+    (table) => ({
+        userIdUnique: uniqueIndex("settings_userId_unique").on(table.userId),
+    })
+);

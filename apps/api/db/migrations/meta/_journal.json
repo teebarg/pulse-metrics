@@ -8,6 +8,13 @@
       "when": 1765559584452,
       "tag": "0000_late_sue_storm",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1766507845628,
+      "tag": "0001_great_thundra",
+      "breakpoints": true
     }
   ]
 }

@@ -17,7 +17,7 @@ const orgEventsQueryOptions = () => ({
     queryFn: () => getOrgEventsFn(),
 });
 
-export const Route = createFileRoute("/_protected/account/products")({
+export const Route = createFileRoute("/_protected/account/products-old")({
     loader: async ({ context: { queryClient } }) => {
         await queryClient.ensureQueryData(orgEventsQueryOptions());
     },
