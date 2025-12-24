@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils";
 import { Activity } from "lucide-react";
 import { NotificationCenter } from "@/components/metrics/NotificationCenter";
-import { NotificationSettings, NotificationThresholds } from "@/components/metrics/NotificationSettings";
+import { NotificationSettings } from "@/components/metrics/NotificationSettings";
 import { Notification } from "@/lib/notification.service";
+import { Settings } from "~/server-fn/settings.fn";
 
 interface HeaderProps {
     className?: string;
@@ -10,27 +11,10 @@ interface HeaderProps {
     onMarkAsRead: (id: string) => void;
     onMarkAllAsRead: () => void;
     onDismissNotification: (id: string) => void;
-    soundEnabled: boolean;
-    onToggleSound: () => void;
-    browserNotificationsEnabled: boolean;
-    onToggleBrowserNotifications: () => void;
-    thresholds: NotificationThresholds;
-    onThresholdsChange: (thresholds: NotificationThresholds) => void;
+    settings: Settings;
 }
 
-export function Header({
-    className,
-    notifications,
-    onMarkAsRead,
-    onMarkAllAsRead,
-    onDismissNotification,
-    soundEnabled,
-    onToggleSound,
-    browserNotificationsEnabled,
-    onToggleBrowserNotifications,
-    thresholds,
-    onThresholdsChange,
-}: HeaderProps) {
+export function Header({ className, notifications, onMarkAsRead, onMarkAllAsRead, onDismissNotification, settings }: HeaderProps) {
     return (
         <header className={cn("border-b border-border bg-card/50 backdrop-blur-xl sticky top-0 z-50", className)}>
             <div className="container mx-auto px-6 py-4">
@@ -52,14 +36,7 @@ export function Header({
                             onMarkAllAsRead={onMarkAllAsRead}
                             onDismiss={onDismissNotification}
                         />
-                        <NotificationSettings
-                            soundEnabled={soundEnabled}
-                            onToggleSound={onToggleSound}
-                            browserNotificationsEnabled={browserNotificationsEnabled}
-                            onToggleBrowserNotifications={onToggleBrowserNotifications}
-                            thresholds={thresholds}
-                            onThresholdsChange={onThresholdsChange}
-                        />
+                        <NotificationSettings settings={settings} />
                     </div>
                 </div>
             </div>

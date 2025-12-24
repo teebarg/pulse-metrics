@@ -1,28 +1,21 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { AnalyticsEvent, getProductAnalytics } from "@/lib/dummy-data";
+import { getProductAnalytics } from "@/lib/dummy-data";
 import { TrendingUp, Eye, ShoppingCart, Package, DollarSign, ChevronRight } from "lucide-react";
 import { currency } from "~/lib/utils";
-import { getOrgEventsFn } from "~/server-fn/event.fn";
-import { useQuery } from "@tanstack/react-query";
-
-const orgEventsQueryOptions = () => ({
-    queryKey: ["organization", "events"],
-    queryFn: () => getOrgEventsFn(),
-});
+import { useStore } from "@tanstack/react-store";
+import { store } from "~/utils/store";
 
 export const Route = createFileRoute("/_protected/account/_metricsLayout/products")({
     component: RouteComponent,
 });
 
 function RouteComponent() {
-    const { data, isLoading } = useQuery(orgEventsQueryOptions());
-    const [events, setEvents] = useState<AnalyticsEvent[]>();
-
+    const events = useStore(store, (state) => state.events);
     const productAnalytics = useMemo(() => getProductAnalytics(events), [events]);
 
     const topProduct = productAnalytics[0];
@@ -30,10 +23,6 @@ function RouteComponent() {
     const totalViews = productAnalytics.reduce((sum, p) => sum + p.views, 0);
     const avgConversion =
         productAnalytics.length > 0 ? (productAnalytics.reduce((sum, p) => sum + p.conversionRate, 0) / productAnalytics.length).toFixed(1) : "0.0";
-
-    useEffect(() => {
-        setEvents(data.events);
-    }, [data]);
 
     return (
         <main className="container mx-auto px-6 py-8">

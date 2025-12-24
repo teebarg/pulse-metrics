@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
-import { magicLinkClient } from "better-auth/client/plugins";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
+import { magicLink } from "better-auth/plugins";
 import { Pool } from "pg";
 
 export const auth = betterAuth({
@@ -10,7 +10,18 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
     },
-    plugins: [magicLinkClient(), tanstackStartCookies()],
+    plugins: [
+        tanstackStartCookies(),
+        magicLink({
+            sendMagicLink: async ({ email, token, url }, ctx) => {
+                console.log("🚀 ~ file: auth.ts:17 ~ ctx:", ctx);
+                console.log("🚀 ~ file: auth.ts:17 ~ url:", url);
+                console.log("🚀 ~ file: auth.ts:17 ~ token:", token);
+                console.log("🚀 ~ file: auth.ts:17 ~ email:", email);
+                // send email to user
+            },
+        }),
+    ],
     socialProviders: {
         google: {
             clientId: process.env.GOOGLE_CLIENT_ID as string,

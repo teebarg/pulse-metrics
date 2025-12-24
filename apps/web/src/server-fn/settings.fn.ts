@@ -3,27 +3,27 @@ import z from "zod";
 import { api } from "~/utils/fetch-api";
 
 export interface Settings {
-    name?: string;
-    apiKey?: string;
     createdAt?: string;
     updatedAt?: string;
-}
-
-export interface SettingsResponse {
-    settings: Settings;
+    soundEnabled: boolean;
+    browserNotificationsEnabled: boolean;
+    highValueThreshold: number;
+    activitySpikeMultiplier: number;
 }
 
 export const getSettingsFn = createServerFn().handler(async () => {
-    return await api.get<Settings>("/v1/settings");
+    return await api.get<{ settings: Settings }>("/v1/settings");
 });
 
 export const updateSettingsFn = createServerFn({ method: "POST" })
     .inputValidator(
         z.object({
-            name: z.string().optional(),
-            apiKey: z.string().optional(),
+            soundEnabled: z.boolean().optional(),
+            browserNotificationsEnabled: z.boolean().optional(),
+            highValueThreshold: z.number().optional(),
+            activitySpikeMultiplier: z.number().optional(),
         })
     )
     .handler(async ({ data }) => {
-        return await api.patch<Settings>("/v1/settings", { params: data });
+        return await api.patch<Settings>("/v1/settings", data);
     });

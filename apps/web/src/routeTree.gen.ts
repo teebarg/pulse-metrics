@@ -18,14 +18,12 @@ import { Route as ProtectedOnboardingRouteImport } from './routes/_protected/onb
 import { Route as ProtectedAccountRouteImport } from './routes/_protected/account'
 import { Route as AuthErrorRouteImport } from './routes/_auth/error'
 import { Route as AuthAuthRouteImport } from './routes/_auth/auth'
-import { Route as ProtectedAccountTestIndexRouteImport } from './routes/_protected/account/test-index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ProtectedAccountSettingsRouteImport } from './routes/_protected/account/settings'
-import { Route as ProtectedAccountProductsOldRouteImport } from './routes/_protected/account/products-old'
 import { Route as ProtectedAccountMetricsLayoutRouteImport } from './routes/_protected/account/_metricsLayout'
 import { Route as ProtectedAccountMetricsLayoutIndexRouteImport } from './routes/_protected/account/_metricsLayout/index'
-import { Route as ProtectedAccountProductSlugRouteImport } from './routes/_protected/account/product.$slug'
 import { Route as ProtectedAccountMetricsLayoutProductsRouteImport } from './routes/_protected/account/_metricsLayout/products'
+import { Route as ProtectedAccountMetricsLayoutProductSlugRouteImport } from './routes/_protected/account/_metricsLayout/product.$slug'
 
 const DocsRoute = DocsRouteImport.update({
   id: '/docs',
@@ -70,12 +68,6 @@ const AuthAuthRoute = AuthAuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => AuthRoute,
 } as any)
-const ProtectedAccountTestIndexRoute =
-  ProtectedAccountTestIndexRouteImport.update({
-    id: '/test-index',
-    path: '/test-index',
-    getParentRoute: () => ProtectedAccountRoute,
-  } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -85,12 +77,6 @@ const ProtectedAccountSettingsRoute =
   ProtectedAccountSettingsRouteImport.update({
     id: '/settings',
     path: '/settings',
-    getParentRoute: () => ProtectedAccountRoute,
-  } as any)
-const ProtectedAccountProductsOldRoute =
-  ProtectedAccountProductsOldRouteImport.update({
-    id: '/products-old',
-    path: '/products-old',
     getParentRoute: () => ProtectedAccountRoute,
   } as any)
 const ProtectedAccountMetricsLayoutRoute =
@@ -104,16 +90,16 @@ const ProtectedAccountMetricsLayoutIndexRoute =
     path: '/',
     getParentRoute: () => ProtectedAccountMetricsLayoutRoute,
   } as any)
-const ProtectedAccountProductSlugRoute =
-  ProtectedAccountProductSlugRouteImport.update({
-    id: '/product/$slug',
-    path: '/product/$slug',
-    getParentRoute: () => ProtectedAccountRoute,
-  } as any)
 const ProtectedAccountMetricsLayoutProductsRoute =
   ProtectedAccountMetricsLayoutProductsRouteImport.update({
     id: '/products',
     path: '/products',
+    getParentRoute: () => ProtectedAccountMetricsLayoutRoute,
+  } as any)
+const ProtectedAccountMetricsLayoutProductSlugRoute =
+  ProtectedAccountMetricsLayoutProductSlugRouteImport.update({
+    id: '/product/$slug',
+    path: '/product/$slug',
     getParentRoute: () => ProtectedAccountMetricsLayoutRoute,
   } as any)
 
@@ -125,13 +111,11 @@ export interface FileRoutesByFullPath {
   '/error': typeof AuthErrorRoute
   '/account': typeof ProtectedAccountMetricsLayoutRouteWithChildren
   '/onboarding': typeof ProtectedOnboardingRoute
-  '/account/products-old': typeof ProtectedAccountProductsOldRoute
   '/account/settings': typeof ProtectedAccountSettingsRoute
-  '/account/test-index': typeof ProtectedAccountTestIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/account/products': typeof ProtectedAccountMetricsLayoutProductsRoute
-  '/account/product/$slug': typeof ProtectedAccountProductSlugRoute
   '/account/': typeof ProtectedAccountMetricsLayoutIndexRoute
+  '/account/product/$slug': typeof ProtectedAccountMetricsLayoutProductSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -141,12 +125,10 @@ export interface FileRoutesByTo {
   '/error': typeof AuthErrorRoute
   '/account': typeof ProtectedAccountMetricsLayoutIndexRoute
   '/onboarding': typeof ProtectedOnboardingRoute
-  '/account/products-old': typeof ProtectedAccountProductsOldRoute
   '/account/settings': typeof ProtectedAccountSettingsRoute
-  '/account/test-index': typeof ProtectedAccountTestIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/account/products': typeof ProtectedAccountMetricsLayoutProductsRoute
-  '/account/product/$slug': typeof ProtectedAccountProductSlugRoute
+  '/account/product/$slug': typeof ProtectedAccountMetricsLayoutProductSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -160,13 +142,11 @@ export interface FileRoutesById {
   '/_protected/account': typeof ProtectedAccountRouteWithChildren
   '/_protected/onboarding': typeof ProtectedOnboardingRoute
   '/_protected/account/_metricsLayout': typeof ProtectedAccountMetricsLayoutRouteWithChildren
-  '/_protected/account/products-old': typeof ProtectedAccountProductsOldRoute
   '/_protected/account/settings': typeof ProtectedAccountSettingsRoute
-  '/_protected/account/test-index': typeof ProtectedAccountTestIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_protected/account/_metricsLayout/products': typeof ProtectedAccountMetricsLayoutProductsRoute
-  '/_protected/account/product/$slug': typeof ProtectedAccountProductSlugRoute
   '/_protected/account/_metricsLayout/': typeof ProtectedAccountMetricsLayoutIndexRoute
+  '/_protected/account/_metricsLayout/product/$slug': typeof ProtectedAccountMetricsLayoutProductSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -178,13 +158,11 @@ export interface FileRouteTypes {
     | '/error'
     | '/account'
     | '/onboarding'
-    | '/account/products-old'
     | '/account/settings'
-    | '/account/test-index'
     | '/api/auth/$'
     | '/account/products'
-    | '/account/product/$slug'
     | '/account/'
+    | '/account/product/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -194,9 +172,7 @@ export interface FileRouteTypes {
     | '/error'
     | '/account'
     | '/onboarding'
-    | '/account/products-old'
     | '/account/settings'
-    | '/account/test-index'
     | '/api/auth/$'
     | '/account/products'
     | '/account/product/$slug'
@@ -212,13 +188,11 @@ export interface FileRouteTypes {
     | '/_protected/account'
     | '/_protected/onboarding'
     | '/_protected/account/_metricsLayout'
-    | '/_protected/account/products-old'
     | '/_protected/account/settings'
-    | '/_protected/account/test-index'
     | '/api/auth/$'
     | '/_protected/account/_metricsLayout/products'
-    | '/_protected/account/product/$slug'
     | '/_protected/account/_metricsLayout/'
+    | '/_protected/account/_metricsLayout/product/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -295,13 +269,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAuthRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_protected/account/test-index': {
-      id: '/_protected/account/test-index'
-      path: '/test-index'
-      fullPath: '/account/test-index'
-      preLoaderRoute: typeof ProtectedAccountTestIndexRouteImport
-      parentRoute: typeof ProtectedAccountRoute
-    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -314,13 +281,6 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/account/settings'
       preLoaderRoute: typeof ProtectedAccountSettingsRouteImport
-      parentRoute: typeof ProtectedAccountRoute
-    }
-    '/_protected/account/products-old': {
-      id: '/_protected/account/products-old'
-      path: '/products-old'
-      fullPath: '/account/products-old'
-      preLoaderRoute: typeof ProtectedAccountProductsOldRouteImport
       parentRoute: typeof ProtectedAccountRoute
     }
     '/_protected/account/_metricsLayout': {
@@ -337,18 +297,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedAccountMetricsLayoutIndexRouteImport
       parentRoute: typeof ProtectedAccountMetricsLayoutRoute
     }
-    '/_protected/account/product/$slug': {
-      id: '/_protected/account/product/$slug'
-      path: '/product/$slug'
-      fullPath: '/account/product/$slug'
-      preLoaderRoute: typeof ProtectedAccountProductSlugRouteImport
-      parentRoute: typeof ProtectedAccountRoute
-    }
     '/_protected/account/_metricsLayout/products': {
       id: '/_protected/account/_metricsLayout/products'
       path: '/products'
       fullPath: '/account/products'
       preLoaderRoute: typeof ProtectedAccountMetricsLayoutProductsRouteImport
+      parentRoute: typeof ProtectedAccountMetricsLayoutRoute
+    }
+    '/_protected/account/_metricsLayout/product/$slug': {
+      id: '/_protected/account/_metricsLayout/product/$slug'
+      path: '/product/$slug'
+      fullPath: '/account/product/$slug'
+      preLoaderRoute: typeof ProtectedAccountMetricsLayoutProductSlugRouteImport
       parentRoute: typeof ProtectedAccountMetricsLayoutRoute
     }
   }
@@ -369,6 +329,7 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 interface ProtectedAccountMetricsLayoutRouteChildren {
   ProtectedAccountMetricsLayoutProductsRoute: typeof ProtectedAccountMetricsLayoutProductsRoute
   ProtectedAccountMetricsLayoutIndexRoute: typeof ProtectedAccountMetricsLayoutIndexRoute
+  ProtectedAccountMetricsLayoutProductSlugRoute: typeof ProtectedAccountMetricsLayoutProductSlugRoute
 }
 
 const ProtectedAccountMetricsLayoutRouteChildren: ProtectedAccountMetricsLayoutRouteChildren =
@@ -377,6 +338,8 @@ const ProtectedAccountMetricsLayoutRouteChildren: ProtectedAccountMetricsLayoutR
       ProtectedAccountMetricsLayoutProductsRoute,
     ProtectedAccountMetricsLayoutIndexRoute:
       ProtectedAccountMetricsLayoutIndexRoute,
+    ProtectedAccountMetricsLayoutProductSlugRoute:
+      ProtectedAccountMetricsLayoutProductSlugRoute,
   }
 
 const ProtectedAccountMetricsLayoutRouteWithChildren =
@@ -386,19 +349,13 @@ const ProtectedAccountMetricsLayoutRouteWithChildren =
 
 interface ProtectedAccountRouteChildren {
   ProtectedAccountMetricsLayoutRoute: typeof ProtectedAccountMetricsLayoutRouteWithChildren
-  ProtectedAccountProductsOldRoute: typeof ProtectedAccountProductsOldRoute
   ProtectedAccountSettingsRoute: typeof ProtectedAccountSettingsRoute
-  ProtectedAccountTestIndexRoute: typeof ProtectedAccountTestIndexRoute
-  ProtectedAccountProductSlugRoute: typeof ProtectedAccountProductSlugRoute
 }
 
 const ProtectedAccountRouteChildren: ProtectedAccountRouteChildren = {
   ProtectedAccountMetricsLayoutRoute:
     ProtectedAccountMetricsLayoutRouteWithChildren,
-  ProtectedAccountProductsOldRoute: ProtectedAccountProductsOldRoute,
   ProtectedAccountSettingsRoute: ProtectedAccountSettingsRoute,
-  ProtectedAccountTestIndexRoute: ProtectedAccountTestIndexRoute,
-  ProtectedAccountProductSlugRoute: ProtectedAccountProductSlugRoute,
 }
 
 const ProtectedAccountRouteWithChildren =
@@ -429,3 +386,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

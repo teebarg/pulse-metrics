@@ -71,7 +71,6 @@ export function showBrowserNotification(title: string, body: string, icon?: stri
             requireInteraction: false,
         });
 
-        // Auto close after 5 seconds
         setTimeout(() => notification.close(), 5000);
 
         notification.onclick = () => {

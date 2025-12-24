@@ -11,11 +11,6 @@ export const Route = createFileRoute("/_protected/account")({
         if (!onboardingCompleted) {
             throw redirect({ to: "/onboarding" });
         }
-        return {
-            meta: {
-                beaf: 1,
-            },
-        };
     },
 });
 

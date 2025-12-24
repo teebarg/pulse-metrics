@@ -19,10 +19,6 @@ interface ActivityWindow {
     count: number;
 }
 
-export const DEFAULT_HIGH_VALUE_THRESHOLD = 350;
-export const DEFAULT_ACTIVITY_SPIKE_MULTIPLIER = 2;
-const NORMAL_EVENTS_PER_MINUTE = 5;
-
 // Track recent activity for spike detection
 let recentActivity: ActivityWindow[] = [];
 let notificationIdCounter = 0;
@@ -31,7 +27,7 @@ function generateNotificationId(): string {
     return `notif_${++notificationIdCounter}_${Date.now()}`;
 }
 
-export function checkForHighValuePurchase(event: AnalyticsEvent, threshold: number = DEFAULT_HIGH_VALUE_THRESHOLD): Notification | null {
+export function checkForHighValuePurchase(event: AnalyticsEvent, threshold: number = 350): Notification | null {
     if (event.eventType !== "purchase") return null;
 
     const orderValue = event.metadata.order_value || 0;
@@ -52,7 +48,7 @@ export function checkForHighValuePurchase(event: AnalyticsEvent, threshold: numb
     return null;
 }
 
-export function checkForActivitySpike(events: AnalyticsEvent[], spikeMultiplier: number = DEFAULT_ACTIVITY_SPIKE_MULTIPLIER): Notification | null {
+export function checkForActivitySpike(events: AnalyticsEvent[], spikeMultiplier: number = 2): Notification | null {
     const now = new Date();
     const oneMinuteAgo = new Date(now.getTime() - 60 * 1000);
 
@@ -64,8 +60,7 @@ export function checkForActivitySpike(events: AnalyticsEvent[], spikeMultiplier:
     recentActivity.push({ timestamp: now, count: recentCount });
 
     // Calculate average activity
-    const avgActivity =
-        recentActivity.length > 0 ? recentActivity.reduce((sum, a) => sum + a.count, 0) / recentActivity.length : NORMAL_EVENTS_PER_MINUTE;
+    const avgActivity = recentActivity.length > 0 ? recentActivity.reduce((sum, a) => sum + a.count, 0) / recentActivity.length : 5;
 
     // Check for spike
     if (recentCount > avgActivity * spikeMultiplier && recentCount > 10) {

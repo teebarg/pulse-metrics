@@ -13,10 +13,6 @@ export const updateOnboardingStepSchema = z.object({
     onboardingCompletedAt: z.date().optional(),
 });
 
-export const completeOnboardingSchema = z.object({
-    completed: z.boolean(),
-});
-
 export const getOnboardingStatusFn = createServerFn().handler(async () => {
     const request = getRequest();
     const res = await api.get<any>("/v1/onboarding/status", { from: new URL(request.url).pathname });
@@ -28,10 +24,4 @@ export const updateOnboardingStepFn = createServerFn({ method: "POST" })
     .handler(async ({ data }) => {
         const res = await api.patch<{ success: boolean; step: number }>("/v1/onboarding/update", data);
         return res;
-    });
-
-export const completeOnboardingFn = createServerFn({ method: "POST" })
-    .inputValidator((input: unknown) => completeOnboardingSchema.parse(input))
-    .handler(async ({ data }) => {
-        return await api.post<{ success: boolean; step: number }>("/v1/onboarding/complete", { params: data });
     });

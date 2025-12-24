@@ -1,54 +1,78 @@
-import { useState } from "react";
-import { Settings, Volume2, VolumeX, Bell, BellOff } from "lucide-react";
+import { useRef, useState } from "react";
+import { Settings as SettingsIcon, Volume2, VolumeX, Bell, BellOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { currency } from "~/lib/utils";
-
-export interface NotificationThresholds {
-    highValueThreshold: number;
-    activitySpikeMultiplier: number;
-}
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { Settings, updateSettingsFn } from "~/server-fn/settings.fn";
 
 interface NotificationSettingsProps {
-    soundEnabled: boolean;
-    onToggleSound: () => void;
-    browserNotificationsEnabled: boolean;
-    onToggleBrowserNotifications: () => void;
-    thresholds: NotificationThresholds;
-    onThresholdsChange: (thresholds: NotificationThresholds) => void;
+    settings: Settings;
 }
 
-export function NotificationSettings({
-    soundEnabled,
-    onToggleSound,
-    browserNotificationsEnabled,
-    onToggleBrowserNotifications,
-    thresholds,
-    onThresholdsChange,
-}: NotificationSettingsProps) {
+export function NotificationSettings({ settings }: NotificationSettingsProps) {
     const [open, setOpen] = useState(false);
-    const [localThresholds, setLocalThresholds] = useState(thresholds);
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const queryClient = useQueryClient();
+    const mutation = useMutation({
+        mutationFn: async (input: {
+            browserNotificationsEnabled?: boolean;
+            soundEnabled?: boolean;
+            highValueThreshold?: number;
+            activitySpikeMultiplier?: number;
+        }) => await updateSettingsFn({ data: input }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["settings"] });
+        },
+        onError: (error) => {
+            toast.error("Failed to update settings" + error);
+        },
+    });
 
-    const handleHighValueChange = (value: number[]) => {
-        const newThresholds = { ...localThresholds, highValueThreshold: value[0] };
-        setLocalThresholds(newThresholds);
-        onThresholdsChange(newThresholds);
-    };
+    const handleFieldUpdate = (
+        field: "soundEnabled" | "browserNotificationsEnabled" | "highValueThreshold" | "activitySpikeMultiplier",
+        value: boolean | number
+    ) => {
+        const isNumericField = field === "highValueThreshold" || field === "activitySpikeMultiplier";
 
-    const handleSpikeMultiplierChange = (value: number[]) => {
-        const newThresholds = { ...localThresholds, activitySpikeMultiplier: value[0] };
-        setLocalThresholds(newThresholds);
-        onThresholdsChange(newThresholds);
+        if (isNumericField) {
+            if (debounceRef.current) {
+                clearTimeout(debounceRef.current);
+            }
+
+            debounceRef.current = setTimeout(() => {
+                mutation.mutate(
+                    { [field]: value },
+                    {
+                        onError: (e) => {
+                            toast.error("Failed to update settings" + e);
+                        },
+                    }
+                );
+            }, 400);
+
+            return;
+        }
+
+        mutation.mutate(
+            { [field]: value },
+            {
+                onError: (e) => {
+                    toast.error("Failed to update settings" + e);
+                },
+            }
+        );
     };
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-                    <Settings className="h-5 w-5" />
+                    <SettingsIcon className="h-5 w-5" />
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md bg-card border-border">
@@ -61,7 +85,11 @@ export function NotificationSettings({
                     {/* Sound Toggle */}
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            {soundEnabled ? <Volume2 className="h-5 w-5 text-primary" /> : <VolumeX className="h-5 w-5 text-muted-foreground" />}
+                            {settings.soundEnabled ? (
+                                <Volume2 className="h-5 w-5 text-primary" />
+                            ) : (
+                                <VolumeX className="h-5 w-5 text-muted-foreground" />
+                            )}
                             <div>
                                 <Label htmlFor="sound-toggle" className="text-foreground">
                                     Sound Effects
@@ -69,13 +97,17 @@ export function NotificationSettings({
                                 <p className="text-xs text-muted-foreground">Play sounds for alerts</p>
                             </div>
                         </div>
-                        <Switch id="sound-toggle" checked={soundEnabled} onCheckedChange={onToggleSound} />
+                        <Switch
+                            id="sound-toggle"
+                            checked={settings.soundEnabled}
+                            onCheckedChange={(checked: boolean) => handleFieldUpdate("soundEnabled", checked)}
+                        />
                     </div>
 
                     {/* Browser Notifications Toggle */}
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            {browserNotificationsEnabled ? (
+                            {settings.browserNotificationsEnabled ? (
                                 <Bell className="h-5 w-5 text-primary" />
                             ) : (
                                 <BellOff className="h-5 w-5 text-muted-foreground" />
@@ -87,7 +119,11 @@ export function NotificationSettings({
                                 <p className="text-xs text-muted-foreground">Show desktop notifications</p>
                             </div>
                         </div>
-                        <Switch id="browser-toggle" checked={browserNotificationsEnabled} onCheckedChange={onToggleBrowserNotifications} />
+                        <Switch
+                            id="browser-toggle"
+                            checked={settings.browserNotificationsEnabled}
+                            onCheckedChange={(checked: boolean) => handleFieldUpdate("browserNotificationsEnabled", checked)}
+                        />
                     </div>
 
                     <div className="border-t border-border pt-4">
@@ -97,14 +133,14 @@ export function NotificationSettings({
                         <div className="space-y-3">
                             <div className="flex items-center justify-between">
                                 <Label className="text-foreground">High-Value Purchase</Label>
-                                <span className="text-sm font-medium text-primary">{currency(localThresholds.highValueThreshold)}</span>
+                                <span className="text-sm font-medium text-primary">{currency(settings.highValueThreshold)}</span>
                             </div>
                             <Slider
-                                value={[localThresholds.highValueThreshold]}
-                                onValueChange={handleHighValueChange}
-                                min={100}
-                                max={1000}
-                                step={50}
+                                value={[settings.highValueThreshold!]}
+                                onValueChange={(value: number[]) => handleFieldUpdate("highValueThreshold", value[0])}
+                                min={1000}
+                                max={100000}
+                                step={500}
                                 className="w-full"
                             />
                             <p className="text-xs text-muted-foreground">Alert when orders exceed this amount</p>
@@ -114,11 +150,11 @@ export function NotificationSettings({
                         <div className="space-y-3 mt-6">
                             <div className="flex items-center justify-between">
                                 <Label className="text-foreground">Activity Spike Sensitivity</Label>
-                                <span className="text-sm font-medium text-primary">{localThresholds.activitySpikeMultiplier}x</span>
+                                <span className="text-sm font-medium text-primary">{settings.activitySpikeMultiplier}x</span>
                             </div>
                             <Slider
-                                value={[localThresholds.activitySpikeMultiplier]}
-                                onValueChange={handleSpikeMultiplierChange}
+                                value={[settings.activitySpikeMultiplier!]}
+                                onValueChange={(value: number[]) => handleFieldUpdate("activitySpikeMultiplier", value[0])}
                                 min={1.5}
                                 max={5}
                                 step={0.5}
