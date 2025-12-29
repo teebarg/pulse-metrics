@@ -3,18 +3,18 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";
 import { cors } from "hono/cors";
 import { prettyJSON } from "hono/pretty-json";
-
-import { authMiddleware } from "~/middleware/auth.js";
-import { errorHandler } from "~/middleware/error-handler.js";
-import { profileRoutes } from "~/routes/profile.routes";
-import { healthRoute } from "~/routes/health.routes";
-import { analyticsRoutes } from "~/routes/analytics.routes";
-import { onBoardingRoutes } from "~/routes/onboarding.routes";
 import { createNodeWebSocket } from "@hono/node-ws";
-import { createRealtimeListener, registerClient, unregisterClient } from "./realtime-listener";
-import { organizationRoutes } from "~/routes/organization.routes";
-import { eventsRoute } from "~/routes/events.routes";
-import { settingsRoutes } from "~/routes/settings.routes";
+import type { Context } from "hono"
+import { errorHandler } from "./middleware/error-handler.js";
+import { authMiddleware } from "./middleware/auth.js";
+import { healthRoute } from "./routes/health.routes.js";
+import { profileRoutes } from "./routes/profile.routes.js";
+import { analyticsRoutes } from "./routes/analytics.routes.js";
+import { eventsRoute } from "./routes/events.routes.js";
+import { onBoardingRoutes } from "./routes/onboarding.routes.js";
+import { organizationRoutes } from "./routes/organization.routes.js";
+import { settingsRoutes } from "./routes/settings.routes.js";
+import { createRealtimeListener, registerClient, unregisterClient } from "./realtime-listener.js";
 
 const port = Number(process.env.API_PORT || 8787);
 
@@ -46,7 +46,7 @@ app.doc("/doc", {
 
 app.get("/ui", swaggerUI({ url: "/doc" }));
 
-app.get("/", (c) => {
+app.get("/", (c: Context) => {
     return c.json({
         message: "Hello from Hono API!",
         docs: "/ui",

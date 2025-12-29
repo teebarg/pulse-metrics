@@ -1,19 +1,12 @@
-import { OnBoardingRepository } from "~/repositories/onboarding.repository";
-import { OrganizationRepository } from "~/repositories/organization.repository";
-import { UserRepository } from "../repositories/users.repository";
-import { EventsRepository } from "../repositories/events.repository";
-import { gt, eq, sql, and } from "drizzle-orm";
-import { db, pool } from "~/db";
-import { organizations, events } from "~/db/schema";
-import { generateApiKey } from "~/utils/common.utils";
+import { and, eq, gt, sql } from "drizzle-orm";
+import { db } from "../db/index.js";
+import { events, organizations } from "../db/schema.js";
+import type { OrganizationRepository } from "../repositories/organization.repository.js";
+import type { UserRepository } from "../repositories/users.repository.js";
+import { generateApiKey } from "../utils/common.utils.js";
 
 export class OnBoardingService {
-    constructor(
-        private onboardingRepo: OnBoardingRepository,
-        private organizationRepo: OrganizationRepository,
-        private usersRepo: UserRepository,
-        private eventsRepo: EventsRepository
-    ) {}
+    constructor(private organizationRepo: OrganizationRepository, private usersRepo: UserRepository) {}
 
     async UpdateOnboarding(user: any, data: any) {
         const userData = await this.usersRepo.userOrg(user.id);
@@ -121,7 +114,7 @@ export class OnBoardingService {
         // const result = await pool.query(query, [userData[0].organizationId]);
         // const org = result.rows[0] ?? {};
         const res = await this.organizationRepo.getOrg(userData[0].organizationId);
-        const org = res[0]
+        const org = res[0];
 
         return {
             onboardingCompleted: org.onboardingCompleted ?? false,

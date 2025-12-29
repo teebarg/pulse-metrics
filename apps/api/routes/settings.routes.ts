@@ -1,9 +1,10 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
-import { getAuthenticatedUser } from "~/middleware/auth";
-import { errorResponse, successResponse } from "~/utils/response.utils";
-import { getSettings, updateSettings } from "~/services/settings.service";
-import { SettingsResponseSchema, UpdateSettingsRequestSchema } from "~/schemas/settings.schemas";
-import { authMiddleware } from "~/middleware/auth";
+import { getAuthenticatedUser } from "../middleware/auth.js";
+import { errorResponse, successResponse } from "../utils/response.utils.js";
+import { getSettings, updateSettings } from "../services/settings.service.js";
+import { SettingsResponseSchema, UpdateSettingsRequestSchema } from "../schemas/settings.schemas.js";
+import { authMiddleware } from "../middleware/auth.js";
+import { ErrorSchema } from "../schemas/common.schemas.js";
 
 export const settingsRoutes = new OpenAPIHono();
 
@@ -24,15 +25,18 @@ settingsRoutes.openapi(
                     },
                 },
             },
+            500: {
+                description: "Server error",
+                content: { "application/json": { schema: ErrorSchema } },
+            },
         },
     }),
     async (c: any) => {
         try {
             const user = await getAuthenticatedUser(c);
             const settings = await getSettings(user.id);
-            return successResponse(c, { settings });
+            return c.json({ ...settings });
         } catch (error: any) {
-            console.log("🚀 ~ file: settings.routes.ts:35 ~ error:", error)
             return errorResponse(c, error.message, error.details, error.statusCode || 500);
         }
     }
@@ -63,15 +67,19 @@ settingsRoutes.openapi(
                     },
                 },
             },
+            500: {
+                description: "Server error",
+                content: { "application/json": { schema: ErrorSchema } },
+            },
         },
     }),
-    async (c) => {
+    async (c: any) => {
         try {
             const user = await getAuthenticatedUser(c);
             const data = await c.req.json();
 
-            const settings = await updateSettings(user.id, data);
-            return successResponse(c, { settings });
+            await updateSettings(user.id, data);
+            return c.json({ message: "Settings updated successfully" });
         } catch (error: any) {
             return errorResponse(c, error.message, error.details, error.statusCode || 500);
         }

@@ -1,9 +1,9 @@
 import { type Context, type Next } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { db } from "~/db";
-import { organizations, users } from "~/db/schema";
 import { eq } from "drizzle-orm";
-import { auth } from "~/lib/auth";
+import { db } from "../db/index.js";
+import { organizations, users } from "../db/schema.js";
+import { auth } from "../lib/auth.js";
 
 export async function apiKeyMiddleware(c: Context, next: Next) {
     const apiKey = c.req.header("X-API-Key");

@@ -1,18 +1,12 @@
-import { OnBoardingRepository } from "~/repositories/onboarding.repository";
-import { OrganizationRepository } from "~/repositories/organization.repository";
-import { UserRepository } from "../repositories/users.repository";
-import { EventsRepository } from "../repositories/events.repository";
-import { gt, eq, sql, and } from "drizzle-orm";
-import { db, pool } from "~/db";
-import { organizations } from "~/db/schema";
-import { generateApiKey } from "~/utils/common.utils";
+import { organizations } from "../db/schema.js";
+import type { OrganizationRepository } from "../repositories/organization.repository.js";
+import type { UserRepository } from "../repositories/users.repository.js";
+import { generateApiKey } from "../utils/common.utils.js";
 
 export class OrganizationService {
     constructor(
-        private onboardingRepo: OnBoardingRepository,
         private organizationRepo: OrganizationRepository,
         private usersRepo: UserRepository,
-        private eventsRepo: EventsRepository
     ) {}
 
     async GenerateOrganization(user: any) {

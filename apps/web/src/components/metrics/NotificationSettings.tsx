@@ -82,10 +82,9 @@ export function NotificationSettings({ settings }: NotificationSettingsProps) {
                 </DialogHeader>
 
                 <div className="space-y-6 py-4">
-                    {/* Sound Toggle */}
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            {settings.soundEnabled ? (
+                            {settings?.soundEnabled ? (
                                 <Volume2 className="h-5 w-5 text-primary" />
                             ) : (
                                 <VolumeX className="h-5 w-5 text-muted-foreground" />
@@ -99,7 +98,7 @@ export function NotificationSettings({ settings }: NotificationSettingsProps) {
                         </div>
                         <Switch
                             id="sound-toggle"
-                            checked={settings.soundEnabled}
+                            checked={settings?.soundEnabled}
                             onCheckedChange={(checked: boolean) => handleFieldUpdate("soundEnabled", checked)}
                         />
                     </div>
@@ -107,7 +106,7 @@ export function NotificationSettings({ settings }: NotificationSettingsProps) {
                     {/* Browser Notifications Toggle */}
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            {settings.browserNotificationsEnabled ? (
+                            {settings?.browserNotificationsEnabled ? (
                                 <Bell className="h-5 w-5 text-primary" />
                             ) : (
                                 <BellOff className="h-5 w-5 text-muted-foreground" />
@@ -121,7 +120,7 @@ export function NotificationSettings({ settings }: NotificationSettingsProps) {
                         </div>
                         <Switch
                             id="browser-toggle"
-                            checked={settings.browserNotificationsEnabled}
+                            checked={settings?.browserNotificationsEnabled}
                             onCheckedChange={(checked: boolean) => handleFieldUpdate("browserNotificationsEnabled", checked)}
                         />
                     </div>
@@ -133,10 +132,10 @@ export function NotificationSettings({ settings }: NotificationSettingsProps) {
                         <div className="space-y-3">
                             <div className="flex items-center justify-between">
                                 <Label className="text-foreground">High-Value Purchase</Label>
-                                <span className="text-sm font-medium text-primary">{currency(settings.highValueThreshold)}</span>
+                                <span className="text-sm font-medium text-primary">{currency(settings?.highValueThreshold)}</span>
                             </div>
                             <Slider
-                                value={[settings.highValueThreshold!]}
+                                value={[settings?.highValueThreshold!]}
                                 onValueChange={(value: number[]) => handleFieldUpdate("highValueThreshold", value[0])}
                                 min={1000}
                                 max={100000}
@@ -150,10 +149,10 @@ export function NotificationSettings({ settings }: NotificationSettingsProps) {
                         <div className="space-y-3 mt-6">
                             <div className="flex items-center justify-between">
                                 <Label className="text-foreground">Activity Spike Sensitivity</Label>
-                                <span className="text-sm font-medium text-primary">{settings.activitySpikeMultiplier}x</span>
+                                <span className="text-sm font-medium text-primary">{settings?.activitySpikeMultiplier}x</span>
                             </div>
                             <Slider
-                                value={[settings.activitySpikeMultiplier!]}
+                                value={[settings?.activitySpikeMultiplier!]}
                                 onValueChange={(value: number[]) => handleFieldUpdate("activitySpikeMultiplier", value[0])}
                                 min={1.5}
                                 max={5}

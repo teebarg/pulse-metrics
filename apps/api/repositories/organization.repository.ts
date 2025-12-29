@@ -1,5 +1,5 @@
-import { db } from "~/db/index.js";
-import { organizations } from "~/db/schema.js";
+import { db } from "../db/index.js";
+import { organizations } from "../db/schema.js";
 import { eq, desc } from "drizzle-orm";
 
 export class OrganizationRepository {

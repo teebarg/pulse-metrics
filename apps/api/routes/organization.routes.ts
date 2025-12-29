@@ -1,12 +1,11 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
 import { z } from "zod";
-import { errorResponse } from "~/utils/response.utils.js";
-import { OrganizationService } from "../services/organization.service";
-import { ErrorSchema, SuccessSchema } from "../schemas/common.schemas";
-import { UserRepository } from "../repositories/users.repository";
-import { EventsRepository } from "../repositories/events.repository";
-import { OnBoardingRepository } from "../repositories/onboarding.repository";
-import { OrganizationRepository } from "../repositories/organization.repository";
+import { OrganizationService } from "../services/organization.service.js";
+import { OrganizationRepository } from "../repositories/organization.repository.js";
+import { UserRepository } from "../repositories/users.repository.js";
+import { ErrorSchema, SuccessSchema } from "../schemas/common.schemas.js";
+import { errorResponse } from "../utils/response.utils.js";
+
 
 const OrganizationSchema = z.object({
     name: z.string().optional(),
@@ -17,12 +16,7 @@ const OrganizationSchema = z.object({
 });
 
 export const organizationRoutes = new OpenAPIHono();
-const organizationService = new OrganizationService(
-    new OnBoardingRepository(),
-    new OrganizationRepository(),
-    new UserRepository(),
-    new EventsRepository()
-);
+const organizationService = new OrganizationService(new OrganizationRepository(), new UserRepository());
 
 organizationRoutes.openapi(
     createRoute({
@@ -42,7 +36,7 @@ organizationRoutes.openapi(
             },
         },
     }),
-    async (c) => {
+    async (c: any) => {
         const user = c.get("user");
         try {
             const data = await organizationService.GenerateOrganization(user);
@@ -77,12 +71,11 @@ organizationRoutes.openapi(
             },
         },
     }),
-    async (c) => {
+    async (c: any) => {
         const user = c.get("user");
         const data = c.req.valid("json");
         try {
             const resp = await organizationService.UpdateOrganization(user, data);
-            console.log("🚀 ~ file: organization.routes.ts:98 ~ resp:", resp)
             return c.json({
                 ...resp,
             });

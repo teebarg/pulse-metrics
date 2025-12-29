@@ -1,5 +1,5 @@
-import { db } from "~/db/index.js";
-import { users } from "~/db/schema.js";
+import { db } from "../db/index.js";
+import { users } from "../db/schema.js";
 import { eq, desc } from "drizzle-orm";
 
 export class UserRepository {

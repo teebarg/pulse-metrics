@@ -1,7 +1,7 @@
 import { type Context, type Next } from "hono";
 import Redis from "ioredis";
 
-const redis = new Redis(process.env.REDIS_URL!);
+const redis = new Redis.default(process.env.REDIS_URL!);
 
 export async function checkRateLimit(c: Context, next: Next) {
     const organizationId = c.get("organizationId");

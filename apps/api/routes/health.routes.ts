@@ -1,6 +1,6 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
-import { SuccessSchema } from "~/schemas/common.schemas.js";
-import { getListenerStatus } from "../realtime-listener";
+import { SuccessSchema } from "../schemas/common.schemas.js";
+import { getListenerStatus } from "../realtime-listener.js";
 import { z } from "zod";
 
 export const healthRoute = new OpenAPIHono();

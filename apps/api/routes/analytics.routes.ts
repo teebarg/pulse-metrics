@@ -1,9 +1,9 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
-import { ErrorSchema, SuccessSchema } from "~/schemas/common.schemas.js";
-import { AnalyticsRepository } from "~/repositories/analytics.repository";
-import { AnalyticsService } from "~/services/analytics.service";
-import { EcommerceService } from "~/services/ecommerce.service";
-import { EcommerceRepository } from "~/repositories/ecommerce.repository";
+import type { Context } from "hono";
+import { AnalyticsService } from "../services/analytics.service.js";
+import { AnalyticsRepository } from "../repositories/analytics.repository.js";
+import { EcommerceService } from "../services/ecommerce.service.js";
+import { ErrorSchema, SuccessSchema } from "../schemas/common.schemas.js";
 
 export const analyticsRoutes = new OpenAPIHono();
 const analyticsService = new AnalyticsService(new AnalyticsRepository());
@@ -39,7 +39,7 @@ analyticsRoutes.openapi(
             },
         },
     }),
-    async (c) => {
+    async (c: Context) => {
         const organizationId = c.get("organizationId");
         try {
             const data = await analyticsService.GetRealtimeAnalytics(organizationId);
@@ -75,7 +75,7 @@ analyticsRoutes.openapi(
             },
         },
     }),
-    async (c) => {
+    async (c: Context) => {
         const organizationId = c.get("organizationId");
 
         try {
@@ -125,7 +125,7 @@ analyticsRoutes.openapi(
             },
         },
     }),
-    async (c) => {
+    async (c: Context) => {
         const organizationId = c.get("organizationId");
         const days = parseInt(c.req.query("days") || "7");
         const metric = c.req.query("metric") || "views"; // views or purchases
@@ -165,29 +165,35 @@ analyticsRoutes.openapi(
                             totalOrders: z.number(),
                             averageOrderValue: z.number(),
                             conversionRate: z.number(),
-                            topProducts: z.array(z.object({
-                                productId: z.string(),
-                                name: z.string(),
-                                views: z.number(),
-                                addToCarts: z.number(),
-                                purchases: z.number(),
-                                revenue: z.number(),
-                                conversionRate: z.number(),
-                            })),
-                            hourlyData: z.array(z.object({
-                                hour: z.string(),
-                                pageViews: z.number(),
-                                productViews: z.number(),
-                                addToCarts: z.number(),
-                                checkouts: z.number(),
-                                purchases: z.number(),
-                            })),
-                            recentEvents: z.array(z.object({
-                                id: z.string(),
-                                eventType: z.string(),
-                                timestamp: z.string(),
-                                metadata: z.any(),
-                            })),
+                            topProducts: z.array(
+                                z.object({
+                                    productId: z.string(),
+                                    name: z.string(),
+                                    views: z.number(),
+                                    addToCarts: z.number(),
+                                    purchases: z.number(),
+                                    revenue: z.number(),
+                                    conversionRate: z.number(),
+                                })
+                            ),
+                            hourlyData: z.array(
+                                z.object({
+                                    hour: z.string(),
+                                    pageViews: z.number(),
+                                    productViews: z.number(),
+                                    addToCarts: z.number(),
+                                    checkouts: z.number(),
+                                    purchases: z.number(),
+                                })
+                            ),
+                            recentEvents: z.array(
+                                z.object({
+                                    id: z.string(),
+                                    eventType: z.string(),
+                                    timestamp: z.string(),
+                                    metadata: z.any(),
+                                })
+                            ),
                         }),
                     },
                 },
@@ -198,12 +204,12 @@ analyticsRoutes.openapi(
             },
         },
     }),
-    async (c) => {
+    async (c: Context) => {
         const organizationId = c.get("organizationId");
         const timeRange = c.req.query("timeRange") as "24h" | "7d" | "30d";
 
         try {
-            const metrics = await ecommerceService.getMetrics(organizationId, timeRange);
+            const metrics = (await ecommerceService.getMetrics(organizationId, timeRange)) as unknown as any;
             return c.json(metrics);
         } catch (error) {
             console.error("E-commerce metrics error:", error);
@@ -211,7 +217,6 @@ analyticsRoutes.openapi(
         }
     }
 );
-
 
 analyticsRoutes.openapi(
     createRoute({
@@ -238,21 +243,21 @@ analyticsRoutes.openapi(
             },
         },
     }),
-    async (c) => {
+    async (c: Context) => {
         const organizationId = c.get("organizationId");
-        
+
         // Set headers for Server-Sent Events
         c.header("Content-Type", "text/event-stream");
         c.header("Cache-Control", "no-cache");
         c.header("Connection", "keep-alive");
-        
+
         // Create a simple stream that sends a ping every 5 seconds
         const stream = new ReadableStream({
             async start(controller) {
                 // Send initial data
                 const initialData = await ecommerceService.getMetrics(organizationId, "24h");
                 controller.enqueue(`data: ${JSON.stringify(initialData)}\n\n`);
-                
+
                 // Set up interval for updates
                 const interval = setInterval(async () => {
                     try {
@@ -263,19 +268,19 @@ analyticsRoutes.openapi(
                         controller.enqueue(`event: error\ndata: ${JSON.stringify({ error: "Error fetching real-time data" })}\n\n`);
                     }
                 }, 5000);
-                
+
                 // Clean up on stream close
                 return () => {
                     clearInterval(interval);
                 };
             },
         });
-        
+
         return new Response(stream, {
             headers: {
                 "Content-Type": "text/event-stream",
                 "Cache-Control": "no-cache",
-                "Connection": "keep-alive",
+                Connection: "keep-alive",
             },
         });
     }

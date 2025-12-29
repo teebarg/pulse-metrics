@@ -1,10 +1,10 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
-import { getAuthenticatedUser } from "~/middleware/auth";
-import { db } from "~/db";
-import { users } from "~/db/schema";
+import { getAuthenticatedUser } from "../middleware/auth.js";
+import { db } from "../db/index.js";
+import { users } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { errorResponse, successResponse } from "~/utils/response.utils.js";
+import { errorResponse } from "../utils/response.utils.js";
 
 const UserProfileSchema = z.object({
     id: z.string(),
@@ -30,7 +30,7 @@ profileRoutes.openapi(
             },
         },
     }),
-    async (c) => {
+    async (c: any) => {
         try {
             const user = await getAuthenticatedUser(c);
             const dbUser = await db.select().from(users).where(eq(users.id, user.id));
@@ -63,7 +63,7 @@ profileRoutes.openapi(
             },
         },
     }),
-    async (c) => {
+    async (c: any) => {
         try {
             const user = await getAuthenticatedUser(c);
             const { name } = await c.req.json();

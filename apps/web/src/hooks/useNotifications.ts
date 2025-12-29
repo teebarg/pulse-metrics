@@ -20,10 +20,13 @@ export function useNotifications(settings: Settings) {
     }, []);
 
     useEffect(() => {
-        if (!settings.browserNotificationsEnabled) {
+        if (!settings || typeof window === "undefined") {
+            return;
+        }
+        if (!settings?.browserNotificationsEnabled) {
             requestNotificationPermission();
         }
-    }, [settings.browserNotificationsEnabled]);
+    }, [settings?.browserNotificationsEnabled]);
 
     const addNotification = useCallback(
         (notification: Notification) => {
@@ -34,22 +37,22 @@ export function useNotifications(settings: Settings) {
                 duration: 5000,
             });
 
-            if (settings.soundEnabled) {
+            if (settings?.soundEnabled) {
                 const soundType = notification.severity === "success" ? "success" : notification.severity === "warning" ? "warning" : "info";
                 playNotificationSound(soundType);
             }
 
-            if (settings.browserNotificationsEnabled && (notification.severity === "success" || notification.severity === "warning")) {
+            if (settings?.browserNotificationsEnabled && (notification.severity === "success" || notification.severity === "warning")) {
                 showBrowserNotification(notification.title, notification.message);
             }
         },
-        [settings.soundEnabled, settings.browserNotificationsEnabled]
+        [settings?.soundEnabled, settings?.browserNotificationsEnabled]
     );
 
     const processEvent = useCallback(
         (event: AnalyticsEvent, allEvents: AnalyticsEvent[]) => {
             // Check for high-value purchases
-            const highValueNotif = checkForHighValuePurchase(event, settings.highValueThreshold);
+            const highValueNotif = checkForHighValuePurchase(event, settings?.highValueThreshold);
             if (highValueNotif) {
                 addNotification(highValueNotif);
             }
@@ -57,7 +60,7 @@ export function useNotifications(settings: Settings) {
             // Check for activity spikes (throttled to once every 10 seconds)
             const now = Date.now();
             if (now - lastSpikeCheckRef.current > 10000) {
-                const spikeNotif = checkForActivitySpike(allEvents, settings.activitySpikeMultiplier);
+                const spikeNotif = checkForActivitySpike(allEvents, settings?.activitySpikeMultiplier);
                 if (spikeNotif) {
                     addNotification(spikeNotif);
                 }

@@ -1,7 +1,7 @@
-import { db } from "~/db";
-import { events } from "~/db/schema";
 import { eq, and, gte, sql, count, sum, desc } from "drizzle-orm";
 import { z } from "zod";
+import { db } from "../db/index.js";
+import { events } from "../db/schema.js";
 
 const TimeRangeSchema = z.enum(["24h", "7d", "30d"]);
 
@@ -40,7 +40,7 @@ export class EcommerceService {
         // Calculate time range
         const now = new Date();
         let fromDate = new Date(now);
-        
+
         switch (timeRange) {
             case "24h":
                 fromDate.setHours(now.getHours() - 24);
@@ -59,12 +59,7 @@ export class EcommerceService {
         const allEvents = await db
             .select()
             .from(events)
-            .where(
-                and(
-                    eq(events.organizationId, organizationId),
-                    gte(events.timestamp, fromDate)
-                )
-            )
+            .where(and(eq(events.organizationId, organizationId), gte(events.timestamp, fromDate)))
             .orderBy(desc(events.timestamp));
 
         // Calculate metrics
@@ -72,48 +67,51 @@ export class EcommerceService {
         let totalOrders = 0;
         let totalProductViews = 0;
         let totalAddToCarts = 0;
-        
-        const productMetrics = new Map<string, {
-            name: string;
-            views: number;
-            addToCarts: number;
-            purchases: number;
-            revenue: number;
-        }>();
 
-        allEvents.forEach(event => {
+        const productMetrics = new Map<
+            string,
+            {
+                name: string;
+                views: number;
+                addToCarts: number;
+                purchases: number;
+                revenue: number;
+            }
+        >();
+
+        allEvents.forEach((event: any) => {
             const metadata = event.metadata as any;
-            
+
             // Track product metrics
             if (metadata.product_id) {
                 const productId = metadata.product_id;
-                const productName = metadata.product_name || 'Unknown Product';
-                
+                const productName = metadata.product_name || "Unknown Product";
+
                 if (!productMetrics.has(productId)) {
                     productMetrics.set(productId, {
                         name: productName,
                         views: 0,
                         addToCarts: 0,
                         purchases: 0,
-                        revenue: 0
+                        revenue: 0,
                     });
                 }
-                
+
                 const product = productMetrics.get(productId)!;
-                
-                if (event.eventType === 'product_view') {
+
+                if (event.eventType === "product_view") {
                     product.views++;
                     totalProductViews++;
-                } else if (event.eventType === 'add_to_cart') {
+                } else if (event.eventType === "add_to_cart") {
                     product.addToCarts++;
                     totalAddToCarts++;
-                } else if (event.eventType === 'purchase' && metadata.order_value) {
+                } else if (event.eventType === "purchase" && metadata.order_value) {
                     product.purchases++;
                     product.revenue += parseFloat(metadata.order_value);
                     totalRevenue += parseFloat(metadata.order_value);
                     totalOrders++;
                 }
-            } else if (event.eventType === 'purchase' && metadata.order_value) {
+            } else if (event.eventType === "purchase" && metadata.order_value) {
                 // Handle purchases without product_id (shouldn't happen but just in case)
                 totalRevenue += parseFloat(metadata.order_value);
                 totalOrders++;
@@ -131,20 +129,18 @@ export class EcommerceService {
                 addToCarts: metrics.addToCarts,
                 purchases: metrics.purchases,
                 revenue: metrics.revenue,
-                conversionRate: metrics.views > 0 ? (metrics.purchases / metrics.views) * 100 : 0
+                conversionRate: metrics.views > 0 ? (metrics.purchases / metrics.views) * 100 : 0,
             }))
             .sort((a, b) => b.revenue - a.revenue)
             .slice(0, 5); // Top 5 products by revenue
 
         // Get recent events (latest 10)
-        const recentEvents = allEvents
-            .slice(0, 10)
-            .map(event => ({
-                id: event.id,
-                eventType: event.eventType,
-                timestamp: event.timestamp,
-                metadata: event.metadata
-            }));
+        const recentEvents = allEvents.slice(0, 10).map((event) => ({
+            id: event.id,
+            eventType: event.eventType,
+            timestamp: event.timestamp,
+            metadata: event.metadata,
+        }));
 
         return {
             totalRevenue,
@@ -153,59 +149,62 @@ export class EcommerceService {
             conversionRate: totalProductViews > 0 ? (totalOrders / totalProductViews) * 100 : 0,
             topProducts,
             hourlyData,
-            recentEvents
+            recentEvents,
         };
     }
 
     private calculateHourlyData(events: any[]) {
         const now = new Date();
-        const hourlyData = new Map<string, {
-            hour: string;
-            pageViews: number;
-            productViews: number;
-            addToCarts: number;
-            checkouts: number;
-            purchases: number;
-        }>();
+        const hourlyData = new Map<
+            string,
+            {
+                hour: string;
+                pageViews: number;
+                productViews: number;
+                addToCarts: number;
+                checkouts: number;
+                purchases: number;
+            }
+        >();
 
         // Initialize last 24 hours
         for (let i = 0; i < 24; i++) {
             const hour = new Date(now);
             hour.setHours(now.getHours() - i, 0, 0, 0);
-            const hourStr = hour.toLocaleTimeString('en-US', { hour: '2-digit', hour12: true });
-            
+            const hourStr = hour.toLocaleTimeString("en-US", { hour: "2-digit", hour12: true });
+
             hourlyData.set(hourStr, {
                 hour: hourStr,
                 pageViews: 0,
                 productViews: 0,
                 addToCarts: 0,
                 checkouts: 0,
-                purchases: 0
+                purchases: 0,
             });
         }
 
         // Count events by hour
-        events.forEach(event => {
+        events.forEach((event) => {
             const eventHour = new Date(event.timestamp);
-            const hourStr = eventHour.toLocaleTimeString('en-US', { hour: '2-digit', hour12: true });
-            
+            const hourStr = eventHour.toLocaleTimeString("en-US", { hour: "2-digit", hour12: true });
+
             const hourData = hourlyData.get(hourStr);
             if (!hourData) return;
 
             switch (event.eventType) {
-                case 'page_view':
+                case "page_view":
                     hourData.pageViews++;
                     break;
-                case 'product_view':
+                case "product_view":
                     hourData.productViews++;
                     break;
-                case 'add_to_cart':
+                case "add_to_cart":
                     hourData.addToCarts++;
                     break;
-                case 'checkout':
+                case "checkout":
                     hourData.checkouts++;
                     break;
-                case 'purchase':
+                case "purchase":
                     hourData.purchases++;
                     break;
             }

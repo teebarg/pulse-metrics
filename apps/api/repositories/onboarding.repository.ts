@@ -1,5 +1,5 @@
-import { db } from "~/db/index.js";
-import { analyticsCache, events } from "~/db/schema.js";
+import { db } from "../db/index.js";
+import { analyticsCache, events } from "../db/schema.js";
 import { eq, desc, and, gte, sql } from "drizzle-orm";
 
 export class OnBoardingRepository {

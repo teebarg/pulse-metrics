@@ -1,4 +1,4 @@
-import { AnalyticsRepository } from "~/repositories/analytics.repository";
+import type { AnalyticsRepository } from "../repositories/analytics.repository.js";
 
 export class AnalyticsService {
     constructor(private analyticsRepo: AnalyticsRepository) {}

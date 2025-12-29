@@ -1,16 +1,9 @@
-import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
-import { getAuthenticatedUser } from "~/middleware/auth";
-import { db } from "~/db";
-import { users } from "~/db/schema";
-import { eq } from "drizzle-orm";
+import { OpenAPIHono, createRoute } from "@hono/zod-openapi";;
 import { z } from "zod";
-import { errorResponse, successResponse } from "~/utils/response.utils.js";
-import { OnBoardingService } from "../services/onboarding.service";
-import { OnBoardingRepository } from "../repositories/onboarding.repository";
-import { ErrorSchema, SuccessSchema } from "../schemas/common.schemas";
-import { OrganizationRepository } from "../repositories/organization.repository";
-import { UserRepository } from "../repositories/users.repository";
-import { EventsRepository } from "../repositories/events.repository";
+import { OnBoardingService } from "../services/onboarding.service.js";
+import { OrganizationRepository } from "../repositories/organization.repository.js";
+import { UserRepository } from "../repositories/users.repository.js";
+import { ErrorSchema, SuccessSchema } from "../schemas/common.schemas.js";
 
 const completeOnboardingSchema = z.object({
     store: z.string().min(1),
@@ -24,16 +17,11 @@ const OnboardingSchema = z.object({
     store: z.string().optional(),
     domain: z.string().optional(),
     platform: z.enum(["shopify", "woocommerce", "custom"]).or(z.literal("")).optional(),
-    onboardingCompleted: z.boolean().optional()
+    onboardingCompleted: z.boolean().optional(),
 });
 
 export const onBoardingRoutes = new OpenAPIHono();
-const onboardingService = new OnBoardingService(
-    new OnBoardingRepository(),
-    new OrganizationRepository(),
-    new UserRepository(),
-    new EventsRepository()
-);
+const onboardingService = new OnBoardingService(new OrganizationRepository(), new UserRepository());
 
 onBoardingRoutes.openapi(
     createRoute({
@@ -58,7 +46,7 @@ onBoardingRoutes.openapi(
             },
         },
     }),
-    async (c) => {
+    async (c: any) => {
         const user = c.get("user");
         const data = c.req.valid("json");
         try {
@@ -67,7 +55,7 @@ onBoardingRoutes.openapi(
                 ...resp,
             });
         } catch (error: any) {
-            return errorResponse(c, error.message, error.details, error.statusCode || 500);
+            return c.json({ error: error.message }, 500);
         }
     }
 );
@@ -95,7 +83,7 @@ onBoardingRoutes.openapi(
             },
         },
     }),
-    async (c) => {
+    async (c: any) => {
         const user = c.get("user");
         const body = await c.req.json();
         try {
@@ -127,7 +115,7 @@ onBoardingRoutes.openapi(
             },
         },
     }),
-    async (c) => {
+    async (c: any) => {
         const user = c.get("user");
         try {
             const data = await onboardingService.VerifyEvents(user);
@@ -158,7 +146,7 @@ onBoardingRoutes.openapi(
             },
         },
     }),
-    async (c) => {
+    async (c: any) => {
         const user = c.get("user");
         try {
             const data = await onboardingService.OnboardingStatus(user);

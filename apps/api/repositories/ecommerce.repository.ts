@@ -1,7 +1,7 @@
-import { db } from "../db";
-import { events } from "../db/schema";
 import { and, eq, gte, sql, desc } from "drizzle-orm";
 import { z } from "zod";
+import { db } from "../db/index.js";
+import { events } from "../db/schema.js";
 
 // Schema for product metrics
 export const ProductMetricsSchema = z.object({

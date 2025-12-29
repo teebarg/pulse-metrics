@@ -1,6 +1,6 @@
-import { db } from "~/db/index.js";
-import { analyticsCache, events } from "~/db/schema.js";
 import { eq, desc, and, gte, sql } from "drizzle-orm";
+import { db } from "../db/index.js";
+import { analyticsCache, events } from "../db/schema.js";
 
 export class AnalyticsRepository {
     async update(id: string, data: { title: string }) {

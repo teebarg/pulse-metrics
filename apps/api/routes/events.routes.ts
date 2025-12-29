@@ -1,11 +1,11 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
-import { ErrorSchema, SuccessSchema } from "~/schemas/common.schemas.js";
-import { BatchEventSchema, EventSchema } from "../schemas/event.schemas";
-import { errorResponse, successResponse } from "../utils/response.utils";
-import { events, organizations } from "~/db/schema";
+import { ErrorSchema, SuccessSchema } from "../schemas/common.schemas.js";
+import { BatchEventSchema, EventSchema } from "../schemas/event.schemas.js";
+import { errorResponse, successResponse } from "../utils/response.utils.js";
+import { events, organizations } from "../db/schema.js";
 import { eq, sql, desc } from "drizzle-orm";
-import { db } from "~/db";
-import { apiKeyMiddleware, verifyApiKey } from "~/middleware/auth";
+import { db } from "../db/index.js";
+import { apiKeyMiddleware, verifyApiKey } from "../middleware/auth.js";
 
 export const eventsRoute = new OpenAPIHono();
 
@@ -89,9 +89,9 @@ eventsRoute.openapi(
             },
         },
     }),
-    async (c) => {
+    async (c: any) => {
         const event = c.req.valid("json");
-        const org = c.get("organization") as unknown as any;
+        const org = c.get("organization");
 
         if (typeof org.eventsLimit === "number" && (org.eventsUsed ?? 0) >= org.eventsLimit) {
             return c.json(
@@ -127,7 +127,7 @@ eventsRoute.openapi(
             console.error("Event ingestion error:", error);
             return errorResponse(c, "Failed to process chat", error.message);
         }
-    },
+    }
 );
 
 eventsRoute.openapi(
@@ -177,12 +177,12 @@ eventsRoute.openapi(
             },
         },
     }),
-    async (c) => {
+    async (c: any) => {
         const { events: eventData } = c.req.valid("json");
         const organizationId = c.get("organizationId");
 
         try {
-            const eventRecords = eventData.map((event) => ({
+            const eventRecords = eventData?.map((event: z.infer<typeof EventSchema>) => ({
                 organizationId: organizationId,
                 eventType: event.eventType,
                 sessionId: event.sessionId,
@@ -204,5 +204,5 @@ eventsRoute.openapi(
             console.error("Batch ingestion error:", error);
             return c.json({ error: "Failed to track events" }, 500);
         }
-    },
+    }
 );

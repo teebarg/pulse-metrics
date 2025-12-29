@@ -1,5 +1,5 @@
-import { db } from "~/db/index.js";
-import { events } from "~/db/schema.js";
+import { db } from "../db/index.js";
+import { events } from "../db/schema.js";
 import { eq, desc, and } from "drizzle-orm";
 
 export class EventsRepository {
