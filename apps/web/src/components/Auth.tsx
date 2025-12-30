@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "~/components/ui/button";
+import { Card } from "~/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { Sparkles } from "lucide-react";
 import { LoginForm } from "./auth/LoginForm";
 import { SignupForm } from "./auth/SignupForm";
@@ -52,13 +52,12 @@ export default function Auth() {
     const location = useLocation();
 
     const handleSocialLogin = async () => {
-        const data = await authClient.signIn.social({
+        await authClient.signIn.social({
             provider: "google",
             callbackURL: location.pathname,
             newUserCallbackURL: "/onboarding",
             errorCallbackURL: "/error",
         });
-        console.log("🚀 ~ file: Auth.tsx:60 ~ data:", data);
     };
 
     return (

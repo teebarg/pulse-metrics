@@ -5,10 +5,10 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import * as React from "react";
 import type { QueryClient } from "@tanstack/react-query";
-import { DefaultCatchBoundary } from "@/components/DefaultCatchBoundary";
-import { NotFound } from "@/components/NotFound";
-import appCss from "@/styles.css?url";
-import { seo } from "@/utils/seo";
+import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
+import { NotFound } from "~/components/NotFound";
+import appCss from "~/styles.css?url";
+import { seo } from "~/utils/seo";
 import { Toaster } from "sonner";
 import { getStoredTheme, ThemeProvider } from "~/lib/ThemeProvider";
 import { WebSocketProvider } from "pulsews";
@@ -69,7 +69,7 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-    const { _storedTheme } = Route.useLoaderData();
+    const routeData = Route.useLoaderData();
     useEffect(() => {
         if (typeof window !== "undefined" && (window as any).PulseMetrics) {
             (window as any).PulseMetrics.init({
@@ -77,7 +77,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 debug: true,
                 apiUrl: "http://localhost:8787/v1",
             });
-            console.log("✅ PulseMetrics initialized via useEffect");
         }
     }, []);
     return (
@@ -87,7 +86,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 <ScriptOnce
                     children={`
                     (function() {
-                        const storedTheme = ${JSON.stringify(_storedTheme)};
+                        const storedTheme = ${JSON.stringify(routeData?._storedTheme)};
                         if (storedTheme === 'system') {
                         const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
                         document.documentElement.className = systemTheme;
@@ -100,13 +99,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 <script src="/sdk.js" onError={(e) => console.error("Failed to load SDK:", e)} />
             </head>
             <body className="min-h-screen bg-background text-foreground">
-                <ThemeProvider initialTheme={_storedTheme}>
+                <ThemeProvider initialTheme={routeData?._storedTheme}>
                     <OrganizationProvider>
                         <WebSocketProvider
                             url={import.meta.env.VITE_WS}
                             debug={true}
-                            onOpen={() => console.log("WebSocket connected!")}
-                            onClose={() => console.log("WebSocket disconnected!")}
+                            onOpen={() => console.log("✅ WebSocket connected!")}
+                            onClose={() => console.log("❌ WebSocket disconnected!")}
                         >
                             {children}
                         </WebSocketProvider>

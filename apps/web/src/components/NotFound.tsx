@@ -1,5 +1,5 @@
 import { Home, ArrowLeft, Package } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "~/components/ui/button";
 import { useNavigate } from "@tanstack/react-router";
 
 export function NotFound({ children }: { children?: any }) {

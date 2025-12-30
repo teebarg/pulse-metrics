@@ -9,7 +9,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
     useSidebar,
-} from "@/components/ui/sidebar";
+} from "~/components/ui/sidebar";
 import { Link } from "@tanstack/react-router";
 
 const menuItems = [

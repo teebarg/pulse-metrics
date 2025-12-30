@@ -1,4 +1,3 @@
-// Sound effects using Web Audio API
 let audioContext: AudioContext | null = null;
 
 function getAudioContext(): AudioContext {

@@ -1,7 +1,7 @@
-import { cn, currency } from "@/lib/utils";
-import { AnalyticsEvent, formatEventType, getEventColor, getEventBgColor } from "@/lib/dummy-data";
+import { cn, currency } from "~/lib/utils";
+import { AnalyticsEvent, formatEventType, getEventColor, getEventBgColor } from "~/lib/dummy-data";
 import { Eye, ShoppingCart, CreditCard, Package, MousePointer } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea } from "~/components/ui/scroll-area";
 
 interface EventFeedProps {
     events: AnalyticsEvent[];

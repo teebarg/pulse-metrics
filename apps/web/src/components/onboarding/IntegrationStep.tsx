@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, Copy, ExternalLink, Key, Zap } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "~/components/ui/button";
 
 export function IntegrationStep({ formData, onNext, onPrev }: { formData: any; onNext: () => void; onPrev: () => void }) {
     const [copied, setCopied] = useState(false);

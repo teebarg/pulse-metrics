@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
-import { EventType, formatEventType } from "@/lib/dummy-data";
+import { cn } from "~/lib/utils";
+import { EventType, formatEventType } from "~/lib/dummy-data";
 
 interface FunnelChartProps {
     data: Record<EventType, number>;

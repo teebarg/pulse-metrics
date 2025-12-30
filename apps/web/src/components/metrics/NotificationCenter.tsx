@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Bell, X, CheckCheck } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
-import { Notification, getNotificationIcon, getNotificationBgColor } from "@/lib/notification.service";
+import { Button } from "~/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
+import { ScrollArea } from "~/components/ui/scroll-area";
+import { cn } from "~/lib/utils";
+import { Notification, getNotificationIcon, getNotificationBgColor } from "~/lib/notification.service";
 
 interface NotificationCenterProps {
     notifications: Notification[];

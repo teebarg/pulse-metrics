@@ -1,7 +1,7 @@
 import { ErrorComponent, rootRouteId, useMatch, useNavigate, useRouter } from "@tanstack/react-router";
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "~/components/ui/button";
 import { ChevronDown, ChevronUp, RefreshCw, ArrowLeft, ShoppingCart, AlertCircle } from "lucide-react";
 
 export function DefaultCatchBoundary({ error }: ErrorComponentProps) {

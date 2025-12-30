@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Button } from "~/components/ui/button";
+import { SidebarTrigger } from "~/components/ui/sidebar";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -7,7 +7,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "~/components/ui/dropdown-menu";
 import { useNavigate } from "@tanstack/react-router";
 import { CurrentUserAvatar } from "./CurrentUserAvatar";
 import { authClient } from "~/lib/auth-client";

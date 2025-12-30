@@ -1,5 +1,5 @@
 import { Store } from "@tanstack/react-store";
-import { AnalyticsEvent } from "@/lib/dummy-data";
+import { AnalyticsEvent } from "~/lib/dummy-data";
 
 export type AnalyticsState = {
     events: AnalyticsEvent[];

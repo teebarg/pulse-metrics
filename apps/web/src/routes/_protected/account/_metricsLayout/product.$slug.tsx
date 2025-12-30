@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { getEventColor, formatEventType, getProductHourlyData } from "@/lib/dummy-data";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
+import { ScrollArea } from "~/components/ui/scroll-area";
+import { getEventColor, formatEventType, getProductHourlyData } from "~/lib/dummy-data";
 import { ArrowLeft, Eye, ShoppingCart, Package, DollarSign, TrendingUp, Clock } from "lucide-react";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "~/components/ui/chart";
 import { Area, AreaChart, XAxis, YAxis } from "recharts";
 import { currency, formatDate } from "~/lib/utils";
 import { useStore } from "@tanstack/react-store";

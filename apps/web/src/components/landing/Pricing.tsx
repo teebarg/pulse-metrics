@@ -96,7 +96,7 @@ export default function Pricing() {
                             key={plan.name}
                             className={`relative rounded-2xl p-8 transition-all duration-700 ${
                                 plan.popular
-                                    ? "bg-slate-900 text-white shadow-2xl scale-105 border-4 border-slate-900"
+                                    ? "bg-slate-950 text-white shadow-2xl scale-105 border-4 border-slate-900"
                                     : "bg-white border hover:shadow-lg"
                             } ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
                             style={{ transitionDelay: `${index * 150}ms` }}

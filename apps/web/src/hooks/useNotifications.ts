@@ -1,8 +1,8 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { toast } from "sonner";
-import { AnalyticsEvent } from "@/lib/dummy-data";
-import { Notification, checkForHighValuePurchase, checkForActivitySpike, checkForConversionMilestone } from "@/lib//notification.service";
-import { playNotificationSound, requestNotificationPermission, showBrowserNotification } from "@/lib/sound.service";
+import { AnalyticsEvent } from "~/lib/dummy-data";
+import { Notification, checkForHighValuePurchase, checkForActivitySpike, checkForConversionMilestone } from "~/lib//notification.service";
+import { playNotificationSound, requestNotificationPermission, showBrowserNotification } from "~/lib/sound.service";
 import { Settings } from "~/server-fn/settings.fn";
 
 export interface NotificationThresholds {

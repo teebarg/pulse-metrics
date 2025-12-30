@@ -1,9 +1,9 @@
 import { Filter, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { EventType, formatEventType, getEventBgColor } from "@/lib/dummy-data";
-import { cn } from "@/lib/utils";
+import { Button } from "~/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
+import { Badge } from "~/components/ui/badge";
+import { EventType, formatEventType, getEventBgColor } from "~/lib/dummy-data";
+import { cn } from "~/lib/utils";
 
 export interface FilterState {
     eventType: EventType | "all";

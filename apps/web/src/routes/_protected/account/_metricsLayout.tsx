@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Header } from "@/components/metrics/Header";
-import { useNotifications } from "@/hooks/useNotifications";
+import { Header } from "~/components/metrics/Header";
+import { useNotifications } from "~/hooks/useNotifications";
 import { useWebSocket } from "pulsews";
 import { getOrgEventsFn } from "~/server-fn/event.fn";
 import { useSuspenseQuery } from "@tanstack/react-query";

@@ -1,8 +1,8 @@
-import { cn } from "@/lib/utils";
+import { cn } from "~/lib/utils";
 import { Activity } from "lucide-react";
-import { NotificationCenter } from "@/components/metrics/NotificationCenter";
-import { NotificationSettings } from "@/components/metrics/NotificationSettings";
-import { Notification } from "@/lib/notification.service";
+import { NotificationCenter } from "~/components/metrics/NotificationCenter";
+import { NotificationSettings } from "~/components/metrics/NotificationSettings";
+import { Notification } from "~/lib/notification.service";
 import { Settings } from "~/server-fn/settings.fn";
 
 interface HeaderProps {

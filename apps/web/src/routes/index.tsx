@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
+import { Button } from "~/components/ui/button";
 import { BarChart3, Zap, Shield, TrendingUp, Code, Check, Sparkles, Pencil } from "lucide-react";
 import Pricing from "~/components/landing/Pricing";
 import { authClient } from "~/lib/auth-client";
@@ -74,7 +74,7 @@ function RouteComponent() {
                         seconds.
                     </p>
                     <div className="flex gap-4 justify-center">
-                        <Button size="xl" className="rounded-lg">
+                        <Button onClick={() => navigate({ to: "/account" })} size="xl" className="rounded-lg">
                             Start Free Trial
                         </Button>
                         <Button size="xl" variant="outline" className="rounded-lg">
@@ -207,9 +207,13 @@ function RouteComponent() {
                     </Badge>
                     <h2 className="text-4xl font-bold mb-6">Ready to Get Started?</h2>
                     <p className="text-xl text-muted-foreground mb-8">Join hundreds of e-commerce stores already using PulseMetrics</p>
-                    <button className="bg-blue-500 hover:bg-blue-600 text-white px-12 py-4 rounded-lg font-semibold text-lg transition shadow-lg shadow-blue-500/50">
+                    <Button
+                        size="xl"
+                        onClick={() => navigate({ to: "/account" })}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-12 shadow-lg shadow-blue-500/50"
+                    >
                         Start Your Free Trial
-                    </button>
+                    </Button>
                 </div>
             </section>
             <footer className="border-t border-muted py-12">

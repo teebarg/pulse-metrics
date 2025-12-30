@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { getProductAnalytics } from "@/lib/dummy-data";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
+import { Badge } from "~/components/ui/badge";
+import { Progress } from "~/components/ui/progress";
+import { getProductAnalytics } from "~/lib/dummy-data";
 import { TrendingUp, Eye, ShoppingCart, Package, DollarSign, ChevronRight } from "lucide-react";
 import { currency } from "~/lib/utils";
 import { useStore } from "@tanstack/react-store";

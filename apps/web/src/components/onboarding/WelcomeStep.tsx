@@ -1,6 +1,6 @@
 import React from "react";
 import { ChevronRight, Rocket, Key, BarChart3, Zap } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "~/components/ui/button";
 
 
 export function WelcomeStep({ onNext }: { onNext: () => void }) {
