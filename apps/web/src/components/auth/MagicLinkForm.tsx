@@ -4,7 +4,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { z } from "zod";
-import { useLocation } from "@tanstack/react-router";
+import { useSearch } from "@tanstack/react-router";
 import { authClient } from "~/lib/auth-client";
 
 const magicLinkSchema = z.object({
@@ -14,12 +14,11 @@ const magicLinkSchema = z.object({
 type MagicLinkFormData = z.infer<typeof magicLinkSchema>;
 
 export function MagicLinkForm() {
-    const location = useLocation();
+    const search = useSearch({ strict: false });
     const {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
-        reset,
     } = useForm<MagicLinkFormData>({
         resolver: zodResolver(magicLinkSchema),
         defaultValues: {
@@ -30,7 +29,7 @@ export function MagicLinkForm() {
     const onSubmit = async (formData: MagicLinkFormData) => {
         const { data, error } = await authClient.signIn.magicLink({
             email: formData.email,
-            callbackURL: location.pathname,
+            callbackURL: search.callbackUrl || "/account",
             newUserCallbackURL: "/onboarding",
             errorCallbackURL: "/error",
         });

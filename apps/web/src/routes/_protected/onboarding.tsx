@@ -93,10 +93,6 @@ function RouteComponent() {
         }
     };
 
-    const handleSkip = () => {
-        setCurrentStep(STEPS.length - 1);
-    };
-
     return (
         <div className="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-6">
             <div className="max-w-4xl mx-auto">
@@ -147,7 +143,7 @@ function RouteComponent() {
                     {currentStep === 0 && <WelcomeStep onNext={handleNext} />}
                     {currentStep === 1 && <StoreInfoStep formData={formData} setFormData={setFormData} onNext={handleNext} onPrev={handlePrev} />}
                     {currentStep === 2 && <IntegrationStep formData={formData} onNext={handleNext} onPrev={handlePrev} />}
-                    {currentStep === 3 && <VerifyStep formData={formData} onPrev={handlePrev} onSkip={handleSkip} />}
+                    {currentStep === 3 && <VerifyStep formData={formData} onPrev={handlePrev} />}
                     {currentStep === 4 && <CompleteStep formData={formData} />}
                 </div>
             </div>

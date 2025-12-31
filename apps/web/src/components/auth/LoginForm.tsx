@@ -1,4 +1,4 @@
-import { useNavigate } from "@tanstack/react-router";
+import { useSearch } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -14,12 +14,11 @@ type LoginFormData = {
 };
 
 export function LoginForm() {
-    const navigate = useNavigate();
+    const search = useSearch({ strict: false });
     const {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
-        reset,
     } = useForm<LoginFormData>({
         resolver: zodResolver(
             z.object({
@@ -34,35 +33,17 @@ export function LoginForm() {
     });
 
     const onSubmit = async (loginData: LoginFormData) => {
-        const { data, error } = await authClient.signIn.email(
+        await authClient.signIn.email(
             {
                 email: loginData.email,
                 password: loginData.password,
-                callbackURL: "/account",
+                callbackURL: search.callbackUrl || "/account",
                 rememberMe: true,
             },
             {
                 onRequest: (ctx) => {
                     console.log("🚀 ~ file: SignupForm.tsx:48 ~ ctx:", ctx);
                     toast.loading("Signing into your account...", { id: "login" });
-                },
-                onSuccess: async (ctx) => {
-                    console.log("🚀 ~ file: SignupForm.tsx:51 ~ ctx:", ctx);
-                    const { getOnboardingStatusFn } = await import("~/server-fn/onboarding.fn");
-                    try {
-                        const status = await getOnboardingStatusFn();
-                        setTimeout(() => {
-                            if (!status.onboardingCompleted) {
-                                navigate({ to: "/onboarding" });
-                            } else {
-                                navigate({ to: "/account" });
-                            }
-                        }, 500);
-                    } catch {
-                        setTimeout(() => {
-                            navigate({ to: "/onboarding" });
-                        }, 500);
-                    }
                 },
                 onError: (ctx) => {
                     toast.error(ctx.error.message, {
@@ -71,8 +52,6 @@ export function LoginForm() {
                 },
             }
         );
-        console.log("🚀 ~ file: LoginForm.tsx:40 ~ data:", data);
-        console.log("🚀 ~ file: LoginForm.tsx:40 ~ error:", error);
     };
 
     return (

@@ -3,10 +3,10 @@ import { Check, BarChart3, Zap, Activity, ChevronLeft } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRealtimeVerification } from "~/hooks/useRealtimeVerification";
-import { Button } from "../ui/button";
+import { Button } from "~/components/ui/button";
 import { updateOnboardingStepFn } from "~/server-fn/onboarding.fn";
 
-export function VerifyStep({ formData, onPrev, onSkip }: { formData: any; onPrev: () => void; onSkip: () => void }) {
+export function VerifyStep({ formData, onPrev }: { formData: any; onPrev: () => void }) {
     const { isVerifying, eventsReceived, isVerified, startVerification, stopVerification } = useRealtimeVerification(formData.eventsReceived ?? 0);
     const queryClient = useQueryClient();
 
@@ -134,7 +134,7 @@ export function VerifyStep({ formData, onPrev, onSkip }: { formData: any; onPrev
                     <ChevronLeft className="w-5 h-5" />
                     Back
                 </button>
-                <button onClick={onSkip} className="flex-1 px-6 py-3 border border-slate-700 rounded-lg hover:bg-slate-700 transition text-white">
+                <button onClick={handleNext} className="flex-1 px-6 py-3 border border-slate-700 rounded-lg hover:bg-slate-700 transition text-white">
                     Skip for Now
                 </button>
                 {isVerified && (

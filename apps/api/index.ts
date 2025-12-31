@@ -4,7 +4,7 @@ import { swaggerUI } from "@hono/swagger-ui";
 import { cors } from "hono/cors";
 import { prettyJSON } from "hono/pretty-json";
 import { createNodeWebSocket } from "@hono/node-ws";
-import type { Context } from "hono"
+import type { Context } from "hono";
 import { errorHandler } from "./middleware/error-handler.js";
 import { authMiddleware } from "./middleware/auth.js";
 import { healthRoute } from "./routes/health.routes.js";
@@ -15,6 +15,8 @@ import { onBoardingRoutes } from "./routes/onboarding.routes.js";
 import { organizationRoutes } from "./routes/organization.routes.js";
 import { settingsRoutes } from "./routes/settings.routes.js";
 import { createRealtimeListener, registerClient, unregisterClient } from "./realtime-listener.js";
+import { Resend } from "resend";
+import { EmailTemplate } from "./emails/email-template.js";
 
 const port = Number(process.env.API_PORT || 8787);
 
@@ -52,6 +54,24 @@ app.get("/", (c: Context) => {
         docs: "/ui",
         openapi: "/doc",
     });
+});
+
+app.get("/magic-link", async (c) => {
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const { data, error } = await resend.emails.send({
+        from: "Niyi <info@niyi.com.ng>",
+        to: ["teebarg01@gmail.com"],
+        subject: "Welcome!",
+        // react: EmailTemplate({ firstname: "John" }),
+        react: EmailTemplate({ firstName: "John" }),
+        // html: '<strong>It works!</strong>'
+    });
+
+    if (error) {
+        return c.json(error, 400);
+    }
+
+    return c.json(data);
 });
 
 const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app });

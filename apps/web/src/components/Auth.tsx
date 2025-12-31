@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
@@ -49,12 +49,12 @@ const Divider = () => (
 
 export default function Auth() {
     const navigate = useNavigate();
-    const location = useLocation();
+    const search = useSearch({ strict: false });
 
     const handleSocialLogin = async () => {
         await authClient.signIn.social({
             provider: "google",
-            callbackURL: location.pathname,
+            callbackURL: search.callbackUrl,
             newUserCallbackURL: "/onboarding",
             errorCallbackURL: "/error",
         });

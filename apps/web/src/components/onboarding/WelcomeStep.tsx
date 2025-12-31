@@ -2,7 +2,6 @@ import React from "react";
 import { ChevronRight, Rocket, Key, BarChart3, Zap } from "lucide-react";
 import { Button } from "~/components/ui/button";
 
-
 export function WelcomeStep({ onNext }: { onNext: () => void }) {
     return (
         <div className="text-center py-12">
@@ -35,7 +34,7 @@ export function WelcomeStep({ onNext }: { onNext: () => void }) {
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
     return (
         <div className="bg-slate-900/50 rounded-lg p-6 border border-slate-700">
-            <div className="mb-3">{icon}</div>
+            <div className="mb-3 text-center flex justify-center">{icon}</div>
             <h3 className="font-semibold mb-2">{title}</h3>
             <p className="text-sm text-slate-400">{description}</p>
         </div>

@@ -6,7 +6,6 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { z } from "zod";
 import { authClient } from "~/lib/auth-client";
-import { getOnboardingStatusFn } from "~/server-fn/onboarding.fn";
 import { useNavigate } from "@tanstack/react-router";
 
 const signupFormSchema = z.object({
@@ -23,7 +22,6 @@ export function SignupForm() {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
-        reset,
     } = useForm<SignupFormData>({
         resolver: zodResolver(signupFormSchema),
         defaultValues: {
@@ -34,44 +32,29 @@ export function SignupForm() {
     });
 
     const onSubmit = async (signUpData: SignupFormData) => {
-        const { data, error } = await authClient.signUp.email(
+        await authClient.signUp.email(
             {
                 email: signUpData.email,
                 password: signUpData.password,
                 name: signUpData.fullName,
-                callbackURL: "/account", // A URL to redirect to after the user verifies their email (optional)
+                callbackURL: "/onboarding",
+                
             },
             {
                 onRequest: (ctx) => {
-                    console.log("🚀 ~ file: SignupForm.tsx:48 ~ ctx:", ctx);
                     toast.loading("Creating your account...", { id: "signup" });
                 },
                 onSuccess: async (ctx) => {
-                    console.log("🚀 ~ file: SignupForm.tsx:51 ~ ctx:", ctx);
                     toast.success("Account created successfully", { id: "signup" });
-                    try {
-                        const status = await getOnboardingStatusFn();
-                        setTimeout(() => {
-                            if (!status.onboardingCompleted) {
-                                navigate({ to: "/onboarding" });
-                            } else {
-                                navigate({ to: "/account" });
-                            }
-                        }, 500);
-                    } catch {
-                        setTimeout(() => {
-                            navigate({ to: "/onboarding" });
-                        }, 500);
-                    }
+                    setTimeout(() => {
+                        navigate({ to: "/onboarding" });
+                    }, 500);
                 },
                 onError: (ctx) => {
-                    // display the error message
-                    toast.error(ctx.error.message,  { id: "signup" });
+                    toast.error(ctx.error.message, { id: "signup" });
                 },
             }
         );
-        console.log("🚀 ~ file: SignupForm.tsx:40 ~ data:", data);
-        console.log("🚀 ~ file: SignupForm.tsx:40 ~ error:", error);
     };
 
     return (

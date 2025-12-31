@@ -1,12 +1,17 @@
-FROM node:lts-alpine
+FROM node:22-alpine
 
-USER node
-WORKDIR /home/node
+RUN corepack enable && corepack prepare pnpm@10.24.0 --activate
 
-COPY . .
-RUN npm ci
+WORKDIR /app
 
-ARG PORT
-EXPOSE ${PORT:-3000}
+COPY package.json pnpm-lock.yaml ./
 
-CMD ["npm", "run", "start"]
+COPY .npmrc ./
+
+RUN pnpm install --frozen-lockfile
+
+COPY . ./
+
+EXPOSE 8787
+
+CMD ["pnpm", "dev"]

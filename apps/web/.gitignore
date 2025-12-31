@@ -17,7 +17,6 @@ count.txt
 .wrangler
 .output
 .vinxi
-todos.json
 
 # dev
 .yarn/
