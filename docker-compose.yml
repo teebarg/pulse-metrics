@@ -27,70 +27,70 @@ services:
       - traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080
       - traefik.http.routers.traefik-dashboard.service=api@internal
       - traefik.http.middlewares.https-redirect.contenttype.autodetect=false
-  # web:
-  #   build:
-  #     context: ./app
-  #     dockerfile: Dockerfile
-  #   container_name: pulse-web
-  #   ports:
-  #     - "7062:5174"  # Vite frontend
-  #   depends_on:
-  #     - db
-  #   volumes:
-  #     - ./app/src:/app/src
-  #     - ./app/public:/app/public
-  #     - /app/node_modules
-  #   environment:
-  #     - NODE_ENV=development
-  #     - WATCHPACK_POLLING=true
-  #     - CHOKIDAR_USEPOLLING=true
-  #   env_file:
-  #     - ./app/.env
-  #   labels:
-  #     - traefik.enable=true
-  #     - traefik.docker.network=pm-public
-  #     - traefik.constraint-label=pm-public
-  #     # Frontend Router
-  #     - traefik.http.services.app-frontend.loadbalancer.server.port=5174
-  #     - traefik.http.routers.app-frontend-http.rule=Host(`pm.localhost`)
-  #     - traefik.http.routers.app-frontend-http.entrypoints=http
-  #     - traefik.http.routers.app-frontend-http.service=app-frontend
-  #   command: ["pnpm", "dev"]
-  #   networks:
-  #     - pm-public
-  #     - default
-  # api:
-  #   build:
-  #     context: ./app
-  #     dockerfile: Dockerfile
-  #   container_name: pulse-api
-  #   ports:
-  #     - "7063:8787"  # Hono API
-  #   depends_on:
-  #     - db
-  #   volumes:
-  #     - ./app/src:/app/src
-  #     - ./app/public:/app/public
-  #     - /app/node_modules
-  #   environment:
-  #     - NODE_ENV=development
-  #     - WATCHPACK_POLLING=true
-  #     - CHOKIDAR_USEPOLLING=true
-  #   env_file:
-  #     - ./app/.env
-  #   labels:
-  #     - traefik.enable=true
-  #     - traefik.docker.network=pm-public
-  #     - traefik.constraint-label=pm-public
-  #     # API Router (Hono on port 8787)
-  #     - traefik.http.services.app-api.loadbalancer.server.port=8787
-  #     - traefik.http.routers.app-api-http.rule=Host(`api.localhost`)
-  #     - traefik.http.routers.app-api-http.entrypoints=http
-  #     - traefik.http.routers.app-api-http.service=app-api
-  #   command: ["pnpm", "dev"]
-  #   networks:
-  #     - pm-public
-  #     - default
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    container_name: pulse-web
+    ports:
+      - "7062:5174"  # Vite frontend
+    depends_on:
+      - db
+    volumes:
+      - ./apps/web/src:/app/src
+      - ./apps/web/public:/app/public
+      - /app/node_modules
+      - tanstack-cache:/app/.tanstack
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
+    env_file:
+      - ./apps/web/.env
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=pm-public
+      - traefik.constraint-label=pm-public
+      # Frontend Router
+      - traefik.http.services.app-frontend.loadbalancer.server.port=5174
+      - traefik.http.routers.app-frontend-http.rule=Host(`pm.localhost`)
+      - traefik.http.routers.app-frontend-http.entrypoints=http
+      - traefik.http.routers.app-frontend-http.service=app-frontend
+    command: ["pnpm", "dev"]
+    networks:
+      - pm-public
+      - default
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: pulse-api
+    ports:
+      - "7063:8787"  # Hono API
+    depends_on:
+      - db
+    volumes:
+      - ./apps/api:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
+    env_file:
+      - ./apps/api/.env
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=pm-public
+      - traefik.constraint-label=pm-public
+      # API Router (Hono on port 8787)
+      - traefik.http.services.app-api.loadbalancer.server.port=8787
+      - traefik.http.routers.app-api-http.rule=Host(`api.localhost`)
+      - traefik.http.routers.app-api-http.entrypoints=http
+      - traefik.http.routers.app-api-http.service=app-api
+    command: ["pnpm", "dev"]
+    networks:
+      - pm-public
+      - default
   db:
     image: pgvector/pgvector:pg18
     healthcheck:
@@ -166,6 +166,7 @@ services:
 volumes:
   pgv-data:
   redis-data:
+  tanstack-cache:
 
 networks:
   pm-public:
