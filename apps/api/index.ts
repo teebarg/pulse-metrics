@@ -16,7 +16,7 @@ import { organizationRoutes } from "./routes/organization.routes.js";
 import { settingsRoutes } from "./routes/settings.routes.js";
 import { createRealtimeListener, registerClient, unregisterClient } from "./realtime-listener.js";
 import { Resend } from "resend";
-import { EmailTemplate } from "./emails/email-template.js";
+import { EmailTemplate } from "./emails/email-template.tsx";
 
 const port = Number(process.env.API_PORT || 8787);
 
@@ -63,7 +63,7 @@ app.get("/magic-link", async (c) => {
         to: ["teebarg01@gmail.com"],
         subject: "Welcome!",
         // react: EmailTemplate({ firstname: "John" }),
-        react: EmailTemplate({ firstName: "John" }),
+        react: <EmailTemplate firstName="John" />,
         // html: '<strong>It works!</strong>'
     });
 

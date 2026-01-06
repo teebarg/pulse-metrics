@@ -4,7 +4,6 @@ import viteTsConfigPaths from "vite-tsconfig-paths";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { nitro } from "nitro/vite";
-import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import { devtools } from "@tanstack/devtools-vite";
 
 export default defineConfig({
@@ -13,15 +12,12 @@ export default defineConfig({
     },
     plugins: [
         devtools(),
-        nitro(),
+        process.env.NODE_ENV === 'production' ? nitro() : undefined,
         viteTsConfigPaths({
             projects: ["./tsconfig.json"],
         }),
         tailwindcss(),
         tanstackStart(),
-        tanstackRouter({
-            autoCodeSplitting: true,
-        }),
         viteReact(),
     ],
 });

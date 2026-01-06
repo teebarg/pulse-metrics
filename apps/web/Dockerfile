@@ -1,17 +1,15 @@
-FROM node:22-alpine
-
-RUN corepack enable && corepack prepare pnpm@10.24.0 --activate
+FROM node:20-slim
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-COPY .npmrc ./
+COPY package.json pnpm-lock.yaml ./
 
 RUN pnpm install --frozen-lockfile
 
-COPY . ./
+COPY . .
 
 EXPOSE 5174
 
-CMD ["pnpm", "dev"]
+CMD ["pnpm", "dev", "--host"]

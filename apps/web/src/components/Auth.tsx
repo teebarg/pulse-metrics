@@ -49,12 +49,12 @@ const Divider = () => (
 
 export default function Auth() {
     const navigate = useNavigate();
-    const search = useSearch({ strict: false });
+    const search: any = useSearch({ strict: false });
 
     const handleSocialLogin = async () => {
         await authClient.signIn.social({
             provider: "google",
-            callbackURL: search.callbackUrl,
+            callbackURL: search?.callbackUrl || "/account",
             newUserCallbackURL: "/onboarding",
             errorCallbackURL: "/error",
         });

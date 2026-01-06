@@ -22,16 +22,36 @@
 //     </div>
 // );
 
-import * as React from "react";
+// import * as React from "react";
+
+// interface EmailTemplateProps {
+//     firstName: string;
+// }
+
+// export function EmailTemplate({ firstName }: EmailTemplateProps) {
+//     return (
+//         <div>
+//             <h1>Welcome, {firstName}!</h1>
+//         </div>
+//     );
+// }
+
+import type { FC } from "react";
 
 interface EmailTemplateProps {
-    firstName: string;
+    magicLink: string;
+    // Add other props if your template uses them, e.g.:
+    // userName?: string;
+    // logoUrl?: string;
 }
 
-export function EmailTemplate({ firstName }: EmailTemplateProps) {
-    return (
-        <div>
-            <h1>Welcome, {firstName}!</h1>
-        </div>
-    );
-}
+export const EmailTemplate: FC<EmailTemplateProps> = ({ magicLink }) => (
+    <html>
+        <body>
+            <h1>Sign in to Pulse</h1>
+            <p>Click the link below to sign in:</p>
+            <a href={magicLink}>Sign in</a>
+            <p>This link expires in 15 minutes.</p>
+        </body>
+    </html>
+);

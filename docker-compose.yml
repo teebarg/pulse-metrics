@@ -37,10 +37,8 @@ services:
     depends_on:
       - db
     volumes:
-      - ./apps/web/src:/app/src
-      - ./apps/web/public:/app/public
+      - ./apps/web:/app:delegated  # Mount the entire app dir (add :cached if you prefer)
       - /app/node_modules
-      - tanstack-cache:/app/.tanstack
     environment:
       - NODE_ENV=development
       - WATCHPACK_POLLING=true
