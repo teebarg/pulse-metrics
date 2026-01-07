@@ -35,6 +35,7 @@ export const users = pgTable("user", {
     emailVerified: boolean("emailVerified").notNull(),
     image: text("image"),
     twoFactorEnabled: boolean("twoFactorEnabled").notNull().default(false),
+    isAnonymous: boolean("isAnonymous").notNull().default(false),
     role: organizationRoleEnum("role").default("owner"),
     organizationId: uuid("organizationId").references(() => organizations.id, { onDelete: "set null" }),
     createdAt: timestamp("createdAt").notNull(),

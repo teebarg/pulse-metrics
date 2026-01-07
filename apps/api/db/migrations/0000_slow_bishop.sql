@@ -69,6 +69,17 @@ CREATE TABLE "session" (
 	CONSTRAINT "session_token_unique" UNIQUE("token")
 );
 --> statement-breakpoint
+CREATE TABLE "settings" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"userId" text NOT NULL,
+	"soundEnabled" boolean DEFAULT true NOT NULL,
+	"browserNotificationsEnabled" boolean DEFAULT true NOT NULL,
+	"highValueThreshold" integer DEFAULT 100 NOT NULL,
+	"activitySpikeMultiplier" integer DEFAULT 2 NOT NULL,
+	"createdAt" timestamp DEFAULT now(),
+	"updatedAt" timestamp DEFAULT now()
+);
+--> statement-breakpoint
 CREATE TABLE "two_factor" (
 	"id" text PRIMARY KEY NOT NULL,
 	"userId" text NOT NULL,
@@ -83,6 +94,7 @@ CREATE TABLE "user" (
 	"emailVerified" boolean NOT NULL,
 	"image" text,
 	"twoFactorEnabled" boolean DEFAULT false NOT NULL,
+	"isAnonymous" boolean DEFAULT false NOT NULL,
 	"role" "organization_role" DEFAULT 'owner',
 	"organizationId" uuid,
 	"createdAt" timestamp NOT NULL,
@@ -103,8 +115,10 @@ ALTER TABLE "account" ADD CONSTRAINT "account_userId_user_id_fk" FOREIGN KEY ("u
 ALTER TABLE "analytics_cache" ADD CONSTRAINT "analytics_cache_organizationId_organization_id_fk" FOREIGN KEY ("organizationId") REFERENCES "public"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "events" ADD CONSTRAINT "events_organizationId_organization_id_fk" FOREIGN KEY ("organizationId") REFERENCES "public"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "settings" ADD CONSTRAINT "settings_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "two_factor" ADD CONSTRAINT "two_factor_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user" ADD CONSTRAINT "user_organizationId_organization_id_fk" FOREIGN KEY ("organizationId") REFERENCES "public"."organization"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 CREATE UNIQUE INDEX "analytics_cache_unique" ON "analytics_cache" USING btree ("organizationId","metricType","timeWindow","periodStart");--> statement-breakpoint
 CREATE INDEX "idx_org_timestamp" ON "events" USING btree ("organizationId","timestamp" DESC NULLS LAST);--> statement-breakpoint
-CREATE INDEX "idx_event_type" ON "events" USING btree ("organizationId","eventType","timestamp" DESC NULLS LAST);
+CREATE INDEX "idx_event_type" ON "events" USING btree ("organizationId","eventType","timestamp" DESC NULLS LAST);--> statement-breakpoint
+CREATE UNIQUE INDEX "settings_userId_unique" ON "settings" USING btree ("userId");

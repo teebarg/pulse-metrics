@@ -5,18 +5,16 @@ import { cors } from "hono/cors";
 import { prettyJSON } from "hono/pretty-json";
 import { createNodeWebSocket } from "@hono/node-ws";
 import type { Context } from "hono";
-import { errorHandler } from "./middleware/error-handler.js";
-import { authMiddleware } from "./middleware/auth.js";
-import { healthRoute } from "./routes/health.routes.js";
-import { profileRoutes } from "./routes/profile.routes.js";
-import { analyticsRoutes } from "./routes/analytics.routes.js";
-import { eventsRoute } from "./routes/events.routes.js";
-import { onBoardingRoutes } from "./routes/onboarding.routes.js";
-import { organizationRoutes } from "./routes/organization.routes.js";
-import { settingsRoutes } from "./routes/settings.routes.js";
-import { createRealtimeListener, registerClient, unregisterClient } from "./realtime-listener.js";
-import { Resend } from "resend";
-import { EmailTemplate } from "./emails/email-template.tsx";
+import { errorHandler } from "./middleware/error-handler.ts";
+import { authMiddleware } from "./middleware/auth.ts";
+import { genericRoute } from "./routes/generic.routes.ts";
+import { profileRoutes } from "./routes/profile.routes.ts";
+import { analyticsRoutes } from "./routes/analytics.routes.ts";
+import { eventsRoute } from "./routes/events.routes.ts";
+import { onBoardingRoutes } from "./routes/onboarding.routes.ts";
+import { organizationRoutes } from "./routes/organization.routes.ts";
+import { settingsRoutes } from "./routes/settings.routes.ts";
+import { createRealtimeListener, registerClient, unregisterClient } from "./realtime-listener.ts";
 
 const port = Number(process.env.API_PORT || 8787);
 
@@ -30,7 +28,7 @@ app.use("/v1/profile/*", authMiddleware);
 app.use("/v1/onboarding/*", authMiddleware);
 app.use("/v1/organization/*", authMiddleware);
 
-app.route("/", healthRoute);
+app.route("/", genericRoute);
 app.route("/v1/profile", profileRoutes);
 app.route("/v1/analytics", analyticsRoutes);
 app.route("/v1/events", eventsRoute);
@@ -56,23 +54,21 @@ app.get("/", (c: Context) => {
     });
 });
 
-app.get("/magic-link", async (c) => {
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    const { data, error } = await resend.emails.send({
-        from: "Niyi <info@niyi.com.ng>",
-        to: ["teebarg01@gmail.com"],
-        subject: "Welcome!",
-        // react: EmailTemplate({ firstname: "John" }),
-        react: <EmailTemplate firstName="John" />,
-        // html: '<strong>It works!</strong>'
-    });
+// app.get("/test-email", async (c) => {
+//     const resend = new Resend(process.env.RESEND_API_KEY);
+//     const { data, error } = await resend.emails.send({
+//         from: "Niyi at Dev <info@niyi.com.ng>",
+//         to: ["teebarg01@gmail.com"],
+//         subject: "Welcome!",
+//         react: <EmailTemplate firstName="John" />,
+//     });
 
-    if (error) {
-        return c.json(error, 400);
-    }
+//     if (error) {
+//         return c.json(error, 400);
+//     }
 
-    return c.json(data);
-});
+//     return c.json(data);
+// });
 
 const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app });
 app.get(

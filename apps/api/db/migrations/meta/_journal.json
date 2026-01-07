@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1765559584452,
-      "tag": "0000_late_sue_storm",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1766507845628,
-      "tag": "0001_great_thundra",
+      "when": 1767727921401,
+      "tag": "0000_slow_bishop",
       "breakpoints": true
     }
   ]

@@ -1,7 +1,8 @@
 import { betterAuth } from "better-auth";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
-import { magicLink } from "better-auth/plugins";
+import { magicLink, oneTap } from "better-auth/plugins";
 import { Pool } from "pg";
+import { api } from "~/utils/fetch-api";
 
 export const auth = betterAuth({
     database: new Pool({
@@ -14,13 +15,13 @@ export const auth = betterAuth({
         tanstackStartCookies(),
         magicLink({
             sendMagicLink: async ({ email, token, url }, ctx) => {
-                console.log("🚀 ~ file: auth.ts:17 ~ ctx:", ctx);
-                console.log("🚀 ~ file: auth.ts:17 ~ url:", url);
-                console.log("🚀 ~ file: auth.ts:17 ~ token:", token);
-                console.log("🚀 ~ file: auth.ts:17 ~ email:", email);
-                // send email to user
+                await api.post<any>("/magic-link", {
+                    magicLink: url,
+                    email,
+                });
             },
         }),
+        oneTap(),
     ],
     socialProviders: {
         google: {

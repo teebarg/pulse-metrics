@@ -14,7 +14,7 @@ type LoginFormData = {
 };
 
 export function LoginForm() {
-    const search = useSearch({ strict: false });
+    const search: { callbackUrl?: string } = useSearch({ strict: false });
     const {
         register,
         handleSubmit,
@@ -37,12 +37,11 @@ export function LoginForm() {
             {
                 email: loginData.email,
                 password: loginData.password,
-                callbackURL: search.callbackUrl || "/account",
+                callbackURL: search?.callbackUrl || "/account",
                 rememberMe: true,
             },
             {
                 onRequest: (ctx) => {
-                    console.log("🚀 ~ file: SignupForm.tsx:48 ~ ctx:", ctx);
                     toast.loading("Signing into your account...", { id: "login" });
                 },
                 onError: (ctx) => {

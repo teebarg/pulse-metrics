@@ -4,8 +4,9 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { z } from "zod";
-import { useSearch } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { authClient } from "~/lib/auth-client";
+import { toast } from "sonner";
 
 const magicLinkSchema = z.object({
     email: z.email(),
@@ -14,7 +15,7 @@ const magicLinkSchema = z.object({
 type MagicLinkFormData = z.infer<typeof magicLinkSchema>;
 
 export function MagicLinkForm() {
-    const search = useSearch({ strict: false });
+    const search: { callbackUrl?: string } = useSearch({ strict: false });
     const {
         register,
         handleSubmit,
@@ -27,14 +28,18 @@ export function MagicLinkForm() {
     });
 
     const onSubmit = async (formData: MagicLinkFormData) => {
-        const { data, error } = await authClient.signIn.magicLink({
+        const navigate = useNavigate();
+        const { error } = await authClient.signIn.magicLink({
             email: formData.email,
-            callbackURL: search.callbackUrl || "/account",
+            callbackURL: search?.callbackUrl || "/account",
             newUserCallbackURL: "/onboarding",
             errorCallbackURL: "/error",
         });
-        console.log("🚀 ~ file: MagicLinkForm.tsx:36 ~ data:", data);
-        console.log("🚀 ~ file: MagicLinkForm.tsx:36 ~ error:", error);
+        if (error) {
+            toast.error(error.message);
+            return;
+        }
+        navigate({ to: "/verify-request" });
     };
 
     return (

@@ -1,11 +1,12 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
-import { SuccessSchema } from "../schemas/common.schemas.js";
-import { getListenerStatus } from "../realtime-listener.js";
+import { SuccessSchema } from "../schemas/common.schemas.ts";
+import { getListenerStatus } from "../realtime-listener.ts";
 import { z } from "zod";
+import { sendMagicLink } from "../services/generic.service.tsx";
 
-export const healthRoute = new OpenAPIHono();
+export const genericRoute = new OpenAPIHono();
 
-healthRoute.openapi(
+genericRoute.openapi(
     createRoute({
         method: "get",
         path: "/health",
@@ -21,7 +22,7 @@ healthRoute.openapi(
     (c) => c.json({ message: "Server is running", ok: true })
 );
 
-healthRoute.get("/", (c) =>
+genericRoute.get("/", (c) =>
     c.json({
         message: "Hello from Hono API!",
         docs: "/ui",
@@ -29,7 +30,7 @@ healthRoute.get("/", (c) =>
     })
 );
 
-healthRoute.openapi(
+genericRoute.openapi(
     createRoute({
         method: "get",
         path: "/realtime/status",
@@ -45,5 +46,30 @@ healthRoute.openapi(
     async (c) => {
         const status = await getListenerStatus();
         return c.json(status);
+    }
+);
+
+genericRoute.openapi(
+    createRoute({
+        method: "post",
+        path: "/magic-link",
+        tags: ["system"],
+        description: "Send magic link to email",
+        request: {
+            body: {
+                content: { "application/json": { schema: z.object({ magicLink: z.string() }) } },
+            },
+        },
+        responses: {
+            200: {
+                content: { "application/json": { schema: z.object({ message: z.string() }) } },
+                description: "Success",
+            },
+        },
+    }),
+    async (c) => {
+        const data = c.req.valid("json");
+        await sendMagicLink(data.magicLink);
+        return c.json({ message: "Magic link sent successfully" });
     }
 );
