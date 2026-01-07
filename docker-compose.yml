@@ -33,7 +33,7 @@ services:
       dockerfile: Dockerfile
     container_name: pulse-web
     ports:
-      - "7062:5174"  # Vite frontend
+      - "7062:3000"  # Vite frontend
     depends_on:
       - db
     volumes:
@@ -50,7 +50,7 @@ services:
       - traefik.docker.network=pm-public
       - traefik.constraint-label=pm-public
       # Frontend Router
-      - traefik.http.services.app-frontend.loadbalancer.server.port=5174
+      - traefik.http.services.app-frontend.loadbalancer.server.port=3000
       - traefik.http.routers.app-frontend-http.rule=Host(`pm.localhost`)
       - traefik.http.routers.app-frontend-http.entrypoints=http
       - traefik.http.routers.app-frontend-http.service=app-frontend

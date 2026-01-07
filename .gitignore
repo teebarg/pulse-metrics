@@ -45,3 +45,6 @@ lerna-debug.log*
 
 apps/.tanstack
 apps/.pnpm-store
+apps/web/.output
+apps/web/.tanstack
+apps/web/.pnpm-store

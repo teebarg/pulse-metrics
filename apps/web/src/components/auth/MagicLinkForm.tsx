@@ -15,6 +15,7 @@ const magicLinkSchema = z.object({
 type MagicLinkFormData = z.infer<typeof magicLinkSchema>;
 
 export function MagicLinkForm() {
+    const navigate = useNavigate();
     const search: { callbackUrl?: string } = useSearch({ strict: false });
     const {
         register,
@@ -28,7 +29,6 @@ export function MagicLinkForm() {
     });
 
     const onSubmit = async (formData: MagicLinkFormData) => {
-        const navigate = useNavigate();
         const { error } = await authClient.signIn.magicLink({
             email: formData.email,
             callbackURL: search?.callbackUrl || "/account",
@@ -36,6 +36,7 @@ export function MagicLinkForm() {
             errorCallbackURL: "/error",
         });
         if (error) {
+            console.log("🚀 ~ file: MagicLinkForm.tsx:39 ~ error:", error);
             toast.error(error.message);
             return;
         }

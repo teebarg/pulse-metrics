@@ -57,7 +57,7 @@ genericRoute.openapi(
         description: "Send magic link to email",
         request: {
             body: {
-                content: { "application/json": { schema: z.object({ magicLink: z.string() }) } },
+                content: { "application/json": { schema: z.object({ magicLink: z.string(), email: z.string() }) } },
             },
         },
         responses: {
@@ -69,7 +69,7 @@ genericRoute.openapi(
     }),
     async (c) => {
         const data = c.req.valid("json");
-        await sendMagicLink(data.magicLink);
+        await sendMagicLink(data.magicLink, data.email);
         return c.json({ message: "Magic link sent successfully" });
     }
 );

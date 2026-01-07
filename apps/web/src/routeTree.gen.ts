@@ -16,6 +16,7 @@ import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProtectedOnboardingRouteImport } from './routes/_protected/onboarding'
 import { Route as ProtectedAccountRouteImport } from './routes/_protected/account'
+import { Route as AuthVerifyRequestRouteImport } from './routes/_auth/verify-request'
 import { Route as AuthErrorRouteImport } from './routes/_auth/error'
 import { Route as AuthAuthRouteImport } from './routes/_auth/auth'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -57,6 +58,11 @@ const ProtectedAccountRoute = ProtectedAccountRouteImport.update({
   id: '/account',
   path: '/account',
   getParentRoute: () => ProtectedRoute,
+} as any)
+const AuthVerifyRequestRoute = AuthVerifyRequestRouteImport.update({
+  id: '/verify-request',
+  path: '/verify-request',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthErrorRoute = AuthErrorRouteImport.update({
   id: '/error',
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/docs': typeof DocsRoute
   '/auth': typeof AuthAuthRoute
   '/error': typeof AuthErrorRoute
+  '/verify-request': typeof AuthVerifyRequestRoute
   '/account': typeof ProtectedAccountMetricsLayoutRouteWithChildren
   '/onboarding': typeof ProtectedOnboardingRoute
   '/account/settings': typeof ProtectedAccountSettingsRoute
@@ -123,6 +130,7 @@ export interface FileRoutesByTo {
   '/docs': typeof DocsRoute
   '/auth': typeof AuthAuthRoute
   '/error': typeof AuthErrorRoute
+  '/verify-request': typeof AuthVerifyRequestRoute
   '/account': typeof ProtectedAccountMetricsLayoutIndexRoute
   '/onboarding': typeof ProtectedOnboardingRoute
   '/account/settings': typeof ProtectedAccountSettingsRoute
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   '/docs': typeof DocsRoute
   '/_auth/auth': typeof AuthAuthRoute
   '/_auth/error': typeof AuthErrorRoute
+  '/_auth/verify-request': typeof AuthVerifyRequestRoute
   '/_protected/account': typeof ProtectedAccountRouteWithChildren
   '/_protected/onboarding': typeof ProtectedOnboardingRoute
   '/_protected/account/_metricsLayout': typeof ProtectedAccountMetricsLayoutRouteWithChildren
@@ -156,6 +165,7 @@ export interface FileRouteTypes {
     | '/docs'
     | '/auth'
     | '/error'
+    | '/verify-request'
     | '/account'
     | '/onboarding'
     | '/account/settings'
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/docs'
     | '/auth'
     | '/error'
+    | '/verify-request'
     | '/account'
     | '/onboarding'
     | '/account/settings'
@@ -185,6 +196,7 @@ export interface FileRouteTypes {
     | '/docs'
     | '/_auth/auth'
     | '/_auth/error'
+    | '/_auth/verify-request'
     | '/_protected/account'
     | '/_protected/onboarding'
     | '/_protected/account/_metricsLayout'
@@ -255,6 +267,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedAccountRouteImport
       parentRoute: typeof ProtectedRoute
     }
+    '/_auth/verify-request': {
+      id: '/_auth/verify-request'
+      path: '/verify-request'
+      fullPath: '/verify-request'
+      preLoaderRoute: typeof AuthVerifyRequestRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/error': {
       id: '/_auth/error'
       path: '/error'
@@ -317,11 +336,13 @@ declare module '@tanstack/react-router' {
 interface AuthRouteChildren {
   AuthAuthRoute: typeof AuthAuthRoute
   AuthErrorRoute: typeof AuthErrorRoute
+  AuthVerifyRequestRoute: typeof AuthVerifyRequestRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthAuthRoute: AuthAuthRoute,
   AuthErrorRoute: AuthErrorRoute,
+  AuthVerifyRequestRoute: AuthVerifyRequestRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

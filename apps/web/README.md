@@ -64,7 +64,7 @@ Built with TanStack Start (React meta-framework), this application provides a be
    pnpm dev
    ```
 
-   The application will be available at `http://localhost:5173` (or the port specified by Vite).
+   The application will be available at `http://localhost:3000` (or the port specified by Vite).
 
 ### Building for Production
 
@@ -208,7 +208,7 @@ API calls are made through:
 
 ```bash
 docker build -t pulse-metrics-web .
-docker run -p 5173:5173 pulse-metrics-web
+docker run -p 3000:3000 pulse-metrics-web
 ```
 
 ### Production
@@ -219,7 +219,7 @@ The application can be containerized for production deployment. See the root `do
 
 ### Port Already in Use
 
-If port 5173 is already in use, Vite will automatically try the next available port. Check the console output for the actual port.
+If port 3000 is already in use, Vite will automatically try the next available port. Check the console output for the actual port.
 
 ### API Connection Issues
 

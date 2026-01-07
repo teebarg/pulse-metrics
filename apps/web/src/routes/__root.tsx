@@ -72,10 +72,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     const routeData = Route.useLoaderData();
     useEffect(() => {
         if (typeof window !== "undefined" && (window as any).PulseMetrics) {
+            console.log(import.meta.env.VITE_API_URL + "/v1");
+            // console.log(process.env.API_URL + "/v1");
             (window as any).PulseMetrics.init({
                 apiKey: import.meta.env.VITE_PULSE_KEY,
                 debug: true,
-                apiUrl: "http://localhost:8787/v1",
+                apiUrl: import.meta.env.VITE_API_URL + "/v1",
             });
         }
     }, []);

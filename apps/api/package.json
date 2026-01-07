@@ -31,6 +31,7 @@
     "devDependencies": {
         "@types/node": "^20.11.17",
         "@types/pg": "^8.10.0",
+        "@types/react": "^19.2.7",
         "@types/ws": "^8.18.1",
         "dotenv-cli": "^10.0.0",
         "drizzle-kit": "^0.31.6",

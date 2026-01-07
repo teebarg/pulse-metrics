@@ -31,6 +31,7 @@ count.txt
 # env
 .env
 .env.production
+.env.docker
 .env.*.local
 
 # logs

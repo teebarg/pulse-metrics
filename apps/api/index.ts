@@ -15,6 +15,7 @@ import { onBoardingRoutes } from "./routes/onboarding.routes.ts";
 import { organizationRoutes } from "./routes/organization.routes.ts";
 import { settingsRoutes } from "./routes/settings.routes.ts";
 import { createRealtimeListener, registerClient, unregisterClient } from "./realtime-listener.ts";
+import { sendTestEmail } from "./services/generic.service.tsx";
 
 const port = Number(process.env.API_PORT || 8787);
 
@@ -54,21 +55,15 @@ app.get("/", (c: Context) => {
     });
 });
 
-// app.get("/test-email", async (c) => {
-//     const resend = new Resend(process.env.RESEND_API_KEY);
-//     const { data, error } = await resend.emails.send({
-//         from: "Niyi at Dev <info@niyi.com.ng>",
-//         to: ["teebarg01@gmail.com"],
-//         subject: "Welcome!",
-//         react: <EmailTemplate firstName="John" />,
-//     });
+app.get("/test-email", async (c) => {
+    const { data, error } = await sendTestEmail();
 
-//     if (error) {
-//         return c.json(error, 400);
-//     }
+    if (error) {
+        return c.json(error, 400);
+    }
 
-//     return c.json(data);
-// });
+    return c.json(data);
+});
 
 const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app });
 app.get(

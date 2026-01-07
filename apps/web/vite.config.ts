@@ -7,12 +7,10 @@ import { nitro } from "nitro/vite";
 import { devtools } from "@tanstack/devtools-vite";
 
 export default defineConfig({
-    server: {
-        port: 5174,
-    },
     plugins: [
         devtools(),
-        process.env.NODE_ENV === 'production' ? nitro() : undefined,
+        // process.env.NODE_ENV === "production" ? nitro() : undefined,
+        nitro(),
         viteTsConfigPaths({
             projects: ["./tsconfig.json"],
         }),

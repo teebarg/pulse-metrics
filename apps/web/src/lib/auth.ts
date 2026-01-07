@@ -15,6 +15,7 @@ export const auth = betterAuth({
         tanstackStartCookies(),
         magicLink({
             sendMagicLink: async ({ email, token, url }, ctx) => {
+                console.log("🚀 ~ file: auth.ts:18 ~ email:", email);
                 await api.post<any>("/magic-link", {
                     magicLink: url,
                     email,
