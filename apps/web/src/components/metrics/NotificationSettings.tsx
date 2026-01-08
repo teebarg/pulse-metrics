@@ -135,7 +135,7 @@ export function NotificationSettings({ settings }: NotificationSettingsProps) {
                                 <span className="text-sm font-medium text-primary">{currency(settings?.highValueThreshold)}</span>
                             </div>
                             <Slider
-                                value={[settings?.highValueThreshold!]}
+                                value={[settings?.highValueThreshold || 0]}
                                 onValueChange={(value: number[]) => handleFieldUpdate("highValueThreshold", value[0])}
                                 min={1000}
                                 max={100000}
@@ -152,7 +152,7 @@ export function NotificationSettings({ settings }: NotificationSettingsProps) {
                                 <span className="text-sm font-medium text-primary">{settings?.activitySpikeMultiplier}x</span>
                             </div>
                             <Slider
-                                value={[settings?.activitySpikeMultiplier!]}
+                                value={[settings?.activitySpikeMultiplier || 2]}
                                 onValueChange={(value: number[]) => handleFieldUpdate("activitySpikeMultiplier", value[0])}
                                 min={1.5}
                                 max={5}
