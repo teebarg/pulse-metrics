@@ -12,13 +12,13 @@ export default defineConfig({
         port: 5174,
     },
     plugins: [
-        devtools(),
-        nitro(),
         viteTsConfigPaths({
             projects: ["./tsconfig.json"],
         }),
-        tailwindcss(),
         tanstackStart(),
+        nitro(),
+        devtools(),
+        tailwindcss(),
         viteReact(),
         tanstackRouter({
             autoCodeSplitting: true,
