@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as DocsRouteImport } from './routes/docs'
 import { Route as DeferredRouteImport } from './routes/deferred'
 import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as AuthRouteImport } from './routes/_auth'
@@ -26,11 +25,6 @@ import { Route as ProtectedAccountMetricsLayoutIndexRouteImport } from './routes
 import { Route as ProtectedAccountMetricsLayoutProductsRouteImport } from './routes/_protected/account/_metricsLayout/products'
 import { Route as ProtectedAccountMetricsLayoutProductSlugRouteImport } from './routes/_protected/account/_metricsLayout/product.$slug'
 
-const DocsRoute = DocsRouteImport.update({
-  id: '/docs',
-  path: '/docs',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DeferredRoute = DeferredRouteImport.update({
   id: '/deferred',
   path: '/deferred',
@@ -112,7 +106,6 @@ const ProtectedAccountMetricsLayoutProductSlugRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/deferred': typeof DeferredRoute
-  '/docs': typeof DocsRoute
   '/auth': typeof AuthAuthRoute
   '/error': typeof AuthErrorRoute
   '/verify-request': typeof AuthVerifyRequestRoute
@@ -127,7 +120,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/deferred': typeof DeferredRoute
-  '/docs': typeof DocsRoute
   '/auth': typeof AuthAuthRoute
   '/error': typeof AuthErrorRoute
   '/verify-request': typeof AuthVerifyRequestRoute
@@ -144,7 +136,6 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/_protected': typeof ProtectedRouteWithChildren
   '/deferred': typeof DeferredRoute
-  '/docs': typeof DocsRoute
   '/_auth/auth': typeof AuthAuthRoute
   '/_auth/error': typeof AuthErrorRoute
   '/_auth/verify-request': typeof AuthVerifyRequestRoute
@@ -162,7 +153,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/deferred'
-    | '/docs'
     | '/auth'
     | '/error'
     | '/verify-request'
@@ -177,7 +167,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/deferred'
-    | '/docs'
     | '/auth'
     | '/error'
     | '/verify-request'
@@ -193,7 +182,6 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/_protected'
     | '/deferred'
-    | '/docs'
     | '/_auth/auth'
     | '/_auth/error'
     | '/_auth/verify-request'
@@ -212,19 +200,11 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   ProtectedRoute: typeof ProtectedRouteWithChildren
   DeferredRoute: typeof DeferredRoute
-  DocsRoute: typeof DocsRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/docs': {
-      id: '/docs'
-      path: '/docs'
-      fullPath: '/docs'
-      preLoaderRoute: typeof DocsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/deferred': {
       id: '/deferred'
       path: '/deferred'
@@ -401,7 +381,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   ProtectedRoute: ProtectedRouteWithChildren,
   DeferredRoute: DeferredRoute,
-  DocsRoute: DocsRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

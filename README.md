@@ -136,7 +136,7 @@ pulse-metrics/
    ```
 
 7. **Access the applications**:
-   - **Web Dashboard**: http://localhost:3000
+   - **Web Dashboard**: http://localhost:5174
    - **API**: http://localhost:8787
    - **API Documentation**: http://localhost:8787/ui
    - **Database GUI**: http://localhost:7065

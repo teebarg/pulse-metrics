@@ -5,11 +5,14 @@ import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { nitro } from "nitro/vite";
 import { devtools } from "@tanstack/devtools-vite";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 
 export default defineConfig({
+    server: {
+        port: 5174,
+    },
     plugins: [
         devtools(),
-        // process.env.NODE_ENV === "production" ? nitro() : undefined,
         nitro(),
         viteTsConfigPaths({
             projects: ["./tsconfig.json"],
@@ -17,5 +20,8 @@ export default defineConfig({
         tailwindcss(),
         tanstackStart(),
         viteReact(),
+        tanstackRouter({
+            autoCodeSplitting: true,
+        }),
     ],
 });

@@ -7,8 +7,9 @@
   "type": "module",
   "scripts": {
     "dev-debug": "echo 'Debug mode - container will stay alive' && tail -f /dev/null",
-    "dev": "vite dev --host 0.0.0.0 --port 3000",
+    "dev": "vite dev --host 0.0.0.0",
     "build": "vite build",
+    "preview": "vite preview",
     "start": "node .output/server/index.mjs"
   },
   "dependencies": {
@@ -34,6 +35,7 @@
     "@tanstack/react-router-devtools": "^1.132.0",
     "@tanstack/react-router-ssr-query": "^1.131.7",
     "@tanstack/react-start": "^1.132.0",
+    "@tanstack/router-plugin": "^1.132.0",
     "@tanstack/react-store": "^0.8.0",
     "better-auth": "^1.4.6",
     "class-variance-authority": "^0.7.1",
