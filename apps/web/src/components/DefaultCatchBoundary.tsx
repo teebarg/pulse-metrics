@@ -1,4 +1,4 @@
-import { ErrorComponent, rootRouteId, useMatch, useNavigate, useRouter } from "@tanstack/react-router";
+import { ErrorComponent, rootRouteId, useMatch, useNavigate } from "@tanstack/react-router";
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
@@ -6,7 +6,6 @@ import { ChevronDown, ChevronUp, RefreshCw, ArrowLeft, ShoppingCart, AlertCircle
 
 export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
     const [showDetails, setShowDetails] = useState(false);
-    const router = useRouter();
     const navigate = useNavigate();
     const isRoot = useMatch({
         strict: false,
@@ -42,12 +41,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
-                    <Button
-                        onClick={() => {
-                            router.invalidate();
-                        }}
-                        className="gap-2 px-6 py-5 text-base font-medium"
-                    >
+                    <Button onClick={() => window.location.reload()} className="gap-2 px-6 py-5 text-base font-medium">
                         <RefreshCw className="w-4 h-4" />
                         Try Again
                     </Button>

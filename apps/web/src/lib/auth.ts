@@ -14,8 +14,7 @@ export const auth = betterAuth({
     plugins: [
         tanstackStartCookies(),
         magicLink({
-            sendMagicLink: async ({ email, token, url }, ctx) => {
-                console.log("🚀 ~ file: auth.ts:18 ~ email:", email);
+            sendMagicLink: async ({ email, url }, ctx) => {
                 await api.post<any>("/magic-link", {
                     magicLink: url,
                     email,
@@ -26,7 +25,7 @@ export const auth = betterAuth({
     ],
     socialProviders: {
         google: {
-            clientId: process.env.GOOGLE_CLIENT_ID as string,
+            clientId: process.env.VITE_GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
         },
     },

@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { Button } from "~/components/ui/button";
 import { BarChart3, Zap, Shield, TrendingUp, Code, Check, Sparkles, Pencil } from "lucide-react";
 import Pricing from "~/components/landing/Pricing";
@@ -6,15 +6,28 @@ import { authClient } from "~/lib/auth-client";
 import { currency } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { ThemeToggle } from "~/components/theme-toggle";
+import { useEffect, useRef } from "react";
 
 export const Route = createFileRoute("/")({
     component: RouteComponent,
 });
 
 function RouteComponent() {
-    const { data: session } = authClient.useSession();
+    const search: { callbackUrl?: string } = useSearch({ strict: false });
+    const { data: session, isPending } = authClient.useSession();
     const isAuthenticated = !!session;
     const navigate = useNavigate();
+
+    const hasRun = useRef(false);
+
+    useEffect(() => {
+        if (isAuthenticated || isPending || hasRun.current) return;
+
+        hasRun.current = true;
+        authClient.oneTap({
+            callbackURL: search?.callbackUrl || "/account",
+        });
+    }, [isAuthenticated]);
 
     const handleGetStarted = () => {
         navigate({ to: "/auth" });
@@ -41,7 +54,12 @@ function RouteComponent() {
                         </div>
                         <div className="flex items-center gap-4">
                             <ThemeToggle />
-                            {isAuthenticated ? (
+                            {isPending ? (
+                                <div className="flex gap-2">
+                                    <div className="h-9 w-20 rounded-md bg-muted animate-pulse" />
+                                    <div className="h-9 w-28 rounded-md bg-muted animate-pulse" />
+                                </div>
+                            ) : isAuthenticated ? (
                                 <>
                                     <Button variant="ghost" onClick={handleSignOut}>
                                         Sign Out

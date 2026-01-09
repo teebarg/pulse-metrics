@@ -1,7 +1,7 @@
 import { redirect } from "@tanstack/react-router";
 import { getCookie } from "@tanstack/react-start/server";
 
-const baseURL = process.env.API_URL || "http://localhost.dev";
+const baseURL = process.env.VITE_API_URL || "http://localhost.dev";
 
 interface HeaderOptions {}
 
