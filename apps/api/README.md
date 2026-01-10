@@ -58,7 +58,6 @@ This API provides endpoints for:
    DATABASE_URL=postgresql://admin:password@localhost:7064/pm
    REDIS_URL=redis://localhost:7066
    BETTER_AUTH_SECRET=your-secret-key-here
-   BETTER_AUTH_URL=http://localhost:8787
    ```
 
 3. **Run database migrations**:
@@ -244,7 +243,6 @@ See `db/schema.ts` for complete schema definitions.
 | `DATABASE_URL` | PostgreSQL connection string | Required |
 | `REDIS_URL` | Redis connection string | Required |
 | `BETTER_AUTH_SECRET` | Authentication secret | Required |
-| `BETTER_AUTH_URL` | Auth base URL | Required |
 
 ## Available Scripts
 

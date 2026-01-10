@@ -1,5 +1,6 @@
 import { redirect } from "@tanstack/react-router";
 import { getCookie } from "@tanstack/react-start/server";
+import { getRequest } from "@tanstack/react-start/server";
 
 const baseURL = process.env.VITE_API_URL || "http://localhost.dev";
 
@@ -8,11 +9,11 @@ interface HeaderOptions {}
 type RequestOptions = RequestInit & {
     params?: Record<string, string | number | boolean | null | undefined>;
     headers?: HeaderOptions;
-    from?: string;
+    shouldRedirect?: boolean;
 };
 
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
-    const { params, from, ...restOptions } = options;
+    const { params, shouldRedirect, ...restOptions } = options;
     const url = new URL(`${endpoint}`, baseURL);
 
     if (params) {
@@ -35,11 +36,12 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
         ...restOptions,
         headers,
     });
-    if (response.status === 401 && from) {
+    if (response.status === 401 && shouldRedirect) {
+        const request = getRequest();
         throw redirect({
             to: "/auth",
             search: {
-                callbackUrl: encodeURIComponent(from),
+                callbackUrl: encodeURIComponent(new URL(request.headers.get("referer")!).pathname),
             },
         });
     }

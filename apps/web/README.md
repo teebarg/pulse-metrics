@@ -56,7 +56,7 @@ Built with TanStack Start (React meta-framework), this application provides a be
    ```env
    VITE_API_URL=http://localhost:8787
    BETTER_AUTH_SECRET=your-secret-key-here
-   BETTER_AUTH_URL=http://localhost:8787
+   BETTER_AUTH_URL=http://localhost:5174
    ```
 
 3. **Start development server**:

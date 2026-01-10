@@ -101,14 +101,13 @@ pulse-metrics/
    DATABASE_URL=postgresql://admin:password@localhost:7064/pm
    REDIS_URL=redis://localhost:7066
    BETTER_AUTH_SECRET=your-secret-key-here
-   BETTER_AUTH_URL=http://localhost:8787
    ```
    
    **Web** (`apps/web/.env`):
    ```env
    VITE_API_URL=http://localhost:8787
    BETTER_AUTH_SECRET=your-secret-key-here
-   BETTER_AUTH_URL=http://localhost:8787
+   BETTER_AUTH_URL=http://localhost:5174
    ```
 
 5. **Run database migrations**:
@@ -315,14 +314,13 @@ API_PORT=8787
 DATABASE_URL=postgresql://admin:password@localhost:7064/pm
 REDIS_URL=redis://localhost:7066
 BETTER_AUTH_SECRET=your-secret-key-here
-BETTER_AUTH_URL=http://localhost:8787
 ```
 
 ### Web (`apps/web/.env`)
 ```env
 VITE_API_URL=http://localhost:8787
 BETTER_AUTH_SECRET=your-secret-key-here
-BETTER_AUTH_URL=http://localhost:8787
+BETTER_AUTH_URL=http://localhost:5174
 ```
 
 ## Docker

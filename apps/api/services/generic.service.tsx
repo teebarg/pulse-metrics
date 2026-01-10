@@ -10,8 +10,6 @@ export const sendMagicLink = async (magicLink: string, email: string) => {
         subject: "Sign in to Pulse",
         react: <MagicLink magicLink={magicLink} />,
     });
-    console.log("🚀 ~ sendMagicLink ~ error:", error);
-    console.log("🚀 ~ sendMagicLink ~ data:", data);
 };
 
 export const sendTestEmail = async () => {
