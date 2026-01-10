@@ -33,7 +33,7 @@ class PulseMetricsSDK {
     constructor() {
         this.config = {
             apiKey: "",
-            apiUrl: "https://api.pulsemetrics.io",
+            apiUrl: "https://api-pulse.revoque.com.ng",
             autoTrack: true,
             debug: false,
             flushInterval: 5000, // 5 seconds

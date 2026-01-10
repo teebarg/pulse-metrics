@@ -13,7 +13,7 @@ class PulseMetricsCore {
 
     constructor(config: PulseMetricsConfig) {
         this.config = {
-            apiUrl: "https://api.pulsemetrics.io",
+            apiUrl: "https://api-pulse.revoque.com.ng",
             debug: false,
             autoTrack: true,
             flushInterval: 5000,

@@ -176,7 +176,7 @@ import PulseMetrics from '@pulsemetrics/sdk';
 
 PulseMetrics.init({
   apiKey: 'your-api-key',
-  apiUrl: 'https://api.pulsemetrics.io'
+  apiUrl: 'https://api-pulse.revoque.com.ng'
 });
 
 PulseMetrics.track('purchase', {
