@@ -41,7 +41,7 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
         throw redirect({
             to: "/auth",
             search: {
-                callbackUrl: encodeURIComponent(new URL(request.headers.get("referer")!).pathname),
+                callbackUrl: new URL(request.headers.get("referer")!).pathname,
             },
         });
     }
