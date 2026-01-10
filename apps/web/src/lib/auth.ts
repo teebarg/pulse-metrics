@@ -29,5 +29,9 @@ export const auth = betterAuth({
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
         },
     },
-    trustedOrigins: ["http://pm.localhost:7060", "http://localhost:5174"],
+    trustedOrigins: process.env.BETTER_AUTH_TRUSTED_ORIGINS
+        ? process.env.BETTER_AUTH_TRUSTED_ORIGINS.split(",")
+              .map((origin) => origin.trim())
+              .filter(Boolean)
+        : [process.env.BETTER_AUTH_URL!],
 });

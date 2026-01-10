@@ -57,6 +57,7 @@ Built with TanStack Start (React meta-framework), this application provides a be
    VITE_API_URL=http://localhost:8787
    BETTER_AUTH_SECRET=your-secret-key-here
    BETTER_AUTH_URL=http://localhost:5174
+   BETTER_AUTH_TRUSTED_ORIGINS=http://pm.localhost:7060,http://localhost:5174
    ```
 
 3. **Start development server**:
@@ -173,6 +174,7 @@ WebSocket integration provides real-time updates for:
 | `VITE_API_URL` | Backend API URL | `http://localhost:8787` |
 | `BETTER_AUTH_SECRET` | Authentication secret key | Required |
 | `BETTER_AUTH_URL` | Authentication base URL | Required |
+| `BETTER_AUTH_TRUSTED_ORIGINS` | Comma-separated list of trusted origins for CORS | `http://pm.localhost:7060,http://localhost:5174` |
 
 ## Development Tips
 
