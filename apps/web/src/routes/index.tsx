@@ -27,7 +27,7 @@ function RouteComponent() {
         authClient.oneTap({
             callbackURL: search?.callbackUrl || "/account",
         });
-    }, [isAuthenticated]);
+    }, [isAuthenticated, isPending]);
 
     const handleGetStarted = () => {
         navigate({ to: "/auth" });
