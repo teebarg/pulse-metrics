@@ -14,6 +14,7 @@ import { getStoredTheme, ThemeProvider } from "~/lib/ThemeProvider";
 import { WebSocketProvider } from "pulsews";
 import { OrganizationProvider } from "~/providers/organization-provider";
 import { useEffect } from "react";
+import { initPulseMetrics } from "~/lib/pulsemetric.client";
 
 export const Route = createRootRouteWithContext<{
     queryClient: QueryClient;
@@ -71,14 +72,17 @@ function RootComponent() {
 function RootDocument({ children }: { children: React.ReactNode }) {
     const routeData = Route.useLoaderData();
     useEffect(() => {
-        if (typeof window !== "undefined" && (window as any).PulseMetrics) {
-            (window as any).PulseMetrics.init({
-                apiKey: import.meta.env.VITE_PULSE_KEY,
-                debug: true,
-                apiUrl: import.meta.env.VITE_API_URL + "/v1",
-            });
-        }
+        initPulseMetrics();
     }, []);
+    // useEffect(() => {
+    //     if (typeof window !== "undefined" && (window as any).PulseMetrics) {
+    //         (window as any).PulseMetrics.init({
+    //             apiKey: import.meta.env.VITE_PULSE_KEY,
+    //             debug: true,
+    //             apiUrl: import.meta.env.VITE_API_URL + "/v1",
+    //         });
+    //     }
+    // }, []);
     return (
         <html suppressHydrationWarning className="antialiased">
             <head>

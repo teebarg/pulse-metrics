@@ -11,7 +11,6 @@ interface PulseMetrics {
     identify?: (userId: string, traits?: Record<string, any>) => void;
     page?: (pageName: string, metadata?: Record<string, any>) => void;
     reset?: () => void;
-    // Add any other methods your SDK exposes
 }
 
 declare global {

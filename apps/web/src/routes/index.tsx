@@ -7,6 +7,7 @@ import { currency } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { ThemeToggle } from "~/components/theme-toggle";
 import { useEffect, useRef } from "react";
+import { analytics } from "~/lib/pulsemetric.client";
 
 export const Route = createFileRoute("/")({
     component: RouteComponent,
@@ -97,6 +98,11 @@ function RouteComponent() {
                         </Button>
                         <Button size="xl" variant="outline" className="rounded-lg">
                             View Demo
+                        </Button>
+                    </div>
+                    <div>
+                        <Button variant="outline" onClick={() => analytics.productView({ product_id: "123", product_name: "Product", price: 100 })}>
+                            Get Started
                         </Button>
                     </div>
 
