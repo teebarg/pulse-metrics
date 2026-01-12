@@ -9,7 +9,6 @@ interface PulseMetrics {
     init: (config: PulseMetricsConfig) => void;
     track: (eventName: string, data?: Record<string, any>) => void;
     identify?: (userId: string, traits?: Record<string, any>) => void;
-    page?: (pageName: string, metadata?: Record<string, any>) => void;
     reset?: () => void;
 }
 

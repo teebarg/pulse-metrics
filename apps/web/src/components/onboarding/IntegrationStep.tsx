@@ -9,7 +9,7 @@ export function IntegrationStep({ formData, onNext, onPrev }: { formData: any; o
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
-    const installCode = `<script src="https://cdn.pulsemetrics.io/sdk.js"></script>
+    const installCode = `<script src="https://pub-f4e5ec522d104f0c94def43905ff791e.r2.dev/sdk.js"></script>
 <script>
 PulseMetrics.init({
     apiKey: '${formData.apiKey}'

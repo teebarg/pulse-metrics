@@ -200,7 +200,7 @@ function RouteComponent() {
                         <pre className="bg-slate-800 rounded-lg p-6 overflow-x-auto">
                             <code className="text-green-400 text-sm">
                                 {`<!-- Add to your <head> -->
-<script src="https://cdn.pulsemetrics.io/sdk.js"></script>
+<script src="https://pub-f4e5ec522d104f0c94def43905ff791e.r2.dev/sdk.js"></script>
 <script>
   PulseMetrics.init({
     apiKey: 'your_api_key_here'
