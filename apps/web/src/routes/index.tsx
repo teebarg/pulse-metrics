@@ -7,7 +7,6 @@ import { currency } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { ThemeToggle } from "~/components/theme-toggle";
 import { useEffect, useRef } from "react";
-import { analytics } from "~/lib/pulsemetric.client";
 
 export const Route = createFileRoute("/")({
     component: RouteComponent,
@@ -100,12 +99,6 @@ function RouteComponent() {
                             View Demo
                         </Button>
                     </div>
-                    <div>
-                        <Button variant="outline" onClick={() => analytics.productView({ product_id: "123", product_name: "Product", price: 100 })}>
-                            Get Started
-                        </Button>
-                    </div>
-
                     <div className="mt-12 flex gap-8 justify-center items-center text-sm text-muted-foreground">
                         <div className="flex items-center gap-2">
                             <Check className="w-5 h-5 text-green-400" />
@@ -200,7 +193,7 @@ function RouteComponent() {
                         <pre className="bg-slate-800 rounded-lg p-6 overflow-x-auto">
                             <code className="text-green-400 text-sm">
                                 {`<!-- Add to your <head> -->
-<script src="https://pub-f4e5ec522d104f0c94def43905ff791e.r2.dev/sdk.js"></script>
+<script src="${import.meta.env.VITE_SDK_CDN}"></script>
 <script>
   PulseMetrics.init({
     apiKey: 'your_api_key_here'

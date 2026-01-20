@@ -4,7 +4,6 @@ import { routeTree } from "./routeTree.gen";
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { NotFound } from "~/components/NotFound";
 import * as TanstackQuery from "~/providers/root-provider";
-import { analytics } from "./lib/pulsemetric.client";
 
 export const getRouter = () => {
     const rqContext = TanstackQuery.getContext();
@@ -22,10 +21,6 @@ export const getRouter = () => {
     });
 
     setupRouterSsrQueryIntegration({ router, queryClient: rqContext.queryClient });
-
-    router.subscribe("onLoad", ({ toLocation }) => {
-        analytics.pageView();
-    });
 
     return router;
 };
