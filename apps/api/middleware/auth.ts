@@ -42,10 +42,10 @@ export async function apiKeyMiddleware(c: Context, next: Next) {
 export async function verifyApiKey(c: Context, next: Next) {
     try {
         const token = extractToken(c);
+        console.log("🚀 ~ file: auth.ts:45 ~ token:", token);
+        console.log("🚀 ~ file: auth.ts:46 ~ header:", c.req.raw.headers);
         if (!token) {
-            throw new HTTPException(401, {
-                message: "Authorization token required",
-            });
+            return c.json({ error: "Authorization token required" }, 401);
         }
 
         const session = await auth.api.getSession({
@@ -53,9 +53,7 @@ export async function verifyApiKey(c: Context, next: Next) {
         });
 
         if (!session) {
-            throw new HTTPException(401, {
-                message: "Invalid or expired token",
-            });
+            return c.json({ error: "Invalid or expired token" }, 401);
         }
 
         const [org] = await db
@@ -85,7 +83,7 @@ export async function verifyApiKey(c: Context, next: Next) {
         await next();
     } catch (err) {
         console.error("API key verification error:", err);
-        return c.json({ error: "Authentication failed in verifyApiKey" }, 500);
+        return c.json({ error: "Authentication failed in verifyApiKey" }, 400);
     }
 }
 
@@ -114,9 +112,7 @@ export async function authMiddleware(c: Context, next: Next) {
     try {
         const token = extractToken(c);
         if (!token) {
-            throw new HTTPException(401, {
-                message: "Authorization token required",
-            });
+            return c.json({ error: "Authorization token required" }, 401);
         }
 
         const session = await auth.api.getSession({
@@ -124,9 +120,7 @@ export async function authMiddleware(c: Context, next: Next) {
         });
 
         if (!session) {
-            throw new HTTPException(401, {
-                message: "Invalid or expired token",
-            });
+            return c.json({ error: "Invalid or expired token" }, 401);
         }
 
         c.set("user", {
@@ -142,9 +136,7 @@ export async function authMiddleware(c: Context, next: Next) {
         }
 
         console.error("Auth middleware error:", error);
-        throw new HTTPException(401, {
-            message: "Authentication failed",
-        });
+        return c.json({ error: "Authentication failed" }, 401);
     }
 }
 

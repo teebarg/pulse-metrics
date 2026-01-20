@@ -23,7 +23,8 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
         });
     }
 
-    const token = getCookie("better-auth.session_token") ?? "";
+    const token = (getCookie("__Secure-better-auth.session_token") || getCookie("better-auth.session_token")) ?? "";
+    console.log("🚀 ~ file: fetch-api.ts:27 ~ token:", token);
 
     const headers = {
         "Content-Type": "application/json",
