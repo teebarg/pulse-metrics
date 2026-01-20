@@ -22,7 +22,7 @@ export const MagicLink: React.FC<Readonly<MagicLinkProps>> = ({ magicLink }: Mag
         header: {
             background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
             padding: "40px 40px 50px",
-            textAlign: "center",
+            textAlign: "center" as const,
         },
         logo: {
             fontSize: "32px",
@@ -48,7 +48,7 @@ export const MagicLink: React.FC<Readonly<MagicLinkProps>> = ({ magicLink }: Mag
             margin: "0 0 24px 0",
         },
         buttonContainer: {
-            textAlign: "center",
+            textAlign: "center" as const,
             margin: "32px 0",
         },
         button: {
@@ -77,14 +77,14 @@ export const MagicLink: React.FC<Readonly<MagicLinkProps>> = ({ magicLink }: Mag
             border: "1px solid #e5e7eb",
             borderRadius: "6px",
             padding: "16px",
-            wordBreak: "break-all",
+            wordBreak: "break-all" as const,
             fontSize: "13px",
             color: "#667eea",
             fontFamily: "monospace",
         },
         footer: {
             padding: "32px 40px",
-            textAlign: "center",
+            textAlign: "center" as const,
             backgroundColor: "#f9fafb",
             borderTop: "1px solid #e5e7eb",
         },
