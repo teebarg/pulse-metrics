@@ -1,6 +1,6 @@
 import { Resend } from "resend";
-import { MagicLink } from "../emails/magic-link.tsx";
-import { EmailTemplate } from "../emails/email-template.tsx";
+import { MagicLink } from "../emails/magic-link.js";
+import { EmailTemplate } from "../emails/email-template.js";
 
 export const sendMagicLink = async (magicLink: string, email: string) => {
     const resend = new Resend(process.env.RESEND_API_KEY);

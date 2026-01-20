@@ -5,17 +5,17 @@ import { cors } from "hono/cors";
 import { prettyJSON } from "hono/pretty-json";
 import { createNodeWebSocket } from "@hono/node-ws";
 import type { Context } from "hono";
-import { errorHandler } from "./middleware/error-handler.ts";
-import { authMiddleware } from "./middleware/auth.ts";
-import { genericRoute } from "./routes/generic.routes.ts";
-import { profileRoutes } from "./routes/profile.routes.ts";
-import { analyticsRoutes } from "./routes/analytics.routes.ts";
-import { eventsRoute } from "./routes/events.routes.ts";
-import { onBoardingRoutes } from "./routes/onboarding.routes.ts";
-import { organizationRoutes } from "./routes/organization.routes.ts";
-import { settingsRoutes } from "./routes/settings.routes.ts";
-import { createRealtimeListener, registerClient, unregisterClient } from "./realtime-listener.ts";
-import { sendTestEmail } from "./services/generic.service.tsx";
+import { errorHandler } from "./middleware/error-handler.js";
+import { authMiddleware } from "./middleware/auth.js";
+import { genericRoute } from "./routes/generic.routes.js";
+import { profileRoutes } from "./routes/profile.routes.js";
+import { analyticsRoutes } from "./routes/analytics.routes.js";
+import { eventsRoute } from "./routes/events.routes.js";
+import { onBoardingRoutes } from "./routes/onboarding.routes.js";
+import { organizationRoutes } from "./routes/organization.routes.js";
+import { settingsRoutes } from "./routes/settings.routes.js";
+import { createRealtimeListener, registerClient, unregisterClient } from "./realtime-listener.js";
+import { sendTestEmail } from "./services/generic.service.js";
 
 const port = Number(process.env.API_PORT || 8787);
 
@@ -71,7 +71,6 @@ app.get(
     upgradeWebSocket((c) => {
         return {
             onOpen(event, ws) {
-                console.log("🚀 ~ file: index.ts:58 ~ event:", event);
                 console.log("Connection opened");
                 // Register client with optional filters
                 // You can extract these from query params or auth

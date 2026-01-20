@@ -1,8 +1,8 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
-import { SuccessSchema } from "../schemas/common.schemas.ts";
-import { getListenerStatus } from "../realtime-listener.ts";
+import { SuccessSchema } from "../schemas/common.schemas.js";
+import { getListenerStatus } from "../realtime-listener.js";
 import { z } from "zod";
-import { sendMagicLink } from "../services/generic.service.tsx";
+import { sendMagicLink } from "../services/generic.service.js";
 
 export const genericRoute = new OpenAPIHono();
 

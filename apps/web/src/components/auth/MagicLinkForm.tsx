@@ -36,7 +36,6 @@ export function MagicLinkForm() {
             errorCallbackURL: "/error",
         });
         if (error) {
-            console.log("🚀 ~ file: MagicLinkForm.tsx:39 ~ error:", error);
             toast.error(error.message);
             return;
         }
