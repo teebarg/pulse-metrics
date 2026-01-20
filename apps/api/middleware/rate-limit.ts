@@ -42,9 +42,7 @@ export async function checkRateLimit(c: Context, next: Next) {
 
         // Add current timestamp to sorted set
         await redis.zadd(key, now, `${now}`);
-
-        // Expire key slightly after window to free memory
-        await redis.expire(key, 65); // 65 seconds
+        await redis.expire(key, 65);
 
         await next();
     } catch (err) {

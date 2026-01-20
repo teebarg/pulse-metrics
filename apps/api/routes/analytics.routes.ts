@@ -12,7 +12,7 @@ const ecommerceService = new EcommerceService();
 analyticsRoutes.openAPIRegistry.registerComponent("securitySchemes", "Bearer", {
     type: "http",
     scheme: "bearer",
-    bearerFormat: "JWT", // Optional: specify if using JWTs; adjust as needed
+    bearerFormat: "JWT",
 });
 
 analyticsRoutes.openAPIRegistry.registerComponent("securitySchemes", "ApiKeyAuth", {
@@ -212,8 +212,8 @@ analyticsRoutes.openapi(
             const metrics = (await ecommerceService.getMetrics(organizationId, timeRange)) as unknown as any;
             return c.json(metrics);
         } catch (error) {
-            console.error("E-commerce metrics error:", error);
-            return c.json({ error: "Failed to fetch e-commerce metrics" }, 500);
+            console.error("Error fetching metrics:", error);
+            return c.json({ error: "Failed to fetch metrics" }, 500);
         }
     }
 );
@@ -269,7 +269,6 @@ analyticsRoutes.openapi(
                     }
                 }, 5000);
 
-                // Clean up on stream close
                 return () => {
                     clearInterval(interval);
                 };

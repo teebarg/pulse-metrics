@@ -91,8 +91,8 @@ onBoardingRoutes.openapi(
 
             return c.json({ success: true });
         } catch (error) {
-            console.error("Realtime analytics error:", error);
-            return c.json({ error: "Failed to fetch realtime data" }, 500);
+            console.error("Failed to complete onboarding:", error);
+            return c.json({ error: "Failed to complete onboarding" }, 500);
         }
     }
 );
@@ -122,8 +122,8 @@ onBoardingRoutes.openapi(
 
             return c.json({ ...data });
         } catch (error) {
-            console.error("Realtime analytics error:", error);
-            return c.json({ error: "Failed to fetch realtime data" }, 500);
+            console.error("Failed to verify events:", error);
+            return c.json({ error: "Failed to verify events" }, 500);
         }
     }
 );
@@ -153,8 +153,8 @@ onBoardingRoutes.openapi(
 
             return c.json({ ...data });
         } catch (error) {
-            console.error("Realtime analytics error:", error);
-            return c.json({ error: "Failed to fetch realtime data" }, 500);
+            console.error("Failed to get onboarding status:", error);
+            return c.json({ error: "Failed to get onboarding status" }, 500);
         }
     }
 );

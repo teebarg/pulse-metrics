@@ -36,8 +36,8 @@ eventsRoute.openapi(
                 events: res,
             });
         } catch (error: any) {
-            console.error("Event ingestion error:", error);
-            return errorResponse(c, "Failed to process chat", error.message);
+            console.error("Failed to get events:", error);
+            return errorResponse(c, "Failed to get events", error.message);
         }
     }
 );

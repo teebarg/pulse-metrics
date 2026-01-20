@@ -42,8 +42,6 @@ export async function apiKeyMiddleware(c: Context, next: Next) {
 export async function verifyApiKey(c: Context, next: Next) {
     try {
         const token = extractToken(c);
-        console.log("🚀 ~ file: auth.ts:45 ~ token:", token);
-        console.log("🚀 ~ file: auth.ts:46 ~ header:", c.req.raw.headers);
         if (!token) {
             return c.json({ error: "Authorization token required" }, 401);
         }

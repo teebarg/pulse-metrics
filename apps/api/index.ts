@@ -81,7 +81,6 @@ app.get(
                 });
             },
             onMessage(event, ws) {
-                // console.log(`Message from client: ${event.data}`);
                 // ws.send(JSON.stringify({ type: "debug", message: "Hello from server!" }));
                 try {
                     const message = JSON.parse(event.data.toString());

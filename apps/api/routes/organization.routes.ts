@@ -24,10 +24,10 @@ organizationRoutes.openapi(
         path: "/",
         security: [{ Bearer: [] }],
         tags: ["organization"],
-        description: "Verify organization events",
+        description: "Get organization",
         responses: {
             200: {
-                description: "Verify organization events",
+                description: "Get organization",
                 content: { "application/json": { schema: SuccessSchema } },
             },
             500: {
@@ -42,8 +42,8 @@ organizationRoutes.openapi(
             const data = await organizationService.GenerateOrganization(user);
             return c.json(data);
         } catch (error) {
-            console.error("Realtime analytics error:", error);
-            return c.json({ error: "Failed to fetch realtime data" }, 500);
+            console.error("Failed to get organization:", error);
+            return c.json({ error: "Failed to get organization" }, 500);
         }
     }
 );
