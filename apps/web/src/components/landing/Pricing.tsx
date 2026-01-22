@@ -34,7 +34,7 @@ export default function Pricing() {
             name: "Free",
             price: "0",
             description: "Perfect for getting started",
-            features: ["100,000 events/month", "30 days data retention", "Real-time dashboard", "Basic analytics", "2 team members"],
+            features: ["10,000 events/month", "30 days data retention", "Real-time dashboard", "Basic analytics", "2 team members"],
             cta: "Get Started",
             popular: false,
         },

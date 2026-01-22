@@ -44,7 +44,7 @@ CREATE TABLE "organization" (
 	"domain" text,
 	"plan" "organization_plan" DEFAULT 'free',
 	"apiKey" text NOT NULL,
-	"eventsLimit" integer DEFAULT 100,
+	"eventsLimit" integer DEFAULT 10000,
 	"eventsUsed" integer DEFAULT 0,
 	"eventsReceived" integer DEFAULT 0,
 	"platform" text DEFAULT 'custom',

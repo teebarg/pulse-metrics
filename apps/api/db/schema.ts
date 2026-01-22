@@ -11,7 +11,7 @@ export const organizations = pgTable("organization", {
     domain: text("domain"),
     plan: organizationPlanEnum("plan").default("free"),
     apiKey: text("apiKey").notNull().unique(),
-    eventsLimit: integer("eventsLimit").default(100),
+    eventsLimit: integer("eventsLimit").default(10000),
     eventsUsed: integer("eventsUsed").default(0),
     eventsReceived: integer("eventsReceived").default(0),
     platform: text("platform").default("custom"),
